@@ -116,3 +116,46 @@ body {
   border: 1px solid #000000;
   font-size: 14px;
 }
+
+.login_headline {
+  font-family: sans-serif;
+  font-size: 32px;
+  margin-bottom: 20px;
+  margin-left: -80px;
+  text-shadow: 
+    1px 1px 0px #e0e0e0,
+    2px 2px 0px #c0c0c0,
+    3px 3px 0px #a0a0a0;
+}
+
+  .login_form_framework {
+  border: 2px solid #000000;
+  padding: 20px;
+  max-width: 550px;       
+  background-color: #ffffff;
+  margin-left: -100px;
+}
+
+
+.login_form_line {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 15px;
+}
+
+.login_form_line label {
+  font-family: sans-serif;
+  font-size: 14px;
+  flex: 1;
+  padding-right: 10px;
+}
+
+
+.login_form_line input {
+  flex: 1.5;
+  max-width: 300px;
+  padding: 6px;
+  border: 1px solid #000000;
+  font-size: 14px;
+}
