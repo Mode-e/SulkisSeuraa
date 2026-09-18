@@ -1,5 +1,16 @@
-CREATE TABLE users (
+CREATE TABLE IF NOT EXISTS users (
     id INTEGER PRIMARY KEY,
     username TEXT UNIQUE NOT NULL,
     password_hash TEXT NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS shifts (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    user_id INTEGER NOT NULL,
+    location TEXT NOT NULL,
+    time TEXT NOT NULL,
+    player_level TEXT NOT NULL,
+    player_count INTEGER NOT NULL,
+    total_players INTEGER NOT NULL,
+    FOREIGN KEY (user_id) REFERENCES users (id)
 );
