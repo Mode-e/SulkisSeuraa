@@ -1,0 +1,49 @@
+{% extends "layout.html" %}
+
+{% block content %}
+<h2 class="add_shift_headline">Lisää pelivuoro</h2>
+<div class="add_shift_form_framework">
+    <form action="/create_shift" method="post">
+        <div class="add_shift_form_line">
+            <label for="location">Paikka:</label>
+            <select id="location" name="location">
+                <option value="" disabled selected>Valitse paikka...</option>
+                <option value="Kluuvi Unisport">Kluuvi Unisport</option>
+                <option value="Kumpula Unisport">Kumpula Unisport</option>
+                <option value="Meilahti Unisport">Meilahti Unisport</option>
+                <option value="Otaniemi Unisport">Otaniemi Unisport</option>
+                <option value="Töölö Unisport">Töölö Unisport</option>
+                <option value="Viikki Unisport">Viikki Unisport</option>
+            </select>
+        </div>
+
+        <div class="add_shift_form_line">
+            <label for="time">Aika:</label>
+            <input type="datetime-local" name="time" />
+        </div>
+
+        <div class="add_shift_form_line">
+            <label for="player_level">Taso:</label>
+            <select id="player_level" name="player_level">
+                <option value="" disabled selected>Valitse taso...</option>
+                <option value="aloittelija">Aloittelija</option>
+                <option value="harrastaja">Harrastaja</option>
+                <option value="kilpa">Kilpataso</option>
+            </select>
+        </div>
+
+        <div class="add_shift_form_line">
+            <label for="total_players">Määrä:</label>
+            <select id="total_players" name="total_players">
+                <option value="" disabled selected>Valitse pelaajamäärä...</option>
+                <option value="2">2 pelaajaa</option>
+                <option value="4">4 pelaajaa</option>
+            </select>
+        </div>
+
+        <div class="button_container" style="display: flex; justify-content: space-between; align-items: center; width: 100%; margin-left: 420px;">
+            <button type="submit">Lisää vuoro</button>
+        </div>
+    </form>
+</div>
+{% endblock %}
