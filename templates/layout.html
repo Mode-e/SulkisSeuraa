@@ -9,8 +9,13 @@
     <div class="header">
         <h1>Sulkapalloseura</h1>
         <div class="links">
-            <a href="/register">Rekisteröidy</a>
-            <a href="/login">Kirjaudu sisään</a>
+            {% if session.username %}
+                <span>Kirjautunut käyttäjä: {{ session.username }}</span>
+                <a href="/logout">Kirjaudu ulos</a>
+            {% else %}
+                <a href="/register">Rekisteröidy</a>
+                <a href="/login">Kirjaudu sisään</a>
+            {% endif %}
         </div>
     </div>
 
