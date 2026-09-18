@@ -11,6 +11,29 @@ app.secret_key = "super_salainen_avain_tähän"
 def index():
     return render_template("index.html")
 
+@app.route("/add_shift", methods=["GET"])
+def add_shift():
+    if "username" not in session:
+        return "Vaatii kirjautumista"
+    return render_template("add_shift.html")
+
+@app.route("/create_shift", methods=["POST"])
+def create_shift():
+    if "username" not in session:
+        return "Vaatii kirjautumista"
+
+    user_id = session["user_id"]
+    location = request.form["location"]
+    time = request.form["time"]
+    player_level = request.form["player_level"]
+    player_count = 1
+    total_players = request.form["total_players"]
+
+    sql = "INSERT INTO shifts (user_id, location, time, player_level, player_count, total_players) VALUES (?, ?, ?, ?, ?, ?)"
+    db.execute(sql, [user_id, location, time, player_level, player_count, total_players])
+
+    return redirect("/")
+
 @app.route("/logout")
 def logout():
     del session["username"]
