@@ -3,13 +3,17 @@ from werkzeug.security import check_password_hash, generate_password_hash
 import sqlite3
 import config
 import db
+import shifts
 
 app = Flask(__name__)
 app.secret_key = "super_salainen_avain_tähän"
 
 @app.route("/")
 def index():
-    return render_template("index.html")
+    all_shifts = shifts.get_all_shifts()
+    count = len(all_shifts)
+    
+    return render_template("index.html", count=count, messages=all_shifts)
 
 @app.route("/add_shift", methods=["GET"])
 def add_shift():
