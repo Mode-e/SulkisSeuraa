@@ -1,5 +1,5 @@
-from flask import Flask, redirect, render_template, request, flash
-from werkzeug.security import generate_password_hash
+from flask import Flask, redirect, render_template, request, flash, session
+from werkzeug.security import check_password_hash, generate_password_hash
 import sqlite3
 import config
 import db
@@ -11,21 +11,31 @@ app.secret_key = "super_salainen_avain_tähän"
 def index():
     return render_template("index.html")
 
+@app.route("/logout")
+def logout():
+    del session["username"]
+    del session["user_id"]
+    return redirect("/")
+
 @app.route("/login", methods=["GET", "POST"])
 def login():
     if request.method == "GET":
         return render_template("login.html")
         
     username = request.form["username"]
-    password = request.form["password"]
+    password = request.form["password1"]
     
-    sql = "SELECT password_hash FROM users WHERE username = ?"
-    password_hash = db.query(sql, [username])[0][0]
+    sql = "SELECT id, password_hash FROM users WHERE username = ?"
+    result = db.query(sql, [username])
 
-    if check_password_hash(password_hash, password):
-        session["username"] = username
-        return redirect("/")
-    else:
+    try:
+        if check_password_hash(result[0][1], password):
+            session["username"] = username
+            session["user_id"] = result[0][0]
+            return redirect("/")
+        else:
+            return "VIRHE: väärä tunnus tai salasana"
+    except IndexError:
         return "VIRHE: väärä tunnus tai salasana"
 
 
