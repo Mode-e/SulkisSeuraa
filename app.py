@@ -5,6 +5,7 @@ import config
 import db
 
 app = Flask(__name__)
+app.secret_key = "super_salainen_avain_tähän"
 
 @app.route("/")
 def index():
