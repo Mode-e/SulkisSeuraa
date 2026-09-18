@@ -49,3 +49,14 @@ body {
     text-decoration: underline;
     float: left;
 }
+
+/* MAIN CONTENT */
+.content {
+    position: absolute;
+    left: 150px;
+    top: 70px;
+    width: calc(100% - 180px);
+    margin-left: 210px;
+    padding: 30px;
+    font-family: sans-serif;
+}

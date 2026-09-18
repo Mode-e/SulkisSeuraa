@@ -10,3 +10,7 @@ app.secret_key = "super_salainen_avain_tähän"
 @app.route("/")
 def index():
     return render_template("index.html")
+
+@app.route("/register")
+def register():
+    return render_template("register.html")
