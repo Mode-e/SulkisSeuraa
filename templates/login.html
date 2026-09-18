@@ -1,0 +1,22 @@
+{% extends "layout.html" %}
+
+{% block content %}
+<h2 class="login_headline">Kirjaudu sisään</h2>
+<div class="login_form_framework">
+    <form action="/login" method="post">
+        <div class="login_form_line">
+            <label for="username">Käyttäjätunnus:</label>
+            <input type="text" name="username" />
+        </div>
+
+        <div class="login_form_line">
+            <label for="password">Salasana:</label>
+            <input type="password" name="password1" />
+        </div>
+
+        <div class="button_container" style="display: flex; justify-content: space-between; align-items: center; width: 100%; margin-left: 420px;">
+            <button type="submit">Kirjaudu</button>
+        </div>
+    </form>
+</div>
+{% endblock %}
