@@ -1,5 +1,31 @@
 {% extends "layout.html" %}
 
 {% block content %}
-Etusivu
+<h2 class="homepage_headline">Etusivu</h2>
+<div class="homepage_form_framework">
+    <h3 class="homepage_form_title">Avoimet pelivuorot ({{ count }})</h3>
+    
+    {% if count == 0 %}
+        <p class="Empty">Ei avoimia pelivuoroja tällä hetkellä.</p>
+    {% else %}
+        {% for shift in messages %}
+            <div class="shift_message">
+                <div class="shift-texts">
+                    <strong>Lisäsi</strong> {{ shift['username'] }} | 
+                    <strong>Paikka:</strong> {{ shift['location'] }}
+                    <br>
+                    <strong>Aika:</strong> {{ shift['time'] }} |
+                    <strong>Pelaajat:</strong> {{ shift['player_count'] }}/{{ shift['total_players'] }}
+                </div>
+                
+                {% if session and session.get('user_id') == shift['user_id'] %}
+                    <a href="/edit_shift/{{ shift['id'] }}" class="sign_up_button_edit">Muokkaa</a>
+                {% else %}
+                    <button type="submit" class="sign_up_button">Ilmoittaudu</button>
+                {% endif %}
+            </div>
+        {% endfor %}
+    {% endif %}
+</div>
+
 {% endblock %}
