@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Sulkapalloseura</title>
+    <link rel="stylesheet" href="/static/main.css">
+</head>
+<body>
+
+    <div class="header">
+        <h1>Sulkapalloseura</h1>
+        <div class="links">
+            <a href="/register">Rekisteröidy</a>
+            <a href="/login">Kirjaudu sisään</a>
+        </div>
+    </div>
+
+    <div class="sidebar">
+        <a href="/">Etusivu</a>
+        <a href="/add_shift">Lisää vuoro</a>
+        <a href="/search">Hae vuoroja</a>
+        <a href="/my_shifts">Omat vuorot</a>
+    </div>
+    <div class="content">
+        {% block content %}
+        {% endblock %}
+    </div>
+</body>
+</html>
