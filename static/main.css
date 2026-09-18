@@ -73,6 +73,7 @@ body {
     font-family: sans-serif;
 }
 
+/* Register page headline */
 .register_headline {
   font-family: sans-serif;
   font-size: 32px;
@@ -84,7 +85,7 @@ body {
     3px 3px 0px #a0a0a0;
 }
 
-
+/* Register form framework */
 .register_form_framework {
   border: 2px solid #000000;
   padding: 20px;
@@ -93,7 +94,7 @@ body {
   margin-left: -100px;
 }
 
-
+/* Register form line */
 .register_form_line {
   display: flex;
   justify-content: space-between;
@@ -101,6 +102,7 @@ body {
   margin-bottom: 15px;
 }
 
+/* Register form label */
 .register_form_line label {
   font-family: sans-serif;
   font-size: 14px;
@@ -108,7 +110,7 @@ body {
   padding-right: 10px;
 }
 
-
+/* Register form input */
 .register_form_line input {
   flex: 1.5;
   max-width: 300px;
@@ -117,6 +119,7 @@ body {
   font-size: 14px;
 }
 
+/* Login page headline */
 .login_headline {
   font-family: sans-serif;
   font-size: 32px;
@@ -128,6 +131,7 @@ body {
     3px 3px 0px #a0a0a0;
 }
 
+/* Login form framework */
   .login_form_framework {
   border: 2px solid #000000;
   padding: 20px;
@@ -136,7 +140,7 @@ body {
   margin-left: -100px;
 }
 
-
+/* Login form line */
 .login_form_line {
   display: flex;
   justify-content: space-between;
@@ -144,6 +148,7 @@ body {
   margin-bottom: 15px;
 }
 
+/* Login form label */
 .login_form_line label {
   font-family: sans-serif;
   font-size: 14px;
@@ -151,7 +156,7 @@ body {
   padding-right: 10px;
 }
 
-
+/* Login form input */
 .login_form_line input {
   flex: 1.5;
   max-width: 300px;
@@ -160,12 +165,14 @@ body {
   font-size: 14px;
 }
 
+/* Button container */
 .button_container {
   display: flex;
   justify-content: flex-end;
   margin-top: 25px;
 }
 
+/* Button */
 .button_container button {
   background-color: #eeeeee;
   color: #0000ee;
@@ -176,6 +183,7 @@ body {
   cursor: pointer;
 }
 
+/* Button hover effect */
 .button_container button:hover {
   background-color: #dddddd;
 }
