@@ -119,6 +119,30 @@ body {
   font-size: 14px;
 }
 
+
+/* Button container */
+.button_container {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 25px;
+}
+
+/* Button */
+.button_container button {
+  background-color: #eeeeee;
+  color: #0000ee;
+  border: 1px solid #000000;
+  padding: 8px 15px;
+  font-family: sans-serif;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+/* Button hover effect */
+.button_container button:hover {
+  background-color: #dddddd;
+}
+
 /* Login page headline */
 .login_headline {
   font-family: sans-serif;
@@ -165,25 +189,48 @@ body {
   font-size: 14px;
 }
 
-/* Button container */
-.button_container {
-  display: flex;
-  justify-content: flex-end;
-  margin-top: 25px;
+/* Add shift page headline */
+.add_shift_headline {
+  font-family: sans-serif;
+  font-size: 32px;
+  margin-bottom: 20px;
+  margin-left: -80px;
+  text-shadow: 
+    1px 1px 0px #e0e0e0,
+    2px 2px 0px #c0c0c0,
+    3px 3px 0px #a0a0a0;
 }
 
-/* Button */
-.button_container button {
-  background-color: #eeeeee;
-  color: #0000ee;
-  border: 1px solid #000000;
-  padding: 8px 15px;
+/* Add shift form framework */
+  .add_shift_form_framework {
+  border: 2px solid #000000;
+  padding: 20px;
+  max-width: 550px;       
+  background-color: #ffffff;
+  margin-left: -100px;
+}
+
+/* Add shift form line */
+.add_shift_form_line {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 15px;
+}
+
+/* Add shift form label */
+.add_shift_form_line label {
   font-family: sans-serif;
   font-size: 14px;
-  cursor: pointer;
+  flex: 1;
+  box-sizing: border-box;
 }
 
-/* Button hover effect */
-.button_container button:hover {
-  background-color: #dddddd;
+/* Add shift form input */
+.add_shift_form_line input, .add_shift_form_line select {
+  box-sizing: border-box;
+  width: 320px;
+  padding: 6px;
+  border: 1px solid #000000;
+  font-size: 14px;
 }
