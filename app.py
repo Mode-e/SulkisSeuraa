@@ -4,9 +4,23 @@ import sqlite3
 import config
 import db
 import shifts
+import datetime
 
 app = Flask(__name__)
 app.secret_key = "super_salainen_avain_tähän"
+
+@app.route("/my_shifts")
+def my_shifts():
+    if "username" not in session:
+        return "Vaatii kirjautumista"
+    user_id = session["user_id"]
+    time_now = datetime.datetime.now().strftime("%Y-%m-%dT%H:%M")
+    upcoming = shifts.get_upcoming_shifts(user_id, time_now)
+    past = shifts.get_past_shifts(user_id, time_now)
+    upcoming_count = len(upcoming)
+    past_count = len(past)
+
+    return render_template("my_shifts.html", upcoming=upcoming, upcoming_count=upcoming_count, past=past, past_count=past_count)
 
 @app.route("/")
 def index():
