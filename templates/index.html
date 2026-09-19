@@ -21,7 +21,9 @@
                 {% if session and session.get('user_id') == shift['user_id'] %}
                     <a href="/edit_shift/{{ shift['id'] }}" class="sign_up_button_edit">Muokkaa</a>
                 {% else %}
-                    <button type="submit" class="sign_up_button">Ilmoittaudu</button>
+                    {% if session.username %}
+                        <button type="submit" class="sign_up_button">Ilmoittaudu</button>
+                    {% endif %}
                 {% endif %}
             </div>
         {% endfor %}
