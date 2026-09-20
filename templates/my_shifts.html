@@ -28,7 +28,7 @@
         <p class="Empty">Ei menneitä pelivuoroja.</p>
     {% else %}
         {% for shift in past %}
-            <div class="shift_message" style="opacity: 0.6;">
+            <div class="past_shift_message">
                 <div class="shift-texts">
                     <strong>Lisäsi</strong> {{ shift['username'] }} | <strong>Paikka:</strong> {{ shift['location'] }}
                     <br>
