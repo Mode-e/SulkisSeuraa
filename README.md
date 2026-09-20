@@ -1,7 +1,7 @@
 # 🏸 Sulkapallosovellus (tikawe-sovellus)
 
 ## Sovelluksen toiminnot ##
-+ Sovelluksessa käyttäjät pystyvät etsimään peliseuraa sulkapalloon. Ilmoituksessa +ukee missä ja milloin pelivuoro on sekä tarvittava pelaajien määrä.
++ Sovelluksessa käyttäjät pystyvät etsimään peliseuraa sulkapalloon. Ilmoituksessa lukee missä ja milloin pelivuoro on sekä tarvittava pelaajien määrä.
 
 + Käyttäjä pystyy luomaan tunnuksen ja kirjautumaan sisään sovellukseen.
 
@@ -16,7 +16,7 @@
 + Käyttäjä pystyy valitsemaan esimerkiksi seuraavia luokitteluja:
     +Pelipaikka: Kumpula Unisport tai Otaniemi Unisport
     +Pelaajan taso: aloittelija, keskitaso tai edistynyt
-    
+
 + Käyttäjä pystyy ilmoittautumaan pelivuoroon. Ilmoituksessa näytetään, ketkä käyttäjät ovat ilmoittautuneet.
 
 ## Sovelluksen käyttöönotto ##
