@@ -30,3 +30,20 @@ def get_past_shifts(user_id, time_now):
         ORDER BY shifts.time DESC
     """
     return list(db.query(sql, [user_id, time_now]))
+
+def get_shift(shift_id):
+    sql = """
+        SELECT id, user_id, location, time, player_level, player_count, total_players 
+        FROM shifts 
+        WHERE id = ?
+    """
+    result = db.query(sql, [shift_id])
+    return result[0]
+
+def update_shift(shift_id, location, time, player_level, total_players):
+    sql = """
+        UPDATE shifts 
+        SET location = ?, time = ?, player_level = ?, total_players = ? 
+        WHERE id = ?
+    """
+    db.execute(sql, [location, time, player_level, total_players, shift_id])
