@@ -9,10 +9,37 @@ import datetime
 app = Flask(__name__)
 app.secret_key = "super_salainen_avain_tähän"
 
+def check_search(location, time, player_level, total_players):
+    if location == "Valitse paikka...":
+        location = None
+    if player_level == "Valitse taso...":
+        player_level = None
+    if not time:
+        time = None
+    if total_players == "Valitse pelaajamäärä...":
+        total_players = None
+    return location, time, player_level, total_players
+
+@app.route("/search", methods=["GET"])
+def search():
+    if "username" not in session:
+        return "Vaatii kirjautumista"
+
+    location = request.args.get("location", "").strip()
+    time = request.args.get("time", "").strip()
+    player_level = request.args.get("player_level", "").strip()
+    total_players = request.args.get("total_players", "").strip()
+    
+    location, time, player_level, total_players = check_search(location, time, player_level, total_players)
+
+    results = shifts.find_shifts(location, time, player_level, total_players)
+
+    return render_template("search.html", results=results, location=location, time=time, player_level=player_level, total_players=total_players)
+
 @app.route("/edit_shift/<int:id>", methods=["GET", "POST"])
 def edit_shift(id):
     if "username" not in session:
-        return redirect("/login")
+        return "Vaatii kirjautumista"
         
     shift = shifts.get_shift(id)
     if not shift:
