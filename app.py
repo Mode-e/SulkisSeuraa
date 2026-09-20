@@ -9,6 +9,11 @@ import datetime
 app = Flask(__name__)
 app.secret_key = "super_salainen_avain_tähän"
 
+def Check_login():
+    if "username" not in session:
+        return False
+    return True
+
 def check_search(location, time, player_level, total_players):
     if location == "Valitse paikka...":
         location = None
@@ -22,7 +27,7 @@ def check_search(location, time, player_level, total_players):
 
 @app.route("/search", methods=["GET"])
 def search():
-    if "username" not in session:
+    if not Check_login():
         return "Vaatii kirjautumista"
 
     location = request.args.get("location", "").strip()
@@ -38,7 +43,7 @@ def search():
 
 @app.route("/edit_shift/<int:id>", methods=["GET", "POST"])
 def edit_shift(id):
-    if "username" not in session:
+    if not Check_login():
         return "Vaatii kirjautumista"
         
     shift = shifts.get_shift(id)
@@ -63,8 +68,9 @@ def edit_shift(id):
 
 @app.route("/my_shifts")
 def my_shifts():
-    if "username" not in session:
+    if not Check_login():
         return "Vaatii kirjautumista"
+
     user_id = session["user_id"]
     time_now = datetime.datetime.now().strftime("%Y-%m-%dT%H:%M")
     upcoming = shifts.get_upcoming_shifts(user_id, time_now)
@@ -83,13 +89,14 @@ def index():
 
 @app.route("/add_shift", methods=["GET"])
 def add_shift():
-    if "username" not in session:
+    if not Check_login():
         return "Vaatii kirjautumista"
+
     return render_template("add_shift.html")
 
 @app.route("/create_shift", methods=["POST"])
 def create_shift():
-    if "username" not in session:
+    if not Check_login():
         return "Vaatii kirjautumista"
 
     user_id = session["user_id"]
