@@ -9,6 +9,31 @@ import datetime
 app = Flask(__name__)
 app.secret_key = "super_salainen_avain_tähän"
 
+@app.route("/edit_shift/<int:id>", methods=["GET", "POST"])
+def edit_shift(id):
+    if "username" not in session:
+        return redirect("/login")
+        
+    shift = shifts.get_shift(id)
+    if not shift:
+        return "Vuoroa ei löytynyt"
+        
+    if request.method == "POST":
+        if request.form.get("action") == "delete":
+            sql = "DELETE FROM shifts WHERE id = ?"
+            db.execute(sql, [id])
+            return redirect("/my_shifts")
+
+        location = request.form["location"]
+        time = request.form["time"]
+        player_level = request.form["player_level"]
+        total_players = request.form["total_players"]
+        
+        shifts.update_shift(id, location, time, player_level, total_players)
+        return redirect("/my_shifts")
+
+    return render_template("edit_shift.html", shift=shift)
+
 @app.route("/my_shifts")
 def my_shifts():
     if "username" not in session:
