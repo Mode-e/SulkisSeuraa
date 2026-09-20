@@ -1,0 +1,50 @@
+{% extends "layout.html" %}
+
+{% block content %}
+<h2 class="add_shift_headline">Muokkaa vuoroa</h2>
+<div class="add_shift_form_framework">
+    <form action="/edit_shift/{{ shift['id'] }}" method="post">
+        <div class="add_shift_form_line">
+            <label for="location">Paikka:</label>
+            <select id="location" name="location" required>
+                <option value="" disabled selected>Valitse paikka...</option>
+                <option value="Kluuvi Unisport" {% if shift["location"] == "Kluuvi Unisport" %}selected{% endif %}>Kluuvi Unisport</option>
+                <option value="Kumpula Unisport" {% if shift["location"] == "Kumpula Unisport" %}selected{% endif %}>Kumpula Unisport</option>
+                <option value="Meilahti Unisport" {% if shift["location"] == "Meilahti Unisport" %}selected{% endif %}>Meilahti Unisport</option>
+                <option value="Otaniemi Unisport" {% if shift["location"] == "Otaniemi Unisport" %}selected{% endif %}>Otaniemi Unisport</option>
+                <option value="Töölö Unisport" {% if shift["location"] == "Töölö Unisport" %}selected{% endif %}>Töölö Unisport</option>
+                <option value="Viikki Unisport" {% if shift["location"] == "Viikki Unisport" %}selected{% endif %}>Viikki Unisport</option>
+            </select>
+        </div>
+
+        <div class="add_shift_form_line">
+            <label for="time">Aika:</label>
+            <input type="datetime-local" name="time" value="{{ shift['time'] }}"required />
+        </div>
+
+        <div class="add_shift_form_line">
+            <label for="player_level">Taso:</label>
+            <select id="player_level" name="player_level" required>
+                <option value="" disabled selected>Valitse taso...</option>
+                <option value="aloittelija" {% if shift["player_level"] == "aloittelija" %}selected{% endif %}>Aloittelija</option>
+                <option value="harrastaja" {% if shift["player_level"] == "harrastaja" %}selected{% endif %}>Harrastaja</option>
+                <option value="kilpa" {% if shift["player_level"] == "kilpa" %}selected{% endif %}>Kilpataso</option>
+            </select>
+        </div>
+
+        <div class="add_shift_form_line">
+            <label for="total_players">Määrä:</label>
+            <select id="total_players" name="total_players" required>
+                <option value="" disabled selected>Valitse pelaajamäärä...</option>
+                <option value="2"{% if shift["total_players"] | int == 2 %}selected{% endif %}>2 pelaajaa</option>
+                <option value="4"{% if shift["total_players"] | int == 4 %}selected{% endif %}>4 pelaajaa</option>
+            </select>
+        </div>
+
+        <div class="edit_button_container">
+            <button type="submit" class="sign_up_button">Tallenna</button>
+            <button type="submit" name="action" value="delete" class="sign_up_button_delete">Poista</button>
+        </div>
+    </form>
+</div>
+{% endblock %}
