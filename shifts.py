@@ -47,3 +47,30 @@ def update_shift(shift_id, location, time, player_level, total_players):
         WHERE id = ?
     """
     db.execute(sql, [location, time, player_level, total_players, shift_id])
+
+def find_shifts(location=None, time=None, player_level=None, total_players=None):
+    sql = """
+        SELECT shifts.id, shifts.user_id, users.username, shifts.location, 
+               shifts.time, shifts.player_level, shifts.player_count, shifts.total_players 
+        FROM shifts 
+        JOIN users ON shifts.user_id = users.id
+        WHERE 1=1
+    """
+    params = []
+    
+    if location:
+        sql += " AND shifts.location = ?"
+        params.append(location)
+    if time:
+        sql += " AND shifts.time >= ?"
+        params.append(time)
+    if player_level:
+        sql += " AND shifts.player_level = ?"
+        params.append(player_level)
+    if total_players:
+        sql += " AND shifts.total_players = ?"
+        params.append(total_players)
+    
+    sql += " ORDER BY shifts.time ASC"
+    
+    return db.query(sql, params)
