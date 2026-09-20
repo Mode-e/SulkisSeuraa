@@ -5,6 +5,7 @@
 - $ python3 -m venv venv
 - $ source venv/bin/activate
 - $ pip install flask
+- $ sqlite3 database.db < schema.sql
 - $ flask run
 
 -Sovelluksessa käyttäjät pystyvät etsimään peliseuraa sulkapalloon. Ilmoituksessa lukee missä ja milloin pelivuoro on sekä tarvittava pelaajien määrä.
