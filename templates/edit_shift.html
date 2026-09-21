@@ -1,10 +1,10 @@
 {% extends "layout.html" %}
 
 {% block content %}
-<h2 class="add_shift_headline">Muokkaa vuoroa</h2>
-<div class="add_shift_form_framework">
+<h2 class="Cohesive_headline">Muokkaa vuoroa</h2>
+<div class="Cohesive_framework">
     <form action="/edit_shift/{{ shift['id'] }}" method="post">
-        <div class="add_shift_form_line">
+        <div class="Cohesive_form_line">
             <label for="location">Paikka:</label>
             <select id="location" name="location" required>
                 <option value="" disabled selected>Valitse paikka...</option>
@@ -17,12 +17,12 @@
             </select>
         </div>
 
-        <div class="add_shift_form_line">
+        <div class="Cohesive_form_line">
             <label for="time">Aika:</label>
             <input type="datetime-local" name="time" value="{{ shift['time'] }}"required />
         </div>
 
-        <div class="add_shift_form_line">
+        <div class="Cohesive_form_line">
             <label for="player_level">Taso:</label>
             <select id="player_level" name="player_level" required>
                 <option value="" disabled selected>Valitse taso...</option>
@@ -32,7 +32,7 @@
             </select>
         </div>
 
-        <div class="add_shift_form_line">
+        <div class="Cohesive_form_line">
             <label for="total_players">Määrä:</label>
             <select id="total_players" name="total_players" required>
                 <option value="" disabled selected>Valitse pelaajamäärä...</option>
@@ -41,9 +41,9 @@
             </select>
         </div>
 
-        <div class="edit_button_container">
-            <button type="submit" class="sign_up_button">Tallenna</button>
-            <button type="submit" name="action" value="delete" class="sign_up_button_delete">Poista</button>
+        <div class="button_container">
+            <button type="submit" class="button button-default">Tallenna</button>
+            <button type="submit" name="action" value="delete" class="button button-red">Poista</button>
         </div>
     </form>
 </div>
