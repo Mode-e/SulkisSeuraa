@@ -71,7 +71,7 @@ def find_shifts(time_now, location=None, time=None, player_level=None, total_pla
         WHERE 1=1 AND shifts.time >= ?
     """
     params = [time_now]
-    
+
     if location:
         sql += " AND shifts.location = ?"
         params.append(location)
@@ -84,7 +84,7 @@ def find_shifts(time_now, location=None, time=None, player_level=None, total_pla
     if total_players:
         sql += " AND shifts.total_players = ?"
         params.append(total_players)
-    
+
     sql += " ORDER BY shifts.time ASC"
-    
+
     return db.query(sql, params)
