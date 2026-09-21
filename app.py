@@ -53,7 +53,12 @@ def edit_shift(id):
         
     shift = shifts.get_shift(id)
     if not shift:
-        return "Vuoroa ei löytynyt"
+        return "Pelivuoroa ei ole olemassa", 404
+
+    shift = shift[0] if isinstance(shift, list) else shift
+
+    if session["user_id"] != shift["user_id"]:
+        return "Evätty: Sinulla ei ole oikeutta muokata tätä vuoroa!", 403
         
     if request.method == "POST":
         if request.form.get("action") == "delete":

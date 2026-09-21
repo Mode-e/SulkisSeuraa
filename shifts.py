@@ -49,6 +49,9 @@ def get_shift(shift_id):
         WHERE id = ?
     """
     result = db.query(sql, [shift_id])
+
+    if not result:
+        return None
     return result[0]
 
 def update_shift(shift_id, location, time, player_level, total_players):
