@@ -1,10 +1,10 @@
 {% extends "layout.html" %}
 
 {% block content %}
-<h2 class="register_headline">Lisää pelivuoro</h2>
-<div class="add_shift_form_framework">
+<h2 class="Cohesive_headline">Lisää pelivuoro</h2>
+<div class="Cohesive_framework">
     <form action="/create_shift" method="post">
-        <div class="add_shift_form_line">
+        <div class="Cohesive_form_line">
             <label for="location">Paikka:</label>
             <select id="location" name="location" required>
                 <option value="" disabled selected>Valitse paikka...</option>
@@ -17,12 +17,12 @@
             </select>
         </div>
 
-        <div class="add_shift_form_line">
+        <div class="Cohesive_form_line">
             <label for="time">Aika:</label>
             <input type="datetime-local" name="time" required />
         </div>
 
-        <div class="add_shift_form_line">
+        <div class="Cohesive_form_line">
             <label for="player_level">Taso:</label>
             <select id="player_level" name="player_level" required>
                 <option value="" disabled selected>Valitse taso...</option>
@@ -32,7 +32,7 @@
             </select>
         </div>
 
-        <div class="add_shift_form_line">
+        <div class="Cohesive_form_line">
             <label for="total_players">Määrä:</label>
             <select id="total_players" name="total_players" required>
                 <option value="" disabled selected>Valitse pelaajamäärä...</option>
@@ -41,8 +41,8 @@
             </select>
         </div>
 
-        <div class="button_container" style="display: flex; justify-content: space-between; align-items: center; width: 100%; margin-left: 420px;">
-            <button type="submit">Lisää vuoro</button>
+        <div class="button_container">
+            <button type="submit" class="button">Lisää vuoro</button>
         </div>
     </form>
 </div>
