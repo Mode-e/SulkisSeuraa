@@ -9,12 +9,12 @@
         <p class="Empty">Ei avoimia pelivuoroja tällä hetkellä.</p>
     {% else %}
         {% for shift in upcoming %}
-            <div class="shift_message">
+            <div class="shift_row">
                 <div class="shift-texts">
                     <strong>Lisäsi</strong> {{ shift['username'] }} | 
                     <strong>Paikka:</strong> {{ shift['location'] }}
                     <br>
-                    <strong>Aika:</strong> {{ shift['time'] }} |
+                    <strong>Aika:</strong> {{ shift['time'] }} | 
                     <strong>Pelaajat:</strong> {{ shift['player_count'] }}/{{ shift['total_players'] }}
                 </div>
                 
