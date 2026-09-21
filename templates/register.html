@@ -1,30 +1,30 @@
 {% extends "layout.html" %}
 
 {% block content %}
-<h2 class="register_headline">Luo tunnus</h2>
+<h2 class="Cohesive_headline">Luo tunnus</h2>
 
-<div class="register_form_framework">
+<div class="Cohesive_framework">
     <form action="/create" method="POST">
-        <div class="register_form_line">
+        <div class="Cohesive_form_line">
             <label for="username">Käyttäjätunnus:</label>
             <input type="text" id="username" name="username" required>
         </div>
         
-        <div class="register_form_line">
+        <div class="Cohesive_form_line">
             <label for="password">Salasana:</label>
             <input type="password" id="password1" name="password1" required>
         </div>
 
-        <div class="register_form_line">
+        <div class="Cohesive_form_line">
             <label for="password_confirm">Salasana uudelleen:</label>
             <input type="password" id="password2" name="password2" required>
         </div>
         
-        <div class="button_container" style="display: flex; justify-content: space-between; align-items: center; width: 100%; margin-left: 420px;">
-            <button type="submit">Luo tunnus</button>
+        <div class="button_container">
+            <button type="submit" class="button button-default">Luo tunnus</button>
         </div>
     </form>
 </div>
 
-<p style="margin-top: 20px; margin-left: -80px;">Onko sinulla jo tunnus? <a href="/login" style="color: blue;">Kirjaudu sisään tästä</a>.</p>
+<p>Onko sinulla jo tunnus? <a href="/login" style="color: blue;">Kirjaudu sisään tästä</a>.</p>
 {% endblock %}
