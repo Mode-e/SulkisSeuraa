@@ -28,7 +28,7 @@ def check_search(location, time, player_level, total_players):
 @app.route("/search", methods=["GET"])
 def search():
     if not Check_login():
-        return "Vaatii kirjautumista"
+        return render_template("not_registered.html")
 
     location = request.args.get("location", "").strip()
     time = request.args.get("time", "").strip()
@@ -44,7 +44,7 @@ def search():
 @app.route("/edit_shift/<int:id>", methods=["GET", "POST"])
 def edit_shift(id):
     if not Check_login():
-        return "Vaatii kirjautumista"
+        return render_template("not_registered.html")
         
     shift = shifts.get_shift(id)
     if not shift:
@@ -69,7 +69,7 @@ def edit_shift(id):
 @app.route("/my_shifts")
 def my_shifts():
     if not Check_login():
-        return "Vaatii kirjautumista"
+        return render_template("not_registered.html")
 
     user_id = session["user_id"]
     time_now = datetime.datetime.now().strftime("%Y-%m-%dT%H:%M")
@@ -90,14 +90,14 @@ def index():
 @app.route("/add_shift", methods=["GET"])
 def add_shift():
     if not Check_login():
-        return "Vaatii kirjautumista"
+        return render_template("not_registered.html")
 
     return render_template("add_shift.html")
 
 @app.route("/create_shift", methods=["POST"])
 def create_shift():
     if not Check_login():
-        return "Vaatii kirjautumista"
+        return render_template("not_registered.html")
 
     user_id = session["user_id"]
     location = request.form["location"]
