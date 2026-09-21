@@ -9,6 +9,10 @@ import datetime
 app = Flask(__name__)
 app.secret_key = "super_salainen_avain_tähän"
 
+def Check_time():
+    time_now = datetime.datetime.now().strftime("%Y-%m-%dT%H:%M")
+    return time_now
+
 def Check_login():
     if "username" not in session:
         return False
@@ -34,10 +38,11 @@ def search():
     time = request.args.get("time", "").strip()
     player_level = request.args.get("player_level", "").strip()
     total_players = request.args.get("total_players", "").strip()
+    time_now = Check_time()
     
     location, time, player_level, total_players = check_search(location, time, player_level, total_players)
 
-    results = shifts.find_shifts(location, time, player_level, total_players)
+    results = shifts.find_shifts(time_now, location, time, player_level, total_players)
 
     return render_template("search.html", results=results, location=location, time=time, player_level=player_level, total_players=total_players)
 
@@ -72,9 +77,9 @@ def my_shifts():
         return render_template("not_registered.html")
 
     user_id = session["user_id"]
-    time_now = datetime.datetime.now().strftime("%Y-%m-%dT%H:%M")
-    upcoming = shifts.get_upcoming_shifts(user_id, time_now)
-    past = shifts.get_past_shifts(user_id, time_now)
+    time_now = Check_time()
+    upcoming = shifts.get_upcoming_shifts_by_user(user_id, time_now)
+    past = shifts.get_past_shifts_by_user(user_id, time_now)
     upcoming_count = len(upcoming)
     past_count = len(past)
 
@@ -82,10 +87,11 @@ def my_shifts():
 
 @app.route("/")
 def index():
-    all_shifts = shifts.get_all_shifts()
-    count = len(all_shifts)
+    time_now = Check_time()
+    upcoming = shifts.get_upcoming_shifts_all(time_now)
+    upcoming_count = len(upcoming)
     
-    return render_template("index.html", count=count, messages=all_shifts)
+    return render_template("index.html", upcoming=upcoming, upcoming_count=upcoming_count)
 
 @app.route("/add_shift", methods=["GET"])
 def add_shift():
