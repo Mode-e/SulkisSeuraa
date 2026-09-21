@@ -1,11 +1,11 @@
 {% extends "layout.html" %}
 
 {% block content %}
-<h2 class="register_headline">Etsi vuoroja</h2>
+<h2 class="Cohesive_headline">Etsi vuoroja</h2>
 
-<div class="register_form_framework">
+<div class="Cohesive_framework">
     <form action="/search" method="get">
-        <div class="add_shift_form_line">
+        <div class="Cohesive_form_line">
             <label for="location">Paikka:</label>
             <select id="location" name="location">
                 <option value="" disabled selected>Valitse paikka...</option>
@@ -18,12 +18,12 @@
             </select>
         </div>
 
-        <div class="add_shift_form_line">
+        <div class="Cohesive_form_line">
             <label for="time">Aika:</label>
             <input type="datetime-local" name="time" />
         </div>
 
-        <div class="add_shift_form_line">
+        <div class="Cohesive_form_line">
             <label for="player_level">Taso:</label>
             <select id="player_level" name="player_level">
                 <option value="" disabled selected>Valitse taso...</option>
@@ -33,7 +33,7 @@
             </select>
         </div>
 
-        <div class="add_shift_form_line">
+        <div class="Cohesive_form_line">
             <label for="total_players">Määrä:</label>
             <select id="total_players" name="total_players">
                 <option value="" disabled selected>Valitse pelaajamäärä...</option>
@@ -42,13 +42,13 @@
             </select>
         </div>
 
-        <div class="button_container" style="display: flex; justify-content: space-between; align-items: center; width: 100%; margin-left: 420px;">
-            <button type="submit">Hae vuoroja</button>
+        <div class="button_container">
+            <button type="submit" class="button button-default">Hae vuoroja</button>
         </div>
     </form>
 </div>
-<div class="my_shifts_form_framework">
-    <h3 class="my_shifts_form_title">Tulevat vuorot ({{ results|length }})</h3>
+<div class="Cohesive_framework">
+    <h3 class="Cohesive_form_title">Tulevat vuorot ({{ results|length }})</h3>
 
     {% if results %}
         <p class="Empty">Tulokset.</p>
@@ -60,7 +60,13 @@
                     <strong>Aika:</strong> {{ shift.time }} | <strong>Taso:</strong> {{ shift.player_level }} <br>
                     <strong>Pelaajat:</strong> {{ shift.total_players }}
                 </div>
-                <a href="/edit_shift/{{ shift.id }}" class="sig_button">Muokkaa</a>
+                {% if session and session.get('user_id') == shift['user_id'] %}
+                    <a href="/edit_shift/{{ shift['id'] }}" class="button button-red">Muokkaa</a>
+                {% else %}
+                    {% if session.username %}
+                        <button type="submit" class="button button-default">Ilmoittaudu</button>
+                    {% endif %}
+                {% endif %}
             </div>
         {% endfor %}
 
