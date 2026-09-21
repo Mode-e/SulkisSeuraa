@@ -53,7 +53,7 @@
     {% if results %}
         <p class="Empty">Tulokset.</p>
         {% for shift in results %}
-            <div class="shift_message" style="border-bottom: 1px solid #ccc; padding: 10px 0;">
+            <div class="shift_row">
                 <div class="shift-texts">
                     <strong>Paikka:</strong> {{ shift.location }} <br>
                     <strong>Lisäsi:</strong> {{ shift.username }} <br>
