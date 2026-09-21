@@ -55,10 +55,11 @@
         {% for shift in results %}
             <div class="shift_row">
                 <div class="shift-texts">
-                    <strong>Paikka:</strong> {{ shift.location }} <br>
-                    <strong>Lisäsi:</strong> {{ shift.username }} <br>
-                    <strong>Aika:</strong> {{ shift.time }} | <strong>Taso:</strong> {{ shift.player_level }} <br>
-                    <strong>Pelaajat:</strong> {{ shift.total_players }}
+                    <strong>Lisäsi</strong> {{ shift['username'] }} | 
+                    <strong>Paikka:</strong> {{ shift['location'] }}
+                    <br>
+                    <strong>Aika:</strong> {{ shift['time'] }} | 
+                    <strong>Pelaajat:</strong> {{ shift['player_count'] }}/{{ shift['total_players'] }}
                 </div>
                 {% if session and session.get('user_id') == shift['user_id'] %}
                     <a href="/edit_shift/{{ shift['id'] }}" class="button button-red">Muokkaa</a>
