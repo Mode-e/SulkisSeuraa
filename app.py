@@ -79,8 +79,6 @@ def check_search(location, time, player_level, total_players):
 def signup_page(shift_id):
     if access_denied := check_login():
         return access_denied
-    
-    players = shifts.get_players_for_shift(shift_id)
 
     shift = shifts.get_shift(shift_id)
     if not shift:
