@@ -9,6 +9,20 @@ import shifts
 app = Flask(__name__)
 app.secret_key = secret_key
 
+
+def get_form_data(word = None):
+    shift = {
+        "location": request.form["location"],
+        "time": f"{request.form["day"]} {request.form["hours"]}:{request.form["minutes"]}",
+        "player_level": request.form["player_level"],
+        "total_players": request.form["total_players"]
+    }
+
+    if word == "create":
+        shift["user_id"] = session["user_id"]
+        shift["player_count"] = 1
+    return shift
+
 def check_time():
     time_now = datetime.datetime.now().strftime("%Y-%m-%dT%H:%M")
     return time_now
@@ -54,8 +68,6 @@ def edit_shift(shift_id):
     if not shift:
         return "Pelivuoroa ei ole olemassa", 404
 
-    shift = shift[0] if isinstance(shift, list) else shift
-
     if session["user_id"] != shift["user_id"]:
         return "Evätty: Sinulla ei ole oikeutta muokata tätä vuoroa!", 403
 
@@ -65,12 +77,10 @@ def edit_shift(shift_id):
             db.execute(sql, [shift_id])
             return redirect("/my_shifts")
 
-        location = request.form["location"]
-        time = request.form["time"]
-        player_level = request.form["player_level"]
-        total_players = request.form["total_players"]
+        shift = get_form_data()
 
-        shifts.update_shift(shift_id, location, time, player_level, total_players)
+        shifts.update_shift(shift_id, shift["location"], shift["time"],
+                shift["player_level"], shift["total_players"])
         return redirect("/my_shifts")
 
     return render_template("edit_shift.html", shift=shift)
@@ -107,19 +117,14 @@ def add_shift():
 def create_shift():
     if access_denied := check_login(): return access_denied
 
-    user_id = session["user_id"]
-    location = request.form["location"]
-    time = request.form["time"]
-    player_level = request.form["player_level"]
-    player_count = 1
-    total_players = request.form["total_players"]
+    shift = get_form_data("create")
 
     sql = """
         INSERT INTO shifts (user_id, location, time, player_level, player_count, total_players)
         VALUES (?, ?, ?, ?, ?, ?)
     """
-    db.execute(sql, [user_id, location, time, player_level, player_count, total_players])
-
+    db.execute(sql, [shift["user_id"], shift["location"], shift["time"],
+    shift["player_level"], shift["player_count"], shift["total_players"]])
     return redirect("/")
 
 @app.route("/logout")
