@@ -75,6 +75,21 @@ def check_search(location, time, player_level, total_players):
         total_players = None
     return location, time, player_level, total_players
 
+@app.route("/signup/<int:shift_id>", methods=["GET"])
+def signup_page(shift_id):
+    if access_denied := check_login():
+        return access_denied
+    
+    players = shifts.get_players_for_shift(shift_id)
+
+    shift = shifts.get_shift(shift_id)
+    if not shift:
+        return "Pelivuoroa ei ole olemassa", 404
+
+    players = shifts.get_signed_up_players(shift_id)
+
+    return render_template("signup.html", shift=shift, players=players)
+
 @app.route("/search", methods=["GET"])
 def search():
     if access_denied := check_login():
