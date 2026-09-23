@@ -64,8 +64,10 @@
                 {% if session and session.get('user_id') == shift['user_id'] %}
                     <a href="/edit_shift/{{ shift['id'] }}" class="button button-red">Muokkaa</a>
                 {% else %}
-                    {% if session.username %}
-                        <button type="submit" class="button button-default">Ilmoittaudu</button>
+                    {% if shift['player_count'] < shift['total_players'] and session.username %}
+                        <a href="/signup/{{ shift['id'] }}" class="button button-default">Ilmoittaudu</a>
+                    {% else %}
+                        <!-- Lisää jos vuoro täynnä -->
                     {% endif %}
                 {% endif %}
             </div>
