@@ -10,7 +10,7 @@ app = Flask(__name__)
 app.secret_key = secret_key
 
 def split_time(date_str):
-    day, time = datetime_str.split(" ")
+    day, time = date_str.split(" ")
     hour, minutes = time.split(":")
     return day, hour, minutes
 
