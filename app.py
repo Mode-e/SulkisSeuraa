@@ -62,7 +62,7 @@ def check_time():
 def check_login():
     if "username" not in session:
         return render_template("not_registered.html")
-    return
+    return None
 
 def check_search(location, time, player_level, total_players):
     if location == "Valitse paikka...":
@@ -77,11 +77,12 @@ def check_search(location, time, player_level, total_players):
 
 @app.route("/search", methods=["GET"])
 def search():
-    if access_denied := check_login(): return access_denied
+    if access_denied := check_login():
+        return access_denied
 
-    search = get_form_data("search")
-    location, day, player_level, total_players = check_search(search["location"], search["day"],
-    search["player_level"], search["total_players"])
+    search_data = get_form_data("search")
+    location, day, player_level, total_players = check_search(search_data["location"],
+    search_data["day"], search_data["player_level"], search_data["total_players"])
 
     results = shifts.find_shifts(check_time(), location, day, player_level, total_players)
 
@@ -91,7 +92,8 @@ def search():
 
 @app.route("/edit_shift/<int:shift_id>", methods=["GET", "POST"])
 def edit_shift(shift_id):
-    if access_denied := check_login(): return access_denied
+    if access_denied := check_login():
+        return access_denied
 
     shift = shifts.get_shift(shift_id)
     if not shift:
@@ -120,7 +122,8 @@ def edit_shift(shift_id):
 
 @app.route("/my_shifts")
 def my_shifts():
-    if access_denied := check_login(): return access_denied
+    if access_denied := check_login():
+        return access_denied
 
     upcoming = shifts.get_upcoming_shifts_by_user(session["user_id"], check_time())
     past = shifts.get_past_shifts_by_user(session["user_id"], check_time())
@@ -136,13 +139,15 @@ def index():
 
 @app.route("/add_shift", methods=["GET"])
 def add_shift():
-    if access_denied := check_login(): return access_denied
+    if access_denied := check_login():
+        return access_denied
 
     return render_template("add_shift.html")
 
 @app.route("/create_shift", methods=["POST"])
 def create_shift():
-    if access_denied := check_login(): return access_denied
+    if access_denied := check_login():
+        return access_denied
 
     shift = get_form_data("create")
     if shift == "past_time":
@@ -153,7 +158,7 @@ def create_shift():
         VALUES (?, ?, ?, ?, ?, ?)
     """
 
-    db.execute(sql, [shift["user_id"], shift["location"], shift["time"], 
+    db.execute(sql, [shift["user_id"], shift["location"], shift["time"],
     shift["player_level"], shift["player_count"], shift["total_players"]])
 
     return redirect("/")
