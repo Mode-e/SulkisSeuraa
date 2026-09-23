@@ -47,17 +47,14 @@ def check_search(location, time, player_level, total_players):
 def search():
     if access_denied := check_login(): return access_denied
 
-    location = request.args.get("location", "").strip()
-    time = request.args.get("time", "").strip()
-    player_level = request.args.get("player_level", "").strip()
-    total_players = request.args.get("total_players", "").strip()
-    time_now = check_time()
-    location, time, player_level, total_players = check_search(location, time,
-    player_level, total_players)
-    results = shifts.find_shifts(time_now, location, time, player_level, total_players)
+    search = get_form_data("search")
+    location, day, player_level, total_players = check_search(search["location"], search["day"],
+    search["player_level"], search["total_players"])
+
+    results = shifts.find_shifts(check_time(), location, day, player_level, total_players)
 
     return render_template("search.html", results=results,
-    location=location, time=time,
+    location=location, day=day,
     player_level=player_level, total_players=total_players)
 
 @app.route("/edit_shift/<int:shift_id>", methods=["GET", "POST"])
@@ -83,29 +80,25 @@ def edit_shift(shift_id):
                 shift["player_level"], shift["total_players"])
         return redirect("/my_shifts")
 
-    return render_template("edit_shift.html", shift=shift)
+    date, hour, minutes = split_time(shift["time"])
+
+    return render_template("edit_shift.html", shift=shift, date=date, hour=hour, minutes=minutes)
 
 @app.route("/my_shifts")
 def my_shifts():
     if access_denied := check_login(): return access_denied
 
-    user_id = session["user_id"]
-    time_now = check_time()
-    upcoming = shifts.get_upcoming_shifts_by_user(user_id, time_now)
-    past = shifts.get_past_shifts_by_user(user_id, time_now)
-    upcoming_count = len(upcoming)
-    past_count = len(past)
+    upcoming = shifts.get_upcoming_shifts_by_user(session["user_id"], check_time())
+    past = shifts.get_past_shifts_by_user(session["user_id"], check_time())
 
     return render_template("my_shifts.html", upcoming=upcoming,
-    upcoming_count=upcoming_count, past=past, past_count=past_count)
+    upcoming_count=len(upcoming), past=past, past_count=len(past))
 
 @app.route("/")
 def index():
-    time_now = check_time()
-    upcoming = shifts.get_upcoming_shifts_all(time_now)
-    upcoming_count = len(upcoming)
+    upcoming = shifts.get_upcoming_shifts_all(check_time())
 
-    return render_template("index.html", upcoming=upcoming, upcoming_count=upcoming_count)
+    return render_template("index.html", upcoming=upcoming, upcoming_count=len(upcoming))
 
 @app.route("/add_shift", methods=["GET"])
 def add_shift():
@@ -123,8 +116,10 @@ def create_shift():
         INSERT INTO shifts (user_id, location, time, player_level, player_count, total_players)
         VALUES (?, ?, ?, ?, ?, ?)
     """
-    db.execute(sql, [shift["user_id"], shift["location"], shift["time"],
+
+    db.execute(sql, [shift["user_id"], shift["location"], shift["time"], 
     shift["player_level"], shift["player_count"], shift["total_players"]])
+
     return redirect("/")
 
 @app.route("/logout")
@@ -138,15 +133,14 @@ def login():
     if request.method == "GET":
         return render_template("login.html")
 
-    username = request.form["username"]
-    password = request.form["password1"]
+    user = get_form_data("user_login")
 
     sql = "SELECT id, password_hash FROM users WHERE username = ?"
-    result = db.query(sql, [username])
+    result = db.query(sql, [user["username"]])
 
     try:
-        if check_password_hash(result[0][1], password):
-            session["username"] = username
+        if check_password_hash(result[0][1], user["password1"]):
+            session["username"] = user["username"]
             session["user_id"] = result[0][0]
             return redirect("/")
         return "VIRHE: väärä tunnus tai salasana"
@@ -160,16 +154,14 @@ def register():
 
 @app.route("/create", methods=["POST"])
 def create():
-    username = request.form["username"]
-    password1 = request.form["password1"]
-    password2 = request.form["password2"]
-    if password1 != password2:
+    user = get_form_data("user_create")
+    if user["password1"] != user["password2"]:
         return "VIRHE: salasanat eivät ole samat"
-    password_hash = generate_password_hash(password1)
+    password_hash = generate_password_hash(user["password1"])
 
     try:
         sql = "INSERT INTO users (username, password_hash) VALUES (?, ?)"
-        db.execute(sql, [username, password_hash])
+        db.execute(sql, [user["username"], password_hash])
         return redirect("/login")
     except sqlite3.IntegrityError:
         return "VIRHE: tunnus on jo varattu"
