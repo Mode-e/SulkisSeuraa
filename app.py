@@ -9,6 +9,10 @@ import shifts
 app = Flask(__name__)
 app.secret_key = secret_key
 
+def split_time(date_str):
+    day, time = datetime_str.split(" ")
+    hour, minutes = time.split(":")
+    return day, hour, minutes
 
 def get_form_data(word = None):
     if word == "search":
