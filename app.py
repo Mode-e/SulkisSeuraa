@@ -23,13 +23,6 @@ def get_form_data(word = None):
             "total_players": request.args.get("total_players", "").strip()
         }
 
-    shift = {
-        "location": request.form["location"],
-        "time": f"{request.form["day"]} {request.form["hours"]}:{request.form["minutes"]}",
-        "player_level": request.form["player_level"],
-        "total_players": request.form["total_players"]
-    }
-
     if word in ["user_login", "user_create"]:
         user_data = {
             "username": request.form["username"],
@@ -40,6 +33,13 @@ def get_form_data(word = None):
             user_data["password2"] = request.form["password2"]
 
         return user_data
+
+    shift = {
+        "location": request.form["location"],
+        "time": f"{request.form["day"]} {request.form["hours"]}:{request.form["minutes"]}",
+        "player_level": request.form["player_level"],
+        "total_players": request.form["total_players"]
+    }
 
     if word == "create":
         shift["user_id"] = session["user_id"]
