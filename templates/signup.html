@@ -1,0 +1,21 @@
+{% extends "layout.html" %}
+
+{% block content %}
+<h2 class="Cohesive_headline">Ilmoittaudu</h2>
+
+<div class="Cohesive_framework">
+    <div class="Cohesive_form_line">
+        <div class="shift-texts">                <strong>Lisäsi</strong> {{ shift['username'] }} | 
+            <strong>Paikka:</strong> {{ shift['location'] }}
+            <br>
+            <strong>Aika:</strong> {{ shift['time'] }} | 
+            <strong>Pelaajat:</strong> {{ shift['player_count'] }}/{{ shift['total_players'] }}
+        </div>
+    </div>
+        
+    <div class="button_container">
+        <button type="submit" class="button button-default">Ilmoittaudu</button>
+    </div>
+</div>
+
+{% endblock %}
