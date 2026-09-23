@@ -34,6 +34,15 @@ def get_form_data(word = None):
 
         return user_data
 
+    proposed_day = request.form["day"]
+    proposed_hours = request.form["hours"]
+    proposed_minutes = request.form["minutes"]
+    proposed_time = f"{proposed_day} {proposed_hours}:{proposed_minutes}"
+    time_now = check_time()
+
+    if proposed_time < time_now:
+        return "past_time"
+
     shift = {
         "location": request.form["location"],
         "time": f"{request.form["day"]} {request.form["hours"]}:{request.form["minutes"]}",
@@ -47,7 +56,7 @@ def get_form_data(word = None):
     return shift
 
 def check_time():
-    time_now = datetime.datetime.now().strftime("%Y-%m-%dT%H:%M")
+    time_now = datetime.datetime.now().strftime("%Y-%m-%d %H:%M")
     return time_now
 
 def check_login():
@@ -98,6 +107,8 @@ def edit_shift(shift_id):
             return redirect("/my_shifts")
 
         shift = get_form_data()
+        if shift == "past_time":
+            return "Virhe: Et voi muokata vuoroa menneisyyteen!", 400
 
         shifts.update_shift(shift_id, shift["location"], shift["time"],
                 shift["player_level"], shift["total_players"])
@@ -134,6 +145,8 @@ def create_shift():
     if access_denied := check_login(): return access_denied
 
     shift = get_form_data("create")
+    if shift == "past_time":
+        return "Virhe: Et voi luoda vuoroa menneisyyteen!", 400
 
     sql = """
         INSERT INTO shifts (user_id, location, time, player_level, player_count, total_players)
