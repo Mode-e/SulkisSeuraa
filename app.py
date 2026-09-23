@@ -15,8 +15,8 @@ def check_time():
 
 def check_login():
     if "username" not in session:
-        return False
-    return True
+        return render_template("not_registered.html")
+    return
 
 def check_search(location, time, player_level, total_players):
     if location == "Valitse paikka...":
@@ -31,8 +31,7 @@ def check_search(location, time, player_level, total_players):
 
 @app.route("/search", methods=["GET"])
 def search():
-    if not check_login():
-        return render_template("not_registered.html")
+    if access_denied := check_login(): return access_denied
 
     location = request.args.get("location", "").strip()
     time = request.args.get("time", "").strip()
@@ -49,8 +48,7 @@ def search():
 
 @app.route("/edit_shift/<int:shift_id>", methods=["GET", "POST"])
 def edit_shift(shift_id):
-    if not check_login():
-        return render_template("not_registered.html")
+    if access_denied := check_login(): return access_denied
 
     shift = shifts.get_shift(shift_id)
     if not shift:
@@ -79,8 +77,7 @@ def edit_shift(shift_id):
 
 @app.route("/my_shifts")
 def my_shifts():
-    if not check_login():
-        return render_template("not_registered.html")
+    if access_denied := check_login(): return access_denied
 
     user_id = session["user_id"]
     time_now = check_time()
@@ -102,15 +99,13 @@ def index():
 
 @app.route("/add_shift", methods=["GET"])
 def add_shift():
-    if not check_login():
-        return render_template("not_registered.html")
+    if access_denied := check_login(): return access_denied
 
     return render_template("add_shift.html")
 
 @app.route("/create_shift", methods=["POST"])
 def create_shift():
-    if not check_login():
-        return render_template("not_registered.html")
+    if access_denied := check_login(): return access_denied
 
     user_id = session["user_id"]
     location = request.form["location"]
