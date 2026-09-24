@@ -52,6 +52,8 @@ body {
     line-height: 2.0;
     float: left;
     min-height: 100vh;
+    display: flex;
+    flex-direction: column;
 }
 
 /* Sidebar link styles */
@@ -60,13 +62,30 @@ body {
     margin-bottom: 10px;
     color: #0000ee;
     text-decoration: underline;
-    float: left;
 }
 
 /* Sidebar link hover styles */
 .sidebar a:hover {
     color: #551a8b;
 }
+
+.sidebar_info {
+    background-color: #000000;
+    color: #ff0000;
+    font-size: 0.85rem;
+    line-height: 1.6;
+    font-weight: bold;
+    padding: 12px;
+    box-sizing: border-box;
+    margin-left: -20px;
+    width: calc(100% + 40px); 
+}
+
+.sidebar_info span {
+    color: #ffffff;
+    border-bottom: 1px dashed #ff0000;
+}
+
 
 /* ==========================================
    4. MAIN CONTENT AREA
