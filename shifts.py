@@ -55,6 +55,11 @@ def get_shift(shift_id):
         return None
     return result[0]
 
+def get_last_shift_id(user_id):
+    sql = "SELECT id FROM shifts WHERE user_id = ? ORDER BY id DESC LIMIT 1"
+    result = db.query(sql, [user_id])
+    return result[0]["id"]
+
 def update_shift(shift_id, location, time, player_level, total_players):
     sql = """
         UPDATE shifts 
