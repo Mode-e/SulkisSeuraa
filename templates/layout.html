@@ -21,9 +21,16 @@
 
     <div class="sidebar">
         <a href="/">Etusivu</a>
-        <a href="/add_shift">Lisää vuoro</a>
-        <a href="/search">Hae vuoroja</a>
-        <a href="/my_shifts">Omat vuorot</a>
+        {% if not session.username %}
+        <div class="sidebar_info">
+            Kirjautumalla sisään pääset lisäämään omia vuoroja ja ilmoittautumaan mukaan toisten pelivuoroihin.
+        </div>
+        {% endif %}
+        {% if session.username %}
+            <a href="/add_shift">Lisää vuoro</a>
+            <a href="/search">Hae vuoroja</a>
+            <a href="/my_shifts">Omat vuorot</a>
+        {% endif %}
     </div>
     <div class="content">
         {% block content %}
