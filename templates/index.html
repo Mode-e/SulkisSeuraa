@@ -3,32 +3,74 @@
 {% block content %}
 <h2 class="Cohesive_headline">Etusivu</h2>
 <div class="Cohesive_framework">
-    <h3 class="homepage_form_title">Avoimet pelivuorot ({{ upcoming_count }})</h3>
-    
-    {% if upcoming_count == 0 %}
-        <p class="Empty">Ei avoimia pelivuoroja tällä hetkellä.</p>
-    {% else %}
-        {% for shift in upcoming %}
-            <div class="shift_row">
-                <div class="shift-texts">
-                    <strong>Lisäsi</strong> {{ shift['username'] }} | 
-                    <strong>Paikka:</strong> {{ shift['location'] }}
-                    <br>
-                    <strong>Aika:</strong> {{ shift['time'] }} | 
-                    <strong>Pelaajat:</strong> {{ shift['player_count'] }}/{{ shift['total_players'] }}
+    {% if not session.username %}
+        <h3 class="homepage_form_title">Tulevat pelivuorot ({{ open_shifts_count }})</h3>
+        {% if open_shifts_count == 0 %}
+            <p class="Empty">Ei avoimia pelivuoroja.</p>
+        {% else %}
+            {% for shift in open_shifts %}
+                <div class="shift_row">
+                    <div class="shift-texts">
+                        <strong>Lisäsi:</strong> {{ shift['username'] }} |
+                        <strong>Paikka:</strong> {{ shift['location'] }}
+                        <br>
+                        <strong>Aika:</strong> {{ shift['time'] }} |
+                        <strong>Pelaajat:</strong> {{ shift['player_count'] }}/{{ shift['total_players'] }}
+                    </div>
                 </div>
-                
-                {% if session and session.get('user_id') == shift['user_id'] %}
-                    <a href="/edit_shift/{{ shift['id'] }}" class="button button-red">Muokkaa</a>
-                {% else %}
-                    {% if shift['player_count'] < shift['total_players'] and session.username %}
-                        <a href="/signup/{{ shift['id'] }}" class="button button-default">Ilmoittaudu</a>
+            {% endfor %}
+        {% endif %}
+    {% else %}
+        <h3 class="homepage_form_title">Omat pelivuorot ({{ my_shifts_count }})</h3>
+        {% if my_shifts_count == 0 %}
+            <p class="Empty">Et ole ilmoittautunut yhteenkään vuoroon.</p>
+        {% else %}
+            {% for shift in my_shifts %}
+                <div class="shift_row">
+                    <div class="shift-texts">
+                        <strong>Lisäsi</strong> {{ shift['username'] }} | 
+                        <strong>Paikka:</strong> {{ shift['location'] }}
+                        <br>
+                        <strong>Aika:</strong> {{ shift['time'] }} | 
+                        <strong>Pelaajat:</strong> {{ shift['player_count'] }}/{{ shift['total_players'] }}
+                    </div>
+                    
+                    {% if session.get('user_id') == shift['user_id'] %}
+                        <a href="/edit_shift/{{ shift['id'] }}" class="button button-red">Muokkaa</a>
+                        <!-- Painike näkymään vuoron tiedot -->
                     {% else %}
-                        <!-- Lisää jos vuoro täynnä -->
+                        {% if shift['player_count'] < shift['total_players'] and session.username %}
+                            <a href="/signup/{{ shift['id'] }}" class="button button-default">Ilmoittaudu</a>
+                        {% else %}
+                            <!-- Teksti jos vuoro täynnä -->
+                        {% endif %}
                     {% endif %}
-                {% endif %}
-            </div>
-        {% endfor %}
+                </div>
+            {% endfor %}
+        {% endif %}
+        <h3 class="homepage_form_title">Avoimet pelivuorot ({{ open_shifts_count }})</h3>
+        {% if open_shifts_count == 0 %}
+            <p class="Empty">Ei avoimia pelivuoroja.</p>
+        {% else %}
+            {% for shift in open_shifts %}
+                <div class="shift_row">
+                    <div class="shift-texts">
+                        <strong>Lisäsi:</strong> {{ shift['username'] }} |
+                        <strong>Paikka:</strong> {{ shift['location'] }}
+                        <br>
+                        <strong>Aika:</strong> {{ shift['time'] }} |
+                        <strong>Pelaajat:</strong> {{ shift['player_count'] }}/{{ shift['total_players'] }}
+                    </div>
+                    <div>
+                        {% if shift['player_count'] < shift['total_players'] and session.username %}
+                            <a href="/signup/{{ shift['id'] }}" class="button button-default">Ilmoittaudu</a>
+                        {% else %}
+                            <!-- Teksti jos vuoro täynnä -->
+                        {% endif %}
+                    </div>
+                </div>
+            {% endfor %}
+        {% endif %}
     {% endif %}
 </div>
 
