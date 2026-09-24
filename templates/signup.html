@@ -5,11 +5,19 @@
 
 <div class="Cohesive_framework">
     <div class="Cohesive_form_line">
-        <div class="shift-texts">                <strong>Lisäsi</strong> {{ shift['username'] }} | 
+        <div class="shift-texts">
+            <strong>Lisäsi</strong> {{ shift['username'] }}
+            <br>
             <strong>Paikka:</strong> {{ shift['location'] }}
             <br>
-            <strong>Aika:</strong> {{ shift['time'] }} | 
+            <strong>Aika:</strong> {{ shift['time'] }}
+            <br>
             <strong>Pelaajat:</strong> {{ shift['player_count'] }}/{{ shift['total_players'] }}
+            <br>
+            <strong>Osallistujat:</strong>
+            {% for player in players %}
+                {{ player['username'] }} {% if not loop.last %}, {% endif %}
+            {% endfor %}
         </div>
     </div>
         
