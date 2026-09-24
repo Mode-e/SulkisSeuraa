@@ -86,7 +86,44 @@ def signup_page(shift_id):
 
     players = shifts.get_signed_up_players(shift_id)
 
-    return render_template("signup.html", shift=shift, players=players)
+    signed_up = False
+    for player in players:
+        if player["username"] == session["username"]:
+            signed_up = True
+
+    return render_template("signup.html", shift=shift, players=players, signed_up=signed_up)
+
+@app.route("/signup_action/<int:shift_id>", methods=["POST"])
+def signup_action(shift_id):
+    if access_denied := check_login():
+        return access_denied
+
+    user_id = session["user_id"]
+
+    shift = shifts.get_shift(shift_id)
+    if not shift:
+        return "Pelivuoroa ei ole olemassa", 404
+
+    sql_check = "SELECT id FROM signups WHERE user_id = ? AND shift_id = ?"
+    if db.query(sql_check, [user_id, shift_id]):
+        return redirect(f"/signup/{shift_id}")
+
+    if shift["player_count"] >= shift["total_players"]:
+        return redirect(f"/signup/{shift_id}")
+
+    try:
+        db.execute(
+            "INSERT INTO signups (user_id, shift_id) VALUES (?, ?)",
+            [user_id, shift_id]
+        )
+        db.execute(
+            "UPDATE shifts SET player_count = player_count + 1 WHERE id = ?",
+            [shift_id]
+        )
+
+    except sqlite3.IntegrityError:
+        pass
+    return redirect(f"/signup/{shift_id}")
 
 @app.route("/search", methods=["GET"])
 def search():
