@@ -146,9 +146,15 @@ def my_shifts():
 
 @app.route("/")
 def index():
-    upcoming = shifts.get_upcoming_shifts_all(check_time())
+    if "user_id" in session:
+        my_shifts = shifts.get_my_signed_shifts(session["user_id"], check_time())
+        open_shifts = shifts.get_available_shifts(session["user_id"], check_time())
+    else:
+        my_shifts = []
+        open_shifts = shifts.get_upcoming_shifts_all(check_time())
 
-    return render_template("index.html", upcoming=upcoming, upcoming_count=len(upcoming))
+    return render_template("index.html", my_shifts=my_shifts, my_shifts_count=len(my_shifts),
+    open_shifts=open_shifts, open_shifts_count=len(open_shifts))
 
 @app.route("/add_shift", methods=["GET"])
 def add_shift():
