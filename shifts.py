@@ -102,3 +102,27 @@ def get_signed_up_players(shift_id):
         WHERE signups.shift_id = ?
     """
     return db.query(sql, [shift_id])
+
+def get_my_signed_shifts(user_id, current_time):
+    sql = """
+        SELECT S.id, S.user_id, S.location, S.time, S.player_level, S.player_count, S.total_players, U.username
+        FROM shifts S
+        JOIN users U ON S.user_id = U.id
+        JOIN signups SU ON S.id = SU.shift_id
+        WHERE SU.user_id = ? AND S.time > ?
+        ORDER BY S.time ASC
+    """
+    return db.query(sql, [user_id, current_time])
+
+
+def get_available_shifts(user_id, current_time):
+    sql = """
+        SELECT S.id, S.user_id, S.location, S.time, S.player_level, S.player_count, S.total_players, U.username
+        FROM shifts S
+        JOIN users U ON S.user_id = U.id
+        WHERE S.time > ? AND S.id NOT IN (
+            SELECT shift_id FROM signups WHERE user_id = ?
+        )
+        ORDER BY S.time ASC
+    """
+    return db.query(sql, [current_time, user_id])
