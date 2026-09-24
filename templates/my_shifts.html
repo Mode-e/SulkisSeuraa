@@ -16,6 +16,7 @@
                     <strong>Aika:</strong> {{ shift['time'] }} | <strong>Pelaajat:</strong> {{ shift['player_count'] }}/{{ shift['total_players'] }}
                 </div>
                 <a href="/edit_shift/{{ shift['id'] }}" class="button button-red">Muokkaa</a>
+                <a href="/signup/{{ shift['id'] }}" class="button button-default">Tiedot</a>
             </div>
         {% endfor %}
     {% endif %}
