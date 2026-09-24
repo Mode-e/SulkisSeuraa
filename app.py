@@ -174,6 +174,11 @@ def create_shift():
     db.execute(sql, [shift["user_id"], shift["location"], shift["time"],
     shift["player_level"], shift["player_count"], shift["total_players"]])
 
+    shift_id = shifts.get_last_shift_id(shift["user_id"])
+
+    db.execute("INSERT INTO signups (user_id, shift_id) VALUES (?, ?)", 
+    [shift["user_id"], shift_id])
+
     return redirect("/")
 
 @app.route("/logout")
