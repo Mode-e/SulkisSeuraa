@@ -68,29 +68,33 @@ def update_shift(shift_id, location, time, player_level, total_players):
     """
     db.execute(sql, [location, time, player_level, total_players, shift_id])
 
-def find_shifts(time_now, location=None, day=None, player_level=None, total_players=None):
+def find_shifts(time_now, location=None, day=None, player_level=None, total_players=None, username=None):
     sql = """
-        SELECT id, user_id, location, time,
-                player_level, player_count, total_players
-        FROM shifts
-        WHERE time > ?
+        SELECT S.id, S.user_id, U.username, S.location, S.time,
+                S.player_level, S.player_count, S.total_players
+        FROM shifts S
+        JOIN users U ON S.user_id = U.id
+        WHERE S.time > ?
     """
     params = [time_now]
 
     if location:
-        sql += " AND shifts.location = ?"
+        sql += " AND S.location = ?"
         params.append(location)
     if day:
-        sql += " AND shifts.time LIKE ?"
+        sql += " AND S.time LIKE ?"
         params.append(f"{day}%")
     if player_level:
-        sql += " AND shifts.player_level = ?"
+        sql += " AND S.player_level = ?"
         params.append(player_level)
     if total_players:
-        sql += " AND shifts.total_players = ?"
+        sql += " AND S.total_players = ?"
         params.append(total_players)
+    if username:
+        sql += " AND U.username LIKE ?"
+        params.append(f"%{username}%")
 
-    sql += " ORDER BY shifts.time ASC"
+    sql += " ORDER BY S.time ASC"
 
     return db.query(sql, params)
 
