@@ -28,9 +28,13 @@
             </span>
             {% if session.get('user_id') == shift['user_id'] %}
                 <a href="/edit_shift/{{ shift['id'] }}" class="button button-red">Muokkaa</a>
+            {% else %}
+                <form action="/cancel_registration/{{ shift['id'] }}" method="POST">
+                    <button type="submit" class="button button-red">Peru ilmoittautuminen</button>
+                </form>        
             {% endif %}   
         {% elif shift['player_count'] < shift['total_players'] %}
-            <form action="/signup_action/{{ shift['id'] }}" method="POST">
+            <form action="/signup_registration/{{ shift['id'] }}" method="POST">
                 <button type="submit" class="button button-default">Vahvista ilmoittautuminen</button>
             </form>
         {% else %}
