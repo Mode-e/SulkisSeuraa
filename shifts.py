@@ -1,3 +1,4 @@
+from werkzeug.security import check_password_hash
 import db
 
 def get_all_shifts():
@@ -22,22 +23,24 @@ def get_upcoming_shifts_all(time_now):
 
 def get_upcoming_shifts_by_user(user_id, time_now):
     sql = """
-        SELECT shifts.id, shifts.user_id, users.username, shifts.location, 
-               shifts.time, shifts.player_level, shifts.player_count, shifts.total_players 
-        FROM shifts 
+        SELECT shifts.id, shifts.user_id, users.username, shifts.location,
+               shifts.time, shifts.player_level, shifts.player_count, shifts.total_players
+        FROM shifts
+        JOIN signups ON shifts.id = signups.shift_id
         JOIN users ON shifts.user_id = users.id
-        WHERE shifts.user_id = ? AND shifts.time >= ?
+        WHERE signups.user_id = ? AND shifts.time >= ?
         ORDER BY shifts.time ASC
     """
     return list(db.query(sql, [user_id, time_now]))
 
 def get_past_shifts_by_user(user_id, time_now):
     sql = """
-        SELECT shifts.id, shifts.user_id, users.username, shifts.location, 
-               shifts.time, shifts.player_level, shifts.player_count, shifts.total_players 
-        FROM shifts 
+        SELECT shifts.id, shifts.user_id, users.username, shifts.location,
+               shifts.time, shifts.player_level, shifts.player_count, shifts.total_players
+        FROM shifts
+        JOIN signups ON shifts.id = signups.shift_id
         JOIN users ON shifts.user_id = users.id
-        WHERE shifts.user_id = ? AND shifts.time < ?
+        WHERE signups.user_id = ? AND shifts.time < ?
         ORDER BY shifts.time DESC
     """
     return list(db.query(sql, [user_id, time_now]))
