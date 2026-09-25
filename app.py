@@ -176,8 +176,7 @@ def my_shifts():
     upcoming = shifts.get_upcoming_shifts_by_user(session["user_id"], check_time())
     past = shifts.get_past_shifts_by_user(session["user_id"], check_time())
 
-    return render_template("my_shifts.html", upcoming=upcoming,
-    upcoming_count=len(upcoming), past=past, past_count=len(past))
+    return render_template("my_shifts.html", upcoming=upcoming, past=past)
 
 @app.route("/")
 def index():
@@ -188,8 +187,7 @@ def index():
         my_shifts = []
         open_shifts = shifts.get_upcoming_shifts_all(check_time())
 
-    return render_template("index.html", my_shifts=my_shifts, my_shifts_count=len(my_shifts),
-    open_shifts=open_shifts, open_shifts_count=len(open_shifts))
+    return render_template("index.html", my_shifts=my_shifts, open_shifts=open_shifts)
 
 @app.route("/add_shift", methods=["GET"])
 def add_shift():
