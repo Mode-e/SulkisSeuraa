@@ -203,21 +203,10 @@ def create_shift():
 
     shift = get_form_data("create")
     if shift == "past_time":
-        flash("VIRHE: et voi valita mennyttä aikaa")				MUUTTUNUT!! flash
+        flash("VIRHE: et voi valita mennyttä aikaa")
         return redirect("/add_shift")
 
-    sql = """
-        INSERT INTO shifts (user_id, location, time, player_level, player_count, total_players)
-        VALUES (?, ?, ?, ?, ?, ?)
-    """
-
-    db.execute(sql, [shift["user_id"], shift["location"], shift["time"],
-    shift["player_level"], shift["player_count"], shift["total_players"]])
-
-    shift_id = shifts.get_last_shift_id(shift["user_id"])
-
-    db.execute("INSERT INTO signups (user_id, shift_id) VALUES (?, ?)", 
-    [shift["user_id"], shift_id])
+    shifts.create_shift(shift)
 
     return redirect("/")
 
