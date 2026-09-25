@@ -126,3 +126,33 @@ def get_available_shifts(user_id, current_time):
         ORDER BY S.time ASC
     """
     return db.query(sql, [current_time, user_id])
+
+def cancel_registration(user_id, shift_id):
+    sql = """
+        UPDATE shifts 
+        SET player_count = player_count - 1 
+        WHERE id = ? AND EXISTS (
+            SELECT 1 FROM signups WHERE user_id = ? AND shift_id = ?
+        )
+    """
+    db.execute(sql, [shift_id, user_id, shift_id])
+
+    sql1 = """
+        DELETE FROM signups 
+        WHERE user_id = ? AND shift_id = ?
+    """
+    db.execute(sql1, [user_id, shift_id])
+
+def signup_registration(user_id, shift_id):
+    sql = """
+        INSERT INTO signups (user_id, shift_id) 
+        VALUES (?, ?)
+    """
+    db.execute(sql, [user_id, shift_id])
+
+    sql1 = """
+        UPDATE shifts 
+        SET player_count = player_count + 1 
+        WHERE id = ?
+    """
+    db.execute(sql1, [shift_id])

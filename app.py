@@ -98,26 +98,12 @@ def cancel_registration(shift_id):
     if access_denied := check_login():
         return access_denied
 
-    user_id = session["user_id"]
-
     shift = shifts.get_shift(shift_id)
     if not shift:
         return "Pelivuoroa ei ole olemassa", 404
 
-    try:
-        db.execute(
-            "DELETE FROM signups WHERE user_id = ? AND shift_id = ?",
-            [user_id, shift_id]
-        )
+    shifts.cancel_registration(session["user_id"], shift_id)
 
-        db.execute(
-            "UPDATE shifts SET player_count = player_count - 1 WHERE id = ?",
-            [shift_id]
-        )
-        
-    except sqlite3.IntegrityError:
-        pass
-        
     return redirect(f"/signup/{shift_id}")
 
 @app.route("/signup_registration/<int:shift_id>", methods=["POST"])
@@ -125,31 +111,12 @@ def signup_registration(shift_id):
     if access_denied := check_login():
         return access_denied
 
-    user_id = session["user_id"]
-
     shift = shifts.get_shift(shift_id)
     if not shift:
         return "Pelivuoroa ei ole olemassa", 404
 
-    sql_check = "SELECT id FROM signups WHERE user_id = ? AND shift_id = ?"
-    if db.query(sql_check, [user_id, shift_id]):
-        return redirect(f"/signup/{shift_id}")
+    shifts.signup_registration(session["user_id"], shift_id)
 
-    if shift["player_count"] >= shift["total_players"]:
-        return redirect(f"/signup/{shift_id}")
-
-    try:
-        db.execute(
-            "INSERT INTO signups (user_id, shift_id) VALUES (?, ?)",
-            [user_id, shift_id]
-        )
-        db.execute(
-            "UPDATE shifts SET player_count = player_count + 1 WHERE id = ?",
-            [shift_id]
-        )
-
-    except sqlite3.IntegrityError:
-        pass
     return redirect(f"/signup/{shift_id}")
 
 @app.route("/search", methods=["GET"])
