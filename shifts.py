@@ -157,6 +157,25 @@ def signup_registration(user_id, shift_id):
     """
     db.execute(sql1, [shift_id])
 
+def create_shift(shift_data):
+    sql = """
+        INSERT INTO shifts (user_id, location, time, player_level, player_count, total_players)
+        VALUES (?, ?, ?, ?, ?, ?)
+    """
+    db.execute(sql, [shift_data["user_id"], shift_data["location"], 
+        shift_data["time"], shift_data["player_level"], 
+        shift_data["player_count"], shift_data["total_players"]])
+
+    shift_id = get_last_shift_id(shift_data["user_id"])
+
+    sql = """
+        INSERT INTO signups (user_id, shift_id) 
+        VALUES (?, ?)
+    """
+    db.execute(sql, [shift_data["user_id"], shift_id])
+
+    return shift_id
+
 def check_login(username, password):
     sql = "SELECT id, password_hash FROM users WHERE username = ?"
     result = db.query(sql, [username])
