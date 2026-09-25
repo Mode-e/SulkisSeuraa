@@ -156,3 +156,12 @@ def signup_registration(user_id, shift_id):
         WHERE id = ?
     """
     db.execute(sql1, [shift_id])
+
+def create_user(username, password_hash):
+    sql = "INSERT INTO users (username, password_hash) VALUES (?, ?)"
+    db.execute(sql, [username, password_hash])
+
+def user_exists(username):
+    sql = "SELECT 1 FROM users WHERE username = ?"
+    result = db.query(sql, [username])
+    return bool(result)
