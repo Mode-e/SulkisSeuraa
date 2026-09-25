@@ -64,6 +64,13 @@ def check_login():
         return render_template("not_registered.html")
     return None
 
+def check_shift(shift_id):
+    shift = shifts.get_shift(shift_id)
+    if not shift:
+        flash("VIRHE: Hakemaasi pelivuoroa ei ole olemassa.")
+        return None 
+    return shift
+
 def check_search(location, time, player_level, total_players):
     if location == "Valitse paikka...":
         location = None
@@ -80,9 +87,9 @@ def signup_page(shift_id):
     if access_denied := check_login():
         return access_denied
 
-    shift = shifts.get_shift(shift_id)
+    shift = check_shift(shift_id)
     if not shift:
-        return "Pelivuoroa ei ole olemassa", 404
+        return redirect("/")
 
     players = shifts.get_signed_up_players(shift_id)
 
@@ -93,17 +100,17 @@ def signup_page(shift_id):
 
     return render_template("signup.html", shift=shift, players=players, signed_up=signed_up)
 
+
 @app.route("/cancel_registration/<int:shift_id>", methods=["POST"])
 def cancel_registration(shift_id):
     if access_denied := check_login():
         return access_denied
 
-    shift = shifts.get_shift(shift_id)
+    shift = check_shift(shift_id)
     if not shift:
-        return "Pelivuoroa ei ole olemassa", 404
+        return redirect("/")
 
     shifts.cancel_registration(session["user_id"], shift_id)
-
     flash("Ilmoittautuminen peruttu onnistuneesti.")
     return redirect("/")
 
@@ -112,9 +119,9 @@ def signup_registration(shift_id):
     if access_denied := check_login():
         return access_denied
 
-    shift = shifts.get_shift(shift_id)
+    shift = check_shift(shift_id)
     if not shift:
-        return "Pelivuoroa ei ole olemassa", 404
+        return redirect("/")
 
     shifts.signup_registration(session["user_id"], shift_id)
 
