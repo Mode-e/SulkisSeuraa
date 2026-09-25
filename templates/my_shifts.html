@@ -3,7 +3,7 @@
 {% block content %}
 <h2 class="Cohesive_headline">Omat vuorot</h2>
 <div class="Cohesive_framework">
-    <h3 class="Cohesive_form_title">Tulevat vuorot ({{ upcoming_count }})</h3>
+    <h3 class="Cohesive_form_title">Tulevat vuorot ({{ upcoming|length }})</h3>
     
     {% if upcoming_count == 0 %}
         <p class="Empty">Ei tulevia pelivuoroja tällä hetkellä.</p>
@@ -15,7 +15,9 @@
                     <br>
                     <strong>Aika:</strong> {{ shift['time'] }} | <strong>Pelaajat:</strong> {{ shift['player_count'] }}/{{ shift['total_players'] }}
                 </div>
-                <a href="/edit_shift/{{ shift['id'] }}" class="button button-red">Muokkaa</a>
+                {% if shift['user_id'] == session['user_id'] %}
+                    <a href="/edit_shift/{{ shift['id'] }}" class="button button-red">Muokkaa</a>
+                {% endif %}
                 <a href="/signup/{{ shift['id'] }}" class="button button-default">Tiedot</a>
             </div>
         {% endfor %}
@@ -23,7 +25,7 @@
 </div>
 
 <div class="Cohesive_framework">
-    <h3 class="Cohesive_form_title">Menneet vuorot ({{ past_count }})</h3>
+    <h3 class="Cohesive_form_title">Menneet vuorot ({{ past|length }})</h3>
     
     {% if past_count == 0 %}
         <p class="Empty">Ei menneitä pelivuoroja.</p>
