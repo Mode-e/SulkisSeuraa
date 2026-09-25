@@ -1,6 +1,6 @@
 import datetime
 import sqlite3
-from flask import Flask, redirect, render_template, request, session
+from flask import Flask, redirect, render_template, request, session, flash
 from werkzeug.security import check_password_hash, generate_password_hash
 from config import secret_key
 import db
@@ -104,7 +104,8 @@ def cancel_registration(shift_id):
 
     shifts.cancel_registration(session["user_id"], shift_id)
 
-    return redirect(f"/signup/{shift_id}")
+    flash("Ilmoittautuminen peruttu onnistuneesti.")
+    return redirect("/")
 
 @app.route("/signup_registration/<int:shift_id>", methods=["POST"])
 def signup_registration(shift_id):
@@ -117,7 +118,8 @@ def signup_registration(shift_id):
 
     shifts.signup_registration(session["user_id"], shift_id)
 
-    return redirect(f"/signup/{shift_id}")
+    flash("Ilmoittautuminen onnistui.")
+    return redirect("/")
 
 @app.route("/search", methods=["GET"])
 def search():
@@ -141,10 +143,12 @@ def edit_shift(shift_id):
 
     shift = shifts.get_shift(shift_id)
     if not shift:
-        return "Pelivuoroa ei ole olemassa", 404
+        flash("VIRHE: Hakemaasi pelivuoroa ei ole olemassa.")
+        return redirect("/")
 
     if session["user_id"] != shift["user_id"]:
-        return "Evätty: Sinulla ei ole oikeutta muokata tätä vuoroa!", 403
+        flash("VIRHE: Sinulla ei ole oikeutta muokata tätä vuoroa!")
+        return redirect("/")
 
     if request.method == "POST":
         if request.form.get("action") == "delete":
@@ -201,7 +205,8 @@ def create_shift():
 
     shift = get_form_data("create")
     if shift == "past_time":
-        return "Virhe: Et voi luoda vuoroa menneisyyteen!", 400
+        flash("VIRHE: et voi valita mennyttä aikaa")				MUUTTUNUT!! flash
+        return redirect("/add_shift")
 
     sql = """
         INSERT INTO shifts (user_id, location, time, player_level, player_count, total_players)
@@ -239,9 +244,11 @@ def login():
             session["username"] = user["username"]
             session["user_id"] = result[0][0]
             return redirect("/")
-        return "VIRHE: väärä tunnus tai salasana"
+        flash("VIRHE: väärä tunnus tai salasana")
+        return redirect("/login")
     except IndexError:
-        return "VIRHE: väärä tunnus tai salasana"
+        flash("VIRHE: väärä tunnus tai salasana")
+        return redirect("/login")
 
 
 @app.route("/register")
@@ -252,7 +259,8 @@ def register():
 def create():
     user = get_form_data("user_create")
     if user["password1"] != user["password2"]:
-        return "VIRHE: salasanat eivät ole samat"
+        flash("VIRHE: salasanat eivät ole samat")
+        return redirect("/register")
     password_hash = generate_password_hash(user["password1"])
 
     try:
@@ -260,4 +268,5 @@ def create():
         db.execute(sql, [user["username"], password_hash])
         return redirect("/login")
     except sqlite3.IntegrityError:
-        return "VIRHE: tunnus on jo varattu"
+        flash("VIRHE: tunnus on jo varattu")
+        return redirect("/register")
