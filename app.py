@@ -163,16 +163,18 @@ def edit_shift(shift_id):
 
     if request.method == "POST":
         if request.form.get("action") == "delete":
-            sql = "DELETE FROM shifts WHERE id = ?"
-            db.execute(sql, [shift_id])
+            shifts.delete_shift(shift_id)
+            flash("Pelivuoro poistettu.")
             return redirect("/my_shifts")
 
         shift = get_form_data()
         if shift == "past_time":
-            return "Virhe: Et voi muokata vuoroa menneisyyteen!", 400
+            flash("Virhe: Et voi muokata vuoroa menneisyyteen!")
+            return redirect(f"/edit_shift/{shift_id}")
 
         shifts.update_shift(shift_id, shift["location"], shift["time"],
                 shift["player_level"], shift["total_players"])
+        flash("Pelivuoro päivitetty onnistuneesti.")
         return redirect("/my_shifts")
 
     date, hour, minutes = split_time(shift["time"])
@@ -237,7 +239,7 @@ def login():
         flash("VIRHE: käyttäjätunnus väärin")
         return redirect("/login")
 
-    user_id = shifts.check_login(user["username"], user["password1"])		MUUTTUNUT!! sql -> shifts.py
+    user_id = shifts.check_login(user["username"], user["password1"])
 
     if user_id:
         session["username"] = user["username"]
