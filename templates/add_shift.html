@@ -26,13 +26,14 @@
             <label for="hours">Kellonaika:</label>
             <div class="time_select_group">
                 <select id="hours" name="hours" required>
+                    <option value="" disabled selected>Tunnit</option>
                     {% for h in ['00','01','02','03','04','05','06','07','08','09','10','11','12','13','14','15','16','17','18','19','20','21','22','23'] %}
                         <option value="{{ h }}">{{ h }}</option>
                     {% endfor %}
                 </select>
 
                 <select id="minutes" name="minutes" required>
-                    <option value="" disabled selected>Minuutti</option>
+                    <option value="" disabled selected>Minuuttit</option>
                     <option value="00">00</option>
                     <option value="30">30</option>
                 </select>
