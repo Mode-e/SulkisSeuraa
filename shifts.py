@@ -121,7 +121,6 @@ def get_my_signed_shifts(user_id, current_time):
     """
     return db.query(sql, [user_id, current_time])
 
-
 def get_available_shifts(user_id, current_time):
     sql = """
         SELECT S.id, S.user_id, S.location, S.time, S.player_level, S.player_count, S.total_players, U.username
@@ -205,3 +204,10 @@ def user_exists(username):
     sql = "SELECT 1 FROM users WHERE username = ?"
     result = db.query(sql, [username])
     return bool(result)
+
+def delete_shift(shift_id):
+    sql = "DELETE FROM signups WHERE shift_id = ?"
+    db.execute(sql, [shift_id])
+
+    sql = "DELETE FROM shifts WHERE id = ?"
+    db.execute(sql, [shift_id])
