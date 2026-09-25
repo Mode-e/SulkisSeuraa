@@ -42,6 +42,11 @@
             </select>
         </div>
 
+        <div class="Cohesive_form_line">
+            <label for="username">Käyttäjänimi:</label>
+            <input type="text" name="username" placeholder="Etsi nimellä...">
+        </div>
+
         <div class="button_container">
             <button type="submit" class="button button-default">Hae vuoroja</button>
         </div>
@@ -49,7 +54,6 @@
 </div>
 <div class="Cohesive_framework">
     <h3 class="Cohesive_form_title">Tulevat vuorot ({{ results|length }})</h3>
-
     {% if results %}
         <p class="Empty">Tulokset.</p>
         {% for shift in results %}
@@ -63,11 +67,16 @@
                 </div>
                 {% if session and session.get('user_id') == shift['user_id'] %}
                     <a href="/edit_shift/{{ shift['id'] }}" class="button button-red">Muokkaa</a>
+                    <a href="/signup/{{ shift['id'] }}" class="button button-default">Tiedot</a>
                 {% else %}
-                    {% if shift['player_count'] < shift['total_players'] and session.username %}
+                    {% if shift['id'] in signed_up_shift_ids %}
+                        <a href="/signup/{{ shift['id'] }}" class="button button-default">Tiedot</a>
+                    {% elif shift['player_count'] < shift['total_players'] %}
                         <a href="/signup/{{ shift['id'] }}" class="button button-default">Ilmoittaudu</a>
                     {% else %}
-                        <!-- Lisää jos vuoro täynnä -->
+                        <span style="color: #888888; font-weight: bold; margin-left: 10px; vertical-align: middle;">
+                            Vuoro täynnä
+                        </span>
                     {% endif %}
                 {% endif %}
             </div>
