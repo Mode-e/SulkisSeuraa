@@ -233,21 +233,19 @@ def login():
         return render_template("login.html")
 
     user = get_form_data("user_login")
-
-    sql = "SELECT id, password_hash FROM users WHERE username = ?"
-    result = db.query(sql, [user["username"]])
-
-    try:
-        if check_password_hash(result[0][1], user["password1"]):
-            session["username"] = user["username"]
-            session["user_id"] = result[0][0]
-            return redirect("/")
-        flash("VIRHE: väärä tunnus tai salasana")
-        return redirect("/login")
-    except IndexError:
-        flash("VIRHE: väärä tunnus tai salasana")
+    if not shifts.user_exists(user["username"]):
+        flash("VIRHE: käyttäjätunnus väärin")
         return redirect("/login")
 
+    user_id = shifts.check_login(user["username"], user["password1"])		MUUTTUNUT!! sql -> shifts.py
+
+    if user_id:
+        session["username"] = user["username"]
+        session["user_id"] = user_id
+        return redirect("/")
+    
+    flash("VIRHE: väärä salasana")
+    return redirect("/login")
 
 @app.route("/register")
 def register():
