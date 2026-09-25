@@ -32,6 +32,15 @@
             <a href="/my_shifts">Omat vuorot</a>
         {% endif %}
     </div>
+    {% with messages = get_flashed_messages() %}
+    {% if messages %}
+        <div class="flash-messages" style="color: red; margin: 15px 0 15px 220px; font-weight: bold; padding: 10px; background-color: #ffe6e6; border: 1px solid red; border-radius: 4px;">
+        {% for message in messages %}
+            <p style="margin: 0;">{{ message }}</p>
+        {% endfor %}
+        </div>
+    {% endif %}
+    {% endwith %}
     <div class="content">
         {% block content %}
         {% endblock %}
