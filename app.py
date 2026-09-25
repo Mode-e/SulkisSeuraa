@@ -256,15 +256,13 @@ def register():
 @app.route("/create", methods=["POST"])
 def create():
     user = get_form_data("user_create")
+    if shifts.user_exists(user["username"]):
+        flash("VIRHE: käyttäjätunnus varattu")
+        return redirect("/register")
     if user["password1"] != user["password2"]:
-        flash("VIRHE: salasanat eivät ole samat")
+        flash("VIRHE: väärä salasana")
         return redirect("/register")
-    password_hash = generate_password_hash(user["password1"])
 
-    try:
-        sql = "INSERT INTO users (username, password_hash) VALUES (?, ?)"
-        db.execute(sql, [user["username"], password_hash])
-        return redirect("/login")
-    except sqlite3.IntegrityError:
-        flash("VIRHE: tunnus on jo varattu")
-        return redirect("/register")
+    password_hash = generate_password_hash(user["password1"])
+    shifts.create_user(user["username"], password_hash)
+    return redirect("/login")
