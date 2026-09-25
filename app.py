@@ -20,7 +20,8 @@ def get_form_data(word = None):
             "location": request.args.get("location", "").strip(),
             "day": request.args.get("day", "").strip(),
             "player_level": request.args.get("player_level", "").strip(),
-            "total_players": request.args.get("total_players", "").strip()
+            "total_players": request.args.get("total_players", "").strip(),
+            "username": request.args.get("username", "").strip()
         }
 
     if word in ["user_login", "user_create"]:
@@ -71,16 +72,18 @@ def check_shift(shift_id):
         return None 
     return shift
 
-def check_search(location, time, player_level, total_players):
+def check_search(location, day, player_level, total_players, username):
     if location == "Valitse paikka...":
         location = None
     if player_level == "Valitse taso...":
         player_level = None
-    if not time:
-        time = None
+    if not day:
+        day = None
     if total_players == "Valitse pelaajamäärä...":
         total_players = None
-    return location, time, player_level, total_players
+    if not username:
+        username = None
+    return location, day, player_level, total_players, username
 
 @app.route("/signup/<int:shift_id>", methods=["GET"])
 def signup_page(shift_id):
@@ -99,7 +102,6 @@ def signup_page(shift_id):
             signed_up = True
 
     return render_template("signup.html", shift=shift, players=players, signed_up=signed_up)
-
 
 @app.route("/cancel_registration/<int:shift_id>", methods=["POST"])
 def cancel_registration(shift_id):
@@ -134,14 +136,16 @@ def search():
         return access_denied
 
     search_data = get_form_data("search")
-    location, day, player_level, total_players = check_search(search_data["location"],
-    search_data["day"], search_data["player_level"], search_data["total_players"])
+    location, day, player_level, total_players, username = check_search(
+        search_data["location"], search_data["day"],
+        search_data["player_level"], search_data["total_players"],
+        search_data["username"])
 
-    results = shifts.find_shifts(check_time(), location, day, player_level, total_players)
+    results = shifts.find_shifts(check_time(), location, day, player_level, total_players, username)
 
     return render_template("search.html", results=results,
-    location=location, day=day,
-    player_level=player_level, total_players=total_players)
+    location=location, day=day, player_level=player_level,
+    total_players=total_players, username=username)
 
 @app.route("/edit_shift/<int:shift_id>", methods=["GET", "POST"])
 def edit_shift(shift_id):
