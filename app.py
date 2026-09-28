@@ -181,6 +181,16 @@ def edit_shift(shift_id):
 
     return render_template("edit_shift.html", shift=shift, date=date, hour=hour, minutes=minutes)
 
+
+@app.route("/my_info")
+def my_info():
+    if access_denied := check_login():
+        return access_denied
+    info = shifts.user_info(session["user_id"])
+    upcoming = shifts.get_upcoming_shifts_by_user(session["user_id"], check_time())
+
+    return render_template("my_info.html", upcoming=upcoming, info=info)
+
 @app.route("/my_shifts")
 def my_shifts():
     if access_denied := check_login():
