@@ -15,6 +15,12 @@ def split_time(date_str):
     return day, hour, minutes
 
 def get_form_data(word = None):
+    if word == "info":
+        return {
+        "player_level": request.form.get("player_level", ""),
+        "description": request.form.get("description", "")
+    }
+
     if word == "search":
         return {
             "location": request.args.get("location", "").strip(),
@@ -190,6 +196,19 @@ def my_info():
     upcoming = shifts.get_upcoming_shifts_by_user(session["user_id"], check_time())
 
     return render_template("my_info.html", upcoming=upcoming, info=info)
+
+@app.route("/edit_info", methods=["GET", "POST"])
+def edit_info():
+    if access_denied := check_login():
+        return access_denied
+
+    if request.method == "POST":
+        data = get_form_data("info")
+        shifts.update_info(data, session["user_id"])
+        return redirect("/my_info")
+
+    info = shifts.user_info(session["user_id"])
+    return render_template("edit_info.html", info=info)
 
 @app.route("/my_shifts")
 def my_shifts():
