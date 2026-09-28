@@ -1,3 +1,9 @@
+<style>
+    textarea[readonly]:focus {
+        outline: none;
+    }
+</style>
+
 {% extends "layout.html" %}
 
 {% block content %}
@@ -6,9 +12,12 @@
     <div class="shift_row">
         <div class="shift-texts">
             <li><strong>Käyttäjätunnus:</strong> {{ info[0].username }}</li>
-            <li><strong>Pelaajataso:</strong> {{ info[0].player_level if info.player_level else 'Ei määritelty' }}</li>
+            <li><strong>Pelaajataso:</strong> {{ info[0].player_level if info[0].player_level else 'Ei määritelty' }}</li>
             <li><strong>Kuvaus:</strong></li>
-            <textarea name="description" rows="4" cols="50" readonly>{{ info[0].description if info[0].description else '' }}</textarea>
+            <textarea name="description" rows="5" readonly style="width: 400px; max-width: 100%; resize: none;">{{ info.description if info.description else '' }}</textarea>
+            <div class="button_container">
+                <button type="submit" class="button button-default">Päivitä tietoja</button>
+            </div>
         </div>
     </div>
 </div>
