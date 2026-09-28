@@ -91,6 +91,9 @@ def check_search(location, day, player_level, total_players, username):
         username = None
     return location, day, player_level, total_players, username
 
+def check_prev():
+    return request.referrer
+
 @app.route("/signup/<int:shift_id>", methods=["GET"])
 def signup_page(shift_id):
     if access_denied := check_login():
@@ -106,8 +109,9 @@ def signup_page(shift_id):
     for player in players:
         if player["username"] == session["username"]:
             signed_up = True
+    prev = check_prev()
 
-    return render_template("signup.html", shift=shift, players=players, signed_up=signed_up)
+    return render_template("signup.html", shift=shift, players=players, signed_up=signed_up, prev=prev)
 
 @app.route("/cancel_registration/<int:shift_id>", methods=["POST"])
 def cancel_registration(shift_id):
@@ -184,8 +188,8 @@ def edit_shift(shift_id):
         return redirect("/my_shifts")
 
     date, hour, minutes = split_time(shift["time"])
-
-    return render_template("edit_shift.html", shift=shift, date=date, hour=hour, minutes=minutes)
+    prev = check_prev()
+    return render_template("edit_shift.html", shift=shift, date=date, hour=hour, minutes=minutes, prev=prev)
 
 
 @app.route("/my_info")
