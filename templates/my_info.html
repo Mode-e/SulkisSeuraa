@@ -1,0 +1,35 @@
+{% extends "layout.html" %}
+
+{% block content %}
+<h2 class="Cohesive_headline">Omat tiedot</h2>
+<div class="Cohesive_framework">
+    <div class="shift_row">
+        <div class="shift-texts">
+            <li><strong>Käyttäjätunnus:</strong> {{ info[0].username }}</li>
+            <li><strong>Pelaajataso:</strong> {{ info[0].player_level if info.player_level else 'Ei määritelty' }}</li>
+            <li><strong>Kuvaus:</strong></li>
+            <textarea name="description" rows="4" cols="50" readonly>{{ info[0].description if info[0].description else '' }}</textarea>
+        </div>
+    </div>
+</div>
+
+<div class="Cohesive_framework">
+    <h3 class="Cohesive_form_title">Lisätyt tulevat vuorot ({{ upcoming|length }})</h3>
+    
+    {% if upcoming|length == 0 %}
+        <p class="Empty">Ei lisättyjä tulevia pelivuoroja.</p>
+    {% else %}
+        {% for shift in upcoming %}
+            <div class="shift_row upcoming">
+                <div class="shift-texts">
+                    <strong>Lisäsi</strong> {{ shift['username'] }} | <strong>Paikka:</strong> {{ shift['location'] }}
+                    <br>
+                    <strong>Aika:</strong> {{ shift['time'] }} | <strong>Pelaajat:</strong> {{ shift['player_count'] }}/{{ shift['total_players'] }}
+                </div>
+            </div>
+        {% endfor %}
+    {% endif %}
+</div>
+
+
+{% endblock %}
