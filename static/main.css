@@ -206,20 +206,38 @@ body {
     cursor: pointer;
 }
 
-/* Edit / Delete button */
-.button-red {
-    background-color: #ff0000;
+/* Delete button */
+.button-delete {
+    background-color: rgb(250, 67, 67);
     color: #000000;
 }
 
-/* Regular button */
-.button-default {
+/* Delete button hover */
+.button-delete:hover {
+    background-color: red;
+    color: #ffffff;
+}
+
+/* Edit button */
+.button-edit {
     background-color: #eeeeee;
     color: #000000;
 }
 
-/* Hover */
-.button-red:hover, .button-default:hover {
+/* Edit button hover */
+.button-edit:hover {
+    background-color: green;
+    color: #ffffff;
+}
+
+/* Save button */
+.button-save {
+    background-color: lightgreen;
+    color: black
+}
+
+/* Save button hover */
+.button-save:hover {
     background-color: green;
     color: #ffffff;
 }
