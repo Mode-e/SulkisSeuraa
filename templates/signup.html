@@ -24,18 +24,20 @@
     <div class="button_container">
         {% if session.get('user_id') == shift['user_id'] or signed_up %}
             <span style="color: #5cb85c; font-style: italic; font-weight: bold; padding: 6px 12px; display: inline-block;">
-                Olet ilmoittautunut tälle vuorolle
+                Olet ilmoittautunut vuorolle
             </span>
             {% if session.get('user_id') == shift['user_id'] %}
-                <a href="/edit_shift/{{ shift['id'] }}" class="button button-red">Muokkaa</a>
+                <a href="/edit_shift/{{ shift['id'] }}" class="button button-save" style="text-decoration: none;">Muokkaa</a>
+                <a href="{{ prev }}" class="button button-edit" style="text-decoration: none;">Takaisin</a>
             {% else %}
                 <form action="/cancel_registration/{{ shift['id'] }}" method="POST">
-                    <button type="submit" class="button button-red">Peru ilmoittautuminen</button>
+                    <a href="{{ prev }}" class="button button-edit" style="text-decoration: none;">Takaisin</a>
+                    <button type="submit" class="button button-delete">Peru ilmoittautuminen</button>
                 </form>        
             {% endif %}   
         {% elif shift['player_count'] < shift['total_players'] %}
             <form action="/signup_registration/{{ shift['id'] }}" method="POST">
-                <button type="submit" class="button button-default">Vahvista ilmoittautuminen</button>
+                <button type="submit" class="button button-save">Vahvista ilmoittautuminen</button>
             </form>
         {% else %}
             <span style="color: #888; font-style: italic; padding: 6px 12px; display: inline-block;">Vuoro täynnä</span>
