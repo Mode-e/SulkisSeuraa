@@ -1,26 +1,27 @@
-CREATE TABLE IF NOT EXISTS users (
-    id INTEGER PRIMARY KEY,
+CREATE TABLE users (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
     username TEXT UNIQUE NOT NULL,
-    password_hash TEXT NOT NULL
+    password_hash TEXT NOT NULL,
+    player_level TEXT,
+    description TEXT,
+    profile_ready INTEGER DEFAULT 0
 );
 
-CREATE TABLE IF NOT EXISTS shifts (
+CREATE TABLE shifts (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     user_id INTEGER NOT NULL,
     location TEXT NOT NULL,
     time TEXT NOT NULL,
     player_level TEXT NOT NULL,
-    player_count INTEGER NOT NULL,
+    player_count INTEGER DEFAULT 0,
     total_players INTEGER NOT NULL,
     FOREIGN KEY (user_id) REFERENCES users (id)
 );
 
-CREATE TABLE IF NOT EXISTS signups (
+CREATE TABLE signups (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     user_id INTEGER NOT NULL,
     shift_id INTEGER NOT NULL,
-    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
-    FOREIGN KEY (shift_id) REFERENCES shifts(id) ON DELETE CASCADE,
-    UNIQUE(user_id, shift_id)
+    FOREIGN KEY (user_id) REFERENCES users (id),
+    FOREIGN KEY (shift_id) REFERENCES shifts (id)
 );
-
