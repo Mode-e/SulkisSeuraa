@@ -219,3 +219,11 @@ def user_info(user_id):
         WHERE id = ?
     """
     return db.query(sql, [user_id])
+
+def update_info(user_data, user_id):
+    sql = """
+        UPDATE users 
+        SET player_level = ?, description = ?
+        WHERE id = ?
+    """
+    db.execute(sql, [user_data["player_level"], user_data["description"], user_id])
