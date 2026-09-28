@@ -211,3 +211,11 @@ def delete_shift(shift_id):
 
     sql = "DELETE FROM shifts WHERE id = ?"
     db.execute(sql, [shift_id])
+
+def user_info(user_id):
+    sql = """
+        SELECT username , player_level, description
+        FROM users
+        WHERE id = ?
+    """
+    return db.query(sql, [user_id])
