@@ -16,7 +16,7 @@
             <li><strong>Kuvaus:</strong></li>
             <textarea name="description" rows="5" readonly style="width: 400px; max-width: 100%; resize: none;">{{ info[0].description if info[0].description else '' }}</textarea>
             <div class="button_container">
-                <a href="/edit_info" class="button button-default" style="text-decoration: none;">Päivitä tietoja</a>
+                <a href="/edit_info" class="button button-save" style="text-decoration: none;">Päivitä tietoja</a>
             </div>
         </div>
     </div>
@@ -29,12 +29,18 @@
         <p class="Empty">Ei lisättyjä tulevia pelivuoroja.</p>
     {% else %}
         {% for shift in upcoming %}
-            <div class="shift_row upcoming">
+            <div class="shift_row">
                 <div class="shift-texts">
-                    <strong>Lisäsi</strong> {{ shift['username'] }} | <strong>Paikka:</strong> {{ shift['location'] }}
+                    <strong>Lisäsi</strong> {{ shift['username'] }} | 
+                    <strong>Paikka:</strong> {{ shift['location'] }}
                     <br>
-                    <strong>Aika:</strong> {{ shift['time'] }} | <strong>Pelaajat:</strong> {{ shift['player_count'] }}/{{ shift['total_players'] }}
+                    <strong>Aika:</strong> {{ shift['time'] }} | 
+                    <strong>Pelaajat:</strong> {{ shift['player_count'] }}/{{ shift['total_players'] }}
                 </div>
+                {% if session.get('user_id') == shift['user_id'] %}
+                    <a href="/edit_shift/{{ shift['id'] }}" class="button button-save" style="text-decoration: none;">Muokkaa</a>
+                {% endif %}
+                <a href="/signup/{{ shift['id'] }}" class="button button-edit" style="text-decoration: none;">Tiedot</a>
             </div>
         {% endfor %}
     {% endif %}
