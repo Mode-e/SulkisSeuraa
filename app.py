@@ -10,6 +10,10 @@ import re
 app = Flask(__name__)
 app.secret_key = secret_key
 
+def time_now():
+    time_now = datetime.datetime.now().strftime("%Y-%m-%d %H:%M")
+    return time_now
+
 def split_time(date_str):
     day, time = date_str.split(" ")
     hour, minutes = time.split(":")
@@ -42,15 +46,6 @@ def get_form_data(word = None):
 
         return user_data
 
-    proposed_day = request.form["day"]
-    proposed_hours = request.form["hours"]
-    proposed_minutes = request.form["minutes"]
-    proposed_time = f"{proposed_day} {proposed_hours}:{proposed_minutes}"
-    time_now = check_time()
-
-    if proposed_time < time_now:
-        return "past_time"
-
     shift = {
         "location": request.form["location"],
         "time": f"{request.form["day"]} {request.form["hours"]}:{request.form["minutes"]}",
@@ -63,9 +58,32 @@ def get_form_data(word = None):
         shift["player_count"] = 1
     return shift
 
-def check_time():
-    time_now = datetime.datetime.now().strftime("%Y-%m-%d %H:%M")
-    return time_now
+def check_location(location):
+    locations = ["Kluuvi Unisport", "Kumpula Unisport", "Meilahti Unisport",
+                "Otaniemi Unisport", "Töölö Unisport", "Viikki Unisport"]
+    if location not in locations:
+        return f"Virhe, et voi varata vuorolle paikkaa {location}"
+    return True
+
+def check_time(time):
+    proposed_day = request.form["day"]
+    proposed_hours = request.form["hours"]
+    proposed_minutes = request.form["minutes"]
+    proposed_time = f"{proposed_day} {proposed_hours}:{proposed_minutes}"
+    time = time_now()
+
+    if proposed_time < time:
+        return "Virhe: Et voi valita aikaa menneisyydestä"
+
+def check_player_level(level):
+    levels = ["Aloittelija", "Harrastaja", "Kilpatasa"]
+    if level not in levels:
+        return "Virhe: väärä pelaajan taso valittu"
+
+def check_total_players(count):
+    if count != "2" and count != "4":
+        return "Virhe: valitse määräksi kaksinpeli (2) tai nelinpeliksi (4)"
+    return True
 
 def check_login():
     if "username" not in session:
@@ -164,7 +182,7 @@ def search():
         search_data["player_level"], search_data["total_players"],
         search_data["username"])
 
-    results = shifts.find_shifts(check_time(), location, day, player_level, total_players, username)
+    results = shifts.find_shifts(time_now(), location, day, player_level, total_players, username)
 
     return render_template("search.html", results=results,
     location=location, day=day, player_level=player_level,
@@ -209,7 +227,7 @@ def my_info(user_id):
     if access_denied := check_login():
         return access_denied
     info = shifts.user_info(session["user_id"])
-    upcoming = shifts.get_upcoming_shifts_by_user(session["user_id"], check_time())
+    upcoming = shifts.get_upcoming_shifts_by_user(session["user_id"], time_now())
 
     return render_template("my_info.html", upcoming=upcoming, info=info, my_page=(user_id == session["user_id"]))
 
@@ -235,19 +253,19 @@ def my_shifts():
     if access_denied := check_login():
         return access_denied
 
-    upcoming = shifts.get_upcoming_shifts_by_user(session["user_id"], check_time())
-    past = shifts.get_past_shifts_by_user(session["user_id"], check_time())
+    upcoming = shifts.get_upcoming_shifts_by_user(session["user_id"], time_now())
+    past = shifts.get_past_shifts_by_user(session["user_id"], time_now())
 
     return render_template("my_shifts.html", upcoming=upcoming, past=past)
 
 @app.route("/")
 def index():
     if "user_id" in session:
-        my_shifts = shifts.get_my_signed_shifts(session["user_id"], check_time())
-        open_shifts = shifts.get_available_shifts(session["user_id"], check_time())
+        my_shifts = shifts.get_my_signed_shifts(session["user_id"], time_now())
+        open_shifts = shifts.get_available_shifts(session["user_id"], time_now())
     else:
         my_shifts = []
-        open_shifts = shifts.get_upcoming_shifts_all(check_time())
+        open_shifts = shifts.get_upcoming_shifts_all(time_now())
 
     return render_template("index.html", my_shifts=my_shifts, open_shifts=open_shifts)
 
@@ -255,8 +273,7 @@ def index():
 def add_shift():
     if access_denied := check_login():
         return access_denied
-
-    return render_template("add_shift.html")
+    return render_template("add_shift.html", date=time_now)
 
 @app.route("/create_shift", methods=["POST"])
 def create_shift():
@@ -264,8 +281,25 @@ def create_shift():
         return access_denied
     prev = check_prev()
     shift = get_form_data("create")
-    if shift == "past_time":
-        flash("VIRHE: et voi valita mennyttä aikaa", "error")
+
+    location_error = check_location(shift["location"])
+    if isinstance(location_error, str):
+        flash(location_error, "error")
+        return redirect(prev)
+
+    time_error = check_time(shift["time"])
+    if isinstance(time_error, str):
+        flash(time_error, "error")
+        return redirect(prev)
+
+    player_level_error = check_player_level(shift["player_level"])
+    if isinstance(player_level_error, str):
+        flash(player_level_error, "error")
+        return redirect(prev)
+
+    total_players_error = check_total_players(shift["total_players"])
+    if isinstance(total_players_error, str):
+        flash(total_players_error, "error")
         return redirect(prev)
 
     shifts.create_shift(shift)
