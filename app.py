@@ -231,8 +231,8 @@ def edit_shift(shift_id):
 def my_info(user_id):
     if access_denied := check_login():
         return access_denied
-    info = shifts.user_info(session["user_id"])
-    upcoming = shifts.get_upcoming_shifts_by_user(session["user_id"], time_now())
+    info = shifts.user_info(user_id)
+    upcoming = shifts.get_upcoming_shifts_by_user(user_id, time_now())
 
     return render_template("my_info.html", upcoming=upcoming, info=info, my_page=(user_id == session["user_id"]))
 
