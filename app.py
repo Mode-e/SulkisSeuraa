@@ -117,10 +117,10 @@ def signup_page(shift_id):
 def cancel_registration(shift_id):
     if access_denied := check_login():
         return access_denied
-
+    prev = check_prev()
     shift = check_shift(shift_id)
     if not shift:
-        return redirect("/")
+        return redirect(prev)
 
     shifts.cancel_registration(session["user_id"], shift_id)
     flash("Ilmoittautuminen peruttu onnistuneesti.", "success")
@@ -130,10 +130,10 @@ def cancel_registration(shift_id):
 def signup_registration(shift_id):
     if access_denied := check_login():
         return access_denied
-
+    prev = check_prev()
     shift = check_shift(shift_id)
     if not shift:
-        return redirect("/")
+        return redirect(prev)
 
     shifts.signup_registration(session["user_id"], shift_id)
 
@@ -161,15 +161,15 @@ def search():
 def edit_shift(shift_id):
     if access_denied := check_login():
         return access_denied
-
+    prev = check_prev()
     shift = shifts.get_shift(shift_id)
     if not shift:
         flash("VIRHE: Hakemaasi pelivuoroa ei ole olemassa.", "error")
-        return redirect("/")
+        return redirect(prev)
 
     if session["user_id"] != shift["user_id"]:
         flash("VIRHE: Sinulla ei ole oikeutta muokata tätä vuoroa!", "error")
-        return redirect("/")
+        return redirect(prev)
 
     if request.method == "POST":
         if request.form.get("action") == "delete":
@@ -180,7 +180,7 @@ def edit_shift(shift_id):
         shift = get_form_data()
         if shift == "past_time":
             flash("Virhe: Et voi muokata vuoroa menneisyyteen!", "error")
-            return redirect(f"/edit_shift/{shift_id}")
+            return redirect(prev)
 
         shifts.update_shift(shift_id, shift["location"], shift["time"],
                 shift["player_level"], shift["total_players"])
@@ -191,27 +191,30 @@ def edit_shift(shift_id):
     prev = check_prev()
     return render_template("edit_shift.html", shift=shift, date=date, hour=hour, minutes=minutes, prev=prev)
 
-
-@app.route("/my_info")
-def my_info():
+@app.route("/my_info/<int:user_id>")
+def my_info(user_id):
     if access_denied := check_login():
         return access_denied
     info = shifts.user_info(session["user_id"])
     upcoming = shifts.get_upcoming_shifts_by_user(session["user_id"], check_time())
 
-    return render_template("my_info.html", upcoming=upcoming, info=info)
+    return render_template("my_info.html", upcoming=upcoming, info=info, my_page=(user_id == session["user_id"]))
 
-@app.route("/edit_info", methods=["GET", "POST"])
-def edit_info():
+@app.route("/edit_info/<int:user_id>", methods=["GET", "POST"])
+def edit_info(user_id):
     if access_denied := check_login():
         return access_denied
+    prev = check_prev()
+    if user_id != session["user_id"]:
+        flash("Virhe: et voi muokata toisten tietoja", "error")
+        return redirect(prev)
 
     if request.method == "POST":
         data = get_form_data("info")
-        shifts.update_info(data, session["user_id"])
-        return redirect("/my_info")
+        shifts.update_info(data, user_id)
+        return redirect(f"/my_info/{user_id}")
 
-    info = shifts.user_info(session["user_id"])
+    info = shifts.user_info(user_id)
     return render_template("edit_info.html", info=info)
 
 @app.route("/my_shifts")
@@ -246,11 +249,11 @@ def add_shift():
 def create_shift():
     if access_denied := check_login():
         return access_denied
-
+    prev = check_prev()
     shift = get_form_data("create")
     if shift == "past_time":
         flash("VIRHE: et voi valita mennyttä aikaa", "error")
-        return redirect("/add_shift")
+        return redirect(prev)
 
     shifts.create_shift(shift)
 
@@ -266,11 +269,11 @@ def logout():
 def login():
     if request.method == "GET":
         return render_template("login.html")
-
+    prev = check_prev()
     user = get_form_data("user_login")
     if not shifts.user_exists(user["username"]):
         flash("VIRHE: käyttäjätunnus väärin", "error")
-        return redirect("/login")
+        return redirect(prev)
 
     user_id = shifts.check_login(user["username"], user["password1"])
 
@@ -280,7 +283,7 @@ def login():
         return redirect("/")
     
     flash("VIRHE: väärä salasana", "error")
-    return redirect("/login")
+    return redirect(prev)
 
 @app.route("/register")
 def register():
@@ -288,13 +291,14 @@ def register():
 
 @app.route("/create", methods=["POST"])
 def create():
+    prev = check_prev()
     user = get_form_data("user_create")
     if shifts.user_exists(user["username"]):
         flash("VIRHE: käyttäjätunnus varattu", "error")
-        return redirect("/register")
+        return redirect(prev)
     if user["password1"] != user["password2"]:
         flash("VIRHE: väärä salasana", "error")
-        return redirect("/register")
+        return redirect(prev)
 
     password_hash = generate_password_hash(user["password1"])
     shifts.create_user(user["username"], password_hash)
