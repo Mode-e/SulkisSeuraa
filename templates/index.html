@@ -30,7 +30,7 @@
         {% for shift in my_shifts %}
             <div class="shift_row">
                 <div class="shift-texts">
-                    <strong>Lisäsi</strong> <a href="/user/{{ shift['user_id'] }}" style="color: #ff8552; text-decoration: underline; font-weight: bold;">{{ shift['username'] }}</a> | 
+                    <strong>Lisäsi</strong> <a href="/my_info/{{ shift['user_id'] }}" style="color: #ff8552; text-decoration: underline; font-weight: bold;">{{ shift['username'] }}</a> | 
                     <strong>Paikka:</strong> {{ shift['location'] }}
                     <br>
                     <strong>Aika:</strong> {{ shift['time'] }} | 
@@ -52,7 +52,7 @@
         {% for shift in open_shifts %}
             <div class="shift_row">
                 <div class="shift-texts">
-                    <strong>Lisäsi:</strong> {{ shift['username'] }} |
+                    <strong>Lisäsi:</strong> <a href="/my_info/{{ shift['user_id'] }}" style="color: #ff8552; text-decoration: underline; font-weight: bold;">{{ shift['username'] }}</a> |
                     <strong>Paikka:</strong> {{ shift['location'] }}
                     <br>
                     <strong>Aika:</strong> {{ shift['time'] }} |
