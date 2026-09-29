@@ -11,7 +11,7 @@
         {% for shift in upcoming %}
             <div class="shift_row">
                 <div class="shift-texts">
-                    <strong>Lisäsi</strong> <a href="/user/{{ shift['user_id'] }}" style="color: #ff8552; text-decoration: underline; font-weight: bold;">{{ shift['username'] }}</a> |
+                    <strong>Lisäsi</strong> <a href="/my_info/{{ shift['user_id'] }}" style="color: #ff8552; text-decoration: underline; font-weight: bold;">{{ shift['username'] }}</a> | 
                     <strong>Paikka:</strong> {{ shift['location'] }}
                     <br>
                     <strong>Aika:</strong> {{ shift['time'] }} | <strong>Pelaajat:</strong> {{ shift['player_count'] }}/{{ shift['total_players'] }}
@@ -34,7 +34,8 @@
         {% for shift in past %}
             <div class="shift_row past">
                 <div class="shift-texts">
-                    <strong>Lisäsi</strong> {{ shift['username'] }} | <strong>Paikka:</strong> {{ shift['location'] }}
+                    <strong>Lisäsi</strong> <a href="/my_info/{{ shift['user_id'] }}" style="color: #ff8552; text-decoration: underline; font-weight: bold;">{{ shift['username'] }}</a> | 
+                    <strong>Paikka:</strong> {{ shift['location'] }}
                     <br>
                     <strong>Aika:</strong> {{ shift['time'] }} | <strong>Pelaajat:</strong> {{ shift['player_count'] }}/{{ shift['total_players'] }}
                 </div>
