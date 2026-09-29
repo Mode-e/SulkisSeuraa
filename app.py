@@ -5,6 +5,7 @@ from werkzeug.security import check_password_hash, generate_password_hash
 from config import secret_key
 import db
 import shifts
+import re
 
 app = Flask(__name__)
 app.secret_key = secret_key
@@ -70,6 +71,18 @@ def check_login():
     if "username" not in session:
         return render_template("not_registered.html")
     return None
+
+def check_username(username):
+    if len(username) < 3 or len(username) > 20:
+        return "Virhe: käyttäjätunnuksen pituus pitää olla väliltä 3-20"
+    if not re.match("^[a-zA-Z0-9_åäöÅÄÖ]+$", username):
+        return "Virhe: käyttäjätunnuksessa saa olla vain kirjaimia, numeroita ja alaviivoja"
+    return True
+
+def check_password(password):
+    if len(password) < 8 or len(password) > 20:
+        return "Virhe: salasanan pituus pitää olla väliltä 8-20"
+    return True
 
 def check_shift(shift_id):
     shift = shifts.get_shift(shift_id)
@@ -293,9 +306,20 @@ def register():
 def create():
     prev = check_prev()
     user = get_form_data("user_create")
+    username_error = check_username(user["username"])
+    if isinstance(username_error, str):
+        flash(username_error, "error")
+        return redirect(prev)
+
+    password_error = check_password(user["password1"])
+    if isinstance(password_error, str):
+        flash(password_error, "error")
+        return redirect(prev)
+
     if shifts.user_exists(user["username"]):
         flash("VIRHE: käyttäjätunnus varattu", "error")
         return redirect(prev)
+
     if user["password1"] != user["password2"]:
         flash("VIRHE: väärä salasana", "error")
         return redirect(prev)
