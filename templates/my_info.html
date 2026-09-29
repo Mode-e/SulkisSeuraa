@@ -16,7 +16,7 @@
             <li><strong>Kuvaus:</strong></li>
             <textarea name="description" rows="5" readonly style="width: 400px; max-width: 100%; resize: none;">{{ info[0].description if info[0].description else '' }}</textarea>
             <div class="button_container">
-                <a href="/edit_info" class="button button-save" style="text-decoration: none;">Päivitä tietoja</a>
+                <a href="/edit_info" class="button" style="width: 95;">Päivitä tietoja</a>
             </div>
         </div>
     </div>
@@ -38,9 +38,9 @@
                     <strong>Pelaajat:</strong> {{ shift['player_count'] }}/{{ shift['total_players'] }}
                 </div>
                 {% if session.get('user_id') == shift['user_id'] %}
-                    <a href="/edit_shift/{{ shift['id'] }}" class="button button-save" style="text-decoration: none;">Muokkaa</a>
+                    <a href="/edit_shift/{{ shift['id'] }}" class="button">Muokkaa</a>
                 {% endif %}
-                <a href="/signup/{{ shift['id'] }}" class="button button-edit" style="text-decoration: none;">Tiedot</a>
+                <a href="/signup/{{ shift['id'] }}" class="button">Tiedot</a>
             </div>
         {% endfor %}
     {% endif %}

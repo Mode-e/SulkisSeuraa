@@ -10,7 +10,9 @@
 body {
     margin: 0;
     padding: 0;
-    background-color: #ffffff;
+    background: #1c0f0d; /* fallback */
+    background: linear-gradient(135deg, #1c0f0d 25%, #da2510 100%);
+    min-height: 100vh;
 }
 
 /* ==========================================
@@ -19,7 +21,7 @@ body {
 
 /* Header styles */
 .header {
-    background-color: #000000;
+    background-color: transparent;
     padding: 20px;
     display: flex;
     justify-content: space-between;
@@ -35,7 +37,7 @@ body {
 
 /* Header link styles */
 .header a {
-    color: #ff0000;
+    color: #ffffff;
     font-size: 14px;
     margin-left: 15px;
 }
@@ -46,7 +48,7 @@ body {
 
 /* Sidebar styles */
 .sidebar {
-    background-color: #eeeeee;
+    background-color: transparent;
     width: 155px;
     padding: 20px;
     line-height: 2.0;
@@ -60,13 +62,13 @@ body {
 .sidebar a {
     display: block;
     margin-bottom: 10px;
-    color: #0000ee;
+    color: #ffffff;
     text-decoration: underline;
 }
 
 /* Sidebar link hover styles */
 .sidebar a:hover {
-    color: #551a8b;
+    color: #ff4d4d;
 }
 
 .sidebar_info {
@@ -110,17 +112,17 @@ body {
     padding: 30px;
     padding-bottom: 25px;
     max-width: 500px;
-    background-color: #ffffff;
     margin-left: 0;
     box-sizing: border-box;
 }
 
 /* Cohesive form headline styles */
 .Cohesive_headline {
+    color: #ffffff;
     font-size: 32px;
     margin-bottom: 20px;
     margin-left: 0;
-    text-shadow: 1px 1px 0px #e0e0e0, 2px 2px 0px #c0c0c0, 3px 3px 0px #a0a0a0;
+    text-shadow: 1px 1px 4px rgba(0, 0, 0, 0.6);
 }
 
 /* Cohesive form styles */
@@ -136,6 +138,7 @@ body {
 
 /* Cohesive form line styles */
 .Cohesive_form_line {
+    color: #e0e0e0;
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -146,7 +149,7 @@ body {
 .Cohesive_form_line label {
     font-size: 15px;
     font-weight: bold;
-    color: #000000;
+    color: #e0e0e0;
     flex: 1;
     text-align: left;
 }
@@ -154,15 +157,21 @@ body {
 /* Cohesive form line input styles */
 .Cohesive_form_line select,
 .Cohesive_form_line input {
+    background-color: #ffffff;
+    color: #000000;
     flex: 1.5;
     max-width: 260px;
     width: 100%;
     padding: 8px 12px;
     font-size: 14px;
     border: 1px solid #000000;
-    background-color: #ffffff;
     box-sizing: border-box;
     height: 35px;
+}
+
+/* Cohensive form title */
+.Cohesive_form_title {
+    color: #e0e0e0;
 }
 
 /* ==========================================
@@ -171,14 +180,14 @@ body {
 
 /* Upcoming shifts */
 .shift_row {
-    border-bottom: 1px dashed #ccc;
+    border-bottom: 1px dashed #2b0a0a;
     padding: 12px 0;
     font-size: 14px;
     line-height: 1.6;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    color: #333333;
+    color: #888282;
 }
 
 /* Past shifts */
@@ -198,48 +207,28 @@ body {
   margin-top: 25px;
 }
 
-/* Universal button styles */
+/* Button styles */
 .button {
+    border-radius: 40% 60% 65% 35% / 40% 45% 55% 60%;
+    width: 84;
+    height: auto;
     border: 1px solid #000000;
     padding: 8px 15px;
     font-size: 14px;
-    cursor: pointer;
+    font-weight: bold;
+    box-shadow: 
+        0 4px 6px rgba(0, 0, 0, 0.4), 
+        inset 0 2px 3px rgba(255, 255, 255, 0.4);
+    transition: all 0.15s ease;
+    background: linear-gradient(180deg, #ffd700 0%, #b8860b 100%); /* Esimerkki: Tallenna */
+    color: #1a0505;
+    text-decoration: none;
 }
 
-/* Delete button */
-.button-delete {
-    background-color: rgb(250, 67, 67);
-    color: #000000;
-}
-
-/* Delete button hover */
-.button-delete:hover {
-    background-color: red;
-    color: #ffffff;
-}
-
-/* Edit button */
-.button-edit {
-    background-color: #eeeeee;
-    color: #000000;
-}
-
-/* Edit button hover */
-.button-edit:hover {
-    background-color: green;
-    color: #ffffff;
-}
-
-/* Save button */
-.button-save {
-    background-color: lightgreen;
-    color: black
-}
-
-/* Save button hover */
-.button-save:hover {
-    background-color: green;
-    color: #ffffff;
+.button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.5), inset 0 2px 3px rgba(255, 255, 255, 0.5);
+    color:#e0e0e0;
 }
 
 .time_select_group {
@@ -247,10 +236,33 @@ body {
     max-width: 260px;
     width: 100%;
     display: flex;
-    gap: 10px; /* Jättää pienen raon valikkojen väliin */
+    gap: 10px
 }
 
 .time_select_group select {
-    flex: 1; /* Pakottaa molemmat valikot täsmälleen yhtä leveiksi (50% / 50%) */
+    flex: 1;
     width: 100%;
+}
+
+.flash-message {
+  padding: 10px 20px;
+  margin: 10px auto 20px;
+  max-width: 450px;
+  text-align: center;
+  border-radius: 6px;
+  font-size: 16px;
+  font-weight: bold;
+  border: 1px solid transparent;
+}
+
+.flash-message.success {
+    background-color: transparent;
+    border-color: transparent;
+    color: #2ecc71;
+}
+
+.flash-message.error {
+    background-color: transparent;
+    border-color: transparent;
+    color: #f5061e;
 }

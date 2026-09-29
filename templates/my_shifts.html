@@ -16,9 +16,9 @@
                     <strong>Aika:</strong> {{ shift['time'] }} | <strong>Pelaajat:</strong> {{ shift['player_count'] }}/{{ shift['total_players'] }}
                 </div>
                 {% if shift['user_id'] == session['user_id'] %}
-                    <a href="/edit_shift/{{ shift['id'] }}" class="button button-save" style="text-decoration: none;">Muokkaa</a>
+                    <a href="/edit_shift/{{ shift['id'] }}" class="button">Muokkaa</a>
                 {% endif %}
-                <a href="/signup/{{ shift['id'] }}" class="button button-edit" style="text-decoration: none;">Tiedot</a>
+                <a href="/signup/{{ shift['id'] }}" class="button">Tiedot</a>
             </div>
         {% endfor %}
     {% endif %}
