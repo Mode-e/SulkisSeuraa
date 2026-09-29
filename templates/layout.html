@@ -30,7 +30,7 @@
             <a href="/add_shift">Lisää vuoro</a>
             <a href="/search">Hae vuoroja</a>
             <a href="/my_shifts">Omat ilmoittautumiset</a>
-            <a href="/my_info">Omat tiedot</a>
+            <a href="/my_info/{{ session['user_id'] }}">Omat tiedot</a>
         {% endif %}
     </div>
     {% with messages = get_flashed_messages(with_categories=true) %}
