@@ -11,7 +11,8 @@
         {% for shift in upcoming %}
             <div class="shift_row">
                 <div class="shift-texts">
-                    <strong>Lisäsi</strong> {{ shift['username'] }} | <strong>Paikka:</strong> {{ shift['location'] }}
+                    <strong>Lisäsi</strong> <a href="/user/{{ shift['user_id'] }}" style="color: #ff8552; text-decoration: underline; font-weight: bold;">{{ shift['username'] }}</a> |
+                    <strong>Paikka:</strong> {{ shift['location'] }}
                     <br>
                     <strong>Aika:</strong> {{ shift['time'] }} | <strong>Pelaajat:</strong> {{ shift['player_count'] }}/{{ shift['total_players'] }}
                 </div>
