@@ -85,6 +85,11 @@ def check_total_players(count):
         return "Virhe: valitse määräksi kaksinpeli (2) tai nelinpeliksi (4)"
     return True
 
+def check_description(description):
+    if len(description) > 500:
+        return "Virhe: Kuvaus saa olla enintään 500 merkkiä pitkä"
+    return True
+
 def check_login():
     if "username" not in session:
         return render_template("not_registered.html")
@@ -242,6 +247,17 @@ def edit_info(user_id):
 
     if request.method == "POST":
         data = get_form_data("info")
+
+        level_error = check_player_level(data["player_level"])
+        if isinstance(level_error, str):
+            flash(level_error, "error")
+            return redirect(prev)
+
+        description_error = check_description(data["description"])
+        if isinstance(description_error, str):
+            flash(description_error, "error")
+            return redirect(prev)
+
         shifts.update_info(data, user_id)
         return redirect(f"/my_info/{user_id}")
 
