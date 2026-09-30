@@ -133,35 +133,37 @@ def get_available_shifts(user_id, current_time):
     """
     return db.query(sql, [current_time, user_id])
 
-def cancel_registration(user_id, shift_id):
+def cancel(user_id, shift_id):
     sql = """
-        UPDATE shifts 
-        SET player_count = player_count - 1 
-        WHERE id = ? AND EXISTS (
-            SELECT 1 FROM signups WHERE user_id = ? AND shift_id = ?
-        )
-    """
-    db.execute(sql, [shift_id, user_id, shift_id])
-
-    sql1 = """
         DELETE FROM signups 
         WHERE user_id = ? AND shift_id = ?
     """
-    db.execute(sql1, [user_id, shift_id])
+    res = db.execute(sql, [user_id, shift_id])
+    return res.rowcount > 0
 
-def signup_registration(user_id, shift_id):
+def remove_player_count(shift_id)
+    sql = """
+        UPDATE shifts 
+        SET player_count = player_count - 1 
+        WHERE id = ?
+    """
+    db.execute(sql, [shift_id])
+
+def signup(user_id, shift_id):
     sql = """
         INSERT INTO signups (user_id, shift_id) 
         VALUES (?, ?)
     """
-    db.execute(sql, [user_id, shift_id])
+    res = db.execute(sql, [user_id, shift_id])
+    return res.rowcount
 
-    sql1 = """
+def add_player_count(shift_id)
+    sql = """
         UPDATE shifts 
         SET player_count = player_count + 1 
         WHERE id = ?
     """
-    db.execute(sql1, [shift_id])
+    db.execute(sql, [shift_id])
 
 def create_shift(shift_data):
     sql = """
@@ -172,15 +174,6 @@ def create_shift(shift_data):
         shift_data["time"], shift_data["player_level"], 
         shift_data["player_count"], shift_data["total_players"]])
 
-    shift_id = get_last_shift_id(shift_data["user_id"])
-
-    sql = """
-        INSERT INTO signups (user_id, shift_id) 
-        VALUES (?, ?)
-    """
-    db.execute(sql, [shift_data["user_id"], shift_id])
-
-    return shift_id
 
 def check_login(username, password):
     sql = "SELECT id, password_hash FROM users WHERE username = ?"
