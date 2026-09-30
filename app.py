@@ -239,7 +239,7 @@ def edit_shift(shift_id):
         flash("Pelivuoro päivitetty onnistuneesti.", "success")
         return redirect("/my_shifts")
 
-    date, hour, minutes = split_time(data["time"])
+    date, hour, minutes = split_time(shift["time"])
     prev = check_prev()
     return render_template("edit_shift.html", shift=shift, date=date, hour=hour, minutes=minutes, prev=prev)
 
