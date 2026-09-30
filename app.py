@@ -212,33 +212,34 @@ def edit_shift(shift_id):
             shifts.delete_shift(shift_id)
             flash("Pelivuoro poistettu.")
             return redirect("/my_shifts")
+        data = get_form_data()
 
-        location_error = check_location(shift["location"])
+        location_error = check_location(data["location"])
         if isinstance(location_error, str):
             flash(location_error, "error")
             return redirect(prev)
 
-        time_error = check_time(shift["time"])
+        time_error = check_time(data["time"])
         if isinstance(time_error, str):
             flash(time_error, "error")
             return redirect(prev)
 
-        player_level_error = check_player_level(shift["player_level"])
+        player_level_error = check_player_level(data["player_level"])
         if isinstance(player_level_error, str):
             flash(player_level_error, "error")
             return redirect(prev)
 
-        total_players_error = check_total_players(shift["total_players"])
+        total_players_error = check_total_players(data["total_players"])
         if isinstance(total_players_error, str):
             flash(total_players_error, "error")
             return redirect(prev)
 
-        shifts.update_shift(shift_id, shift["location"], shift["time"],
-                shift["player_level"], shift["total_players"])
+        shifts.update_shift(shift_id, data["location"], data["time"],
+                data["player_level"], data["total_players"])
         flash("Pelivuoro päivitetty onnistuneesti.", "success")
         return redirect("/my_shifts")
 
-    date, hour, minutes = split_time(shift["time"])
+    date, hour, minutes = split_time(data["time"])
     prev = check_prev()
     return render_template("edit_shift.html", shift=shift, date=date, hour=hour, minutes=minutes, prev=prev)
 
@@ -333,8 +334,13 @@ def create_shift():
         flash(total_players_error, "error")
         return redirect(prev)
 
-    shifts.create_shift(shift)
+    shift["user_id"] = session["user_id"]
+    shift["player_count"] = 0
 
+    shifts.create_shift(shift)
+    shift_id = shifts.get_last_shift_id(session["user_id"])
+    shifts.signup(session["user_id"], shift_id)
+    shifts.add_player_count(shift_id)
     return redirect("/")
 
 @app.route("/logout")
