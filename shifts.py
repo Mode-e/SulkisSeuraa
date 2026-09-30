@@ -138,10 +138,9 @@ def cancel(user_id, shift_id):
         DELETE FROM signups 
         WHERE user_id = ? AND shift_id = ?
     """
-    res = db.execute(sql, [user_id, shift_id])
-    return res.rowcount > 0
+    db.execute(sql, [user_id, shift_id])
 
-def remove_player_count(shift_id)
+def remove_player_count(shift_id):
     sql = """
         UPDATE shifts 
         SET player_count = player_count - 1 
@@ -154,10 +153,9 @@ def signup(user_id, shift_id):
         INSERT INTO signups (user_id, shift_id) 
         VALUES (?, ?)
     """
-    res = db.execute(sql, [user_id, shift_id])
-    return res.rowcount
+    db.execute(sql, [user_id, shift_id])
 
-def add_player_count(shift_id)
+def add_player_count(shift_id):
     sql = """
         UPDATE shifts 
         SET player_count = player_count + 1 

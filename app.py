@@ -11,8 +11,7 @@ app = Flask(__name__)
 app.secret_key = secret_key
 
 def time_now():
-    time_now = datetime.datetime.now().strftime("%Y-%m-%d %H:%M")
-    return time_now
+    return datetime.datetime.now().strftime("%Y-%m-%d %H:%M")
 
 def split_time(date_str):
     day, time = date_str.split(" ")
@@ -158,7 +157,7 @@ def signup_page(shift_id):
     if not shift:
         return redirect("/")
 
-    if shift["time"] < time_now:
+    if shift["time"] < time_now():
         flash("Virhe: tietoja menneistä vuoroista ei ole saatavilla", "error")
         return redirect("/")
 
@@ -186,11 +185,11 @@ def cancel_registration(shift_id):
         return redirect(prev)
 
     not_signed_up = check_if_not_players(shifts.get_signed_up_players(shift_id), session["username"])
-        if isinstance(not_signed_up, str):
-            flash(not_signed_up, "error")
-            return redirect(prev)
+    if isinstance(not_signed_up, str):
+        flash(not_signed_up, "error")
+        return redirect(prev)
 
-    shifts.cancel(session["user_id"], shift_id):
+    shifts.cancel(session["user_id"], shift_id)
     shifts.remove_player_count(shift_id)
 
     flash("Ilmoittautuminen peruttu onnistuneesti.", "success")
@@ -215,7 +214,7 @@ def signup_registration(shift_id):
         flash(available, "error")
         return redirect(prev)
 
-    signed_up = check_players(shifts.get_sign_up_players(shift_id), session["username"])
+    signed_up = check_players(shifts.get_signed_up_players(shift_id), session["username"])
     if isinstance(signed_up, str):
         flash(signed_up, "error")
         return redirect(prev)
