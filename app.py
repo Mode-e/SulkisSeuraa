@@ -309,7 +309,7 @@ def my_info(user_id):
         return access_denied
 
     prev = check_prev()
-    info = shifts.user_info(user_id)
+    info = users.user_info(user_id)
 
     if not info:
         flash("Virhe: käyttäjää ei ole olemassa", "error")
@@ -342,10 +342,10 @@ def edit_info(user_id):
             flash(description_error, "error")
             return render_template("edit_info.html", info=data, prev=prev)
 
-        shifts.update_info(data, user_id)
+        users_user_update(data, user_id)
         return redirect(f"/my_info/{user_id}")
 
-    info = shifts.user_info(user_id)
+    info = users.user_info(user_id)
     return render_template("edit_info.html", info=info, prev=prev)
 
 @app.route("/my_shifts")
@@ -421,11 +421,11 @@ def login():
         return render_template("login.html")
     prev = check_prev()
     user = get_login_data()
-    if not shifts.user_exists(user["username"]):
+    if not users.user_exists(user["username"]):
         flash("VIRHE: käyttäjätunnus väärin", "error")
         return render_template("login.html", user=user)
 
-    user_id = shifts.check_login(user["username"], user["password1"])
+    user_id = users_user_login(user["username"], user["password1"])
 
     if user_id:
         session["username"] = user["username"]
@@ -453,7 +453,7 @@ def create():
         flash(password_error, "error")
         return render_template("register.html", user=user)
 
-    if shifts.user_exists(user["username"]):
+    if users.user_exists(user["username"]):
         flash("VIRHE: käyttäjätunnus varattu", "error")
         return render_template("register.html", user=user)
 
@@ -462,6 +462,6 @@ def create():
         return render_template("register.html", user=user)
 
     password_hash = generate_password_hash(user["password1"])
-    shifts.create_user(user["username"], password_hash)
+    users.user_create(user["username"], password_hash)
     flash("Käyttäjätunnus luotu", "success")
     return redirect("/login")
