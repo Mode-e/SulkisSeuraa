@@ -93,6 +93,12 @@ def check_players(players, user):
             return "Virhe: olet jo ilmoittautunut vuorolle"
     return None
 
+def check_if_not_players(players, user):
+    for player in players:
+        if user == player["username"]:
+            return None
+    return "Virhe: Et ole ilmoittautunut vuoroon"
+
 def check_description(description):
     if len(description) > 500:
         return "Virhe: Kuvaus saa olla enintään 500 merkkiä pitkä"
@@ -171,7 +177,18 @@ def cancel_registration(shift_id):
     if not shift:
         return redirect(prev)
 
-    shifts.cancel_registration(session["user_id"], shift_id)
+    if shift["time"] < time_now():
+        flash("Virhe: et voi perua ilmoitusta menneeseen vuoroon", "error")
+        return redirect(prev)
+
+    not_signed_up = check_if_not_players(shifts.get_signed_up_players(shift_id), session["username"])
+        if isinstance(not_signed_up, str):
+            flash(not_signed_up, "error")
+            return redirect(prev)
+
+    shifts.cancel(session["user_id"], shift_id):
+    shifts.remove_player_count(shift_id)
+    
     flash("Ilmoittautuminen peruttu onnistuneesti.", "success")
     return redirect("/")
 
