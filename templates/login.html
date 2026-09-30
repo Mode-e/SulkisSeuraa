@@ -6,12 +6,12 @@
     <form action="/login" method="post">
         <div class="Cohesive_form_line">
             <label for="username">Käyttäjätunnus:</label>
-            <input type="text" name="username" />
+            <input type="text" name="username" value="{{ user['username'] if user else '' }}" required/>
         </div>
 
         <div class="Cohesive_form_line">
             <label for="password">Salasana:</label>
-            <input type="password" name="password1" />
+            <input type="password" name="password1" required/>
         </div>
 
         <div class="button_container">
