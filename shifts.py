@@ -1,46 +1,34 @@
 import db
 
-def get_all_shifts():
+def upcoming_shifts(time_now, user_id=None):
     sql = """
-        SELECT shifts.id, shifts.user_id, users.username, shifts.location, 
-               shifts.time, shifts.player_level, shifts.player_count, shifts.total_players 
-        FROM shifts 
-        JOIN users ON shifts.user_id = users.id
+        SELECT S.id, S.user_id, U.username, S.location,
+               S.time, S.player_level, S.player_count, S.total_players
+        FROM shifts S
+        JOIN users U ON S.user_id = U.id
     """
-    return db.query(sql)
+    params = []
 
-def get_upcoming_shifts_all(time_now):
-    sql = """
-        SELECT shifts.id, shifts.user_id, users.username, shifts.location, 
-               shifts.time, shifts.player_level, shifts.player_count, shifts.total_players 
-        FROM shifts 
-        JOIN users ON shifts.user_id = users.id
-        WHERE shifts.time >= ?
-        ORDER BY shifts.time ASC
-    """
-    return list(db.query(sql, [time_now]))
+    if user_id is not None:
+        sql += " JOIN signups ON S.id = signups.shift_id WHERE signups.user_id = ? AND S.time >= ?"
+        params = [user_id, time_now]
+    else:
+        sql += " WHERE S.time >= ?"
+        params = [time_now]
 
-def get_upcoming_shifts_by_user(user_id, time_now):
-    sql = """
-        SELECT shifts.id, shifts.user_id, users.username, shifts.location,
-               shifts.time, shifts.player_level, shifts.player_count, shifts.total_players
-        FROM shifts
-        JOIN signups ON shifts.id = signups.shift_id
-        JOIN users ON shifts.user_id = users.id
-        WHERE signups.user_id = ? AND shifts.time >= ?
-        ORDER BY shifts.time ASC
-    """
-    return list(db.query(sql, [user_id, time_now]))
+    sql += " ORDER BY S.time ASC"
+    
+    return list(db.query(sql, params))
 
-def get_past_shifts_by_user(user_id, time_now):
+def past_shifts(user_id, time_now):
     sql = """
-        SELECT shifts.id, shifts.user_id, users.username, shifts.location,
-               shifts.time, shifts.player_level, shifts.player_count, shifts.total_players
-        FROM shifts
-        JOIN signups ON shifts.id = signups.shift_id
-        JOIN users ON shifts.user_id = users.id
-        WHERE signups.user_id = ? AND shifts.time < ?
-        ORDER BY shifts.time DESC
+        SELECT S.id, S.user_id, U.username, S.location,
+               S.time, S.player_level, S.player_count, S.total_players
+        FROM shifts S
+        JOIN signups ON S.id = signups.shift_id
+        JOIN users U ON S.user_id = U.id
+        WHERE signups.user_id = ? AND S.time < ?
+        ORDER BY S.time DESC
     """
     return list(db.query(sql, [user_id, time_now]))
 
@@ -57,9 +45,11 @@ def get_shift(shift_id):
         return None
     return result[0]
 
-def get_last_shift_id(user_id):
+def last_shift(user_id):
     sql = "SELECT id FROM shifts WHERE user_id = ? ORDER BY id DESC LIMIT 1"
     result = db.query(sql, [user_id])
+    if not result:
+        return None
     return result[0]["id"]
 
 def update_shift(shift_id, location, time, player_level, total_players):
@@ -100,16 +90,16 @@ def find_shifts(time_now, location=None, day=None, player_level=None, total_play
 
     return db.query(sql, params)
 
-def get_signed_up_players(shift_id):
+def get_players(shift_id):
     sql = """
-        SELECT users.username 
-        FROM signups
-        JOIN users ON signups.user_id = users.id
-        WHERE signups.shift_id = ?
+        SELECT U.username 
+        FROM signups S
+        JOIN users U ON S.user_id = U.id
+        WHERE S.shift_id = ?
     """
     return db.query(sql, [shift_id])
 
-def get_my_signed_shifts(user_id, current_time):
+def my_shifts(user_id, time_now):
     sql = """
         SELECT S.id, S.user_id, S.location, S.time, S.player_level, S.player_count, S.total_players, U.username
         FROM shifts S
@@ -118,28 +108,29 @@ def get_my_signed_shifts(user_id, current_time):
         WHERE SU.user_id = ? AND S.time > ?
         ORDER BY S.time ASC
     """
-    return db.query(sql, [user_id, current_time])
+    return db.query(sql, [user_id, time_now])
 
-def get_available_shifts(user_id, current_time):
+def available_shifts(user_id, time_now):
     sql = """
-        SELECT S.id, S.user_id, S.location, S.time, S.player_level, S.player_count, S.total_players, U.username
+        SELECT S.id, S.user_id, S.location, S.time, S.player_level,
+                S.player_count, S.total_players, U.username
         FROM shifts S
         JOIN users U ON S.user_id = U.id
-        WHERE S.time > ? AND S.id NOT IN (
+        WHERE S.time >= ? AND S.id NOT IN (
             SELECT shift_id FROM signups WHERE user_id = ?
         )
         ORDER BY S.time ASC
     """
-    return db.query(sql, [current_time, user_id])
+    return db.query(sql, [time_now, user_id])
 
-def cancel(user_id, shift_id):
+def cancel_signup(user_id, shift_id):
     sql = """
         DELETE FROM signups 
         WHERE user_id = ? AND shift_id = ?
     """
     db.execute(sql, [user_id, shift_id])
 
-def remove_player_count(shift_id):
+def decrease_players(shift_id):
     sql = """
         UPDATE shifts 
         SET player_count = player_count - 1 
@@ -154,7 +145,7 @@ def signup(user_id, shift_id):
     """
     db.execute(sql, [user_id, shift_id])
 
-def add_player_count(shift_id):
+def increase_player(shift_id):
     sql = """
         UPDATE shifts 
         SET player_count = player_count + 1 
@@ -177,3 +168,14 @@ def delete_shift(shift_id):
 
     sql = "DELETE FROM shifts WHERE id = ?"
     db.execute(sql, [shift_id])
+
+def created_shifts(user_id, time_now):
+    sql = """
+        SELECT S.id, S.user_id, U.username, S.location, S.time,
+               S.player_level, S.player_count, S.total_players
+        FROM shifts S
+        JOIN users U ON S.user_id = U.id
+        WHERE S.user_id = ? AND S.time >= ?
+        ORDER BY S.time ASC
+    """
+    return db.query(sql, [user_id, time_now])

@@ -4,7 +4,7 @@ from flask import Flask, redirect, render_template, request, session, flash
 from werkzeug.security import check_password_hash, generate_password_hash
 from config import secret_key
 import db
-import shifts
+import shifts, users
 import re
 
 app = Flask(__name__)
@@ -172,7 +172,7 @@ def signup_page(shift_id):
         flash("Virhe: tietoja menneistä vuoroista ei ole saatavilla", "error")
         return redirect(prev)
 
-    players = shifts.get_signed_up_players(shift_id)
+    players = shifts.get_players(shift_id)
 
     signed_up = False
     for player in players:
@@ -194,13 +194,13 @@ def cancel_registration(shift_id):
         flash("Virhe: et voi perua ilmoitusta menneeseen vuoroon", "error")
         return redirect(prev)
 
-    not_signed_up = check_if_not_players(shifts.get_signed_up_players(shift_id), session["username"])
+    not_signed_up = check_if_not_players(shifts.get_players(shift_id), session["username"])
     if isinstance(not_signed_up, str):
         flash(not_signed_up, "error")
         return redirect(prev)
 
-    shifts.cancel(session["user_id"], shift_id)
-    shifts.remove_player_count(shift_id)
+    shifts.cancel_signup(session["user_id"], shift_id)
+    shifts.decrease_players(shift_id)
 
     flash("Ilmoittautuminen peruttu onnistuneesti.", "success")
     return redirect("/")
@@ -224,13 +224,13 @@ def signup_registration(shift_id):
         flash(available, "error")
         return redirect(prev)
 
-    signed_up = check_players(shifts.get_signed_up_players(shift_id), session["username"])
+    signed_up = check_players(shifts.get_players(shift_id), session["username"])
     if isinstance(signed_up, str):
         flash(signed_up, "error")
         return redirect(prev)
 
     shifts.signup(session["user_id"], shift_id)
-    shifts.add_player_count(shift_id)
+    shifts.increase_player(shift_id)
 
     flash("Ilmoittautuminen onnistui.", "success")
     return redirect("/")
@@ -315,7 +315,7 @@ def my_info(user_id):
         flash("Virhe: käyttäjää ei ole olemassa", "error")
         return redirect(prev)
 
-    upcoming = shifts.get_upcoming_shifts_by_user(user_id, time_now())
+    upcoming = shifts.created_shifts(user_id, time_now())
 
     return render_template("my_info.html", upcoming=upcoming, info=info, my_page=(user_id == session["user_id"]))
 
@@ -353,19 +353,19 @@ def my_shifts():
     if access_denied := check_login():
         return access_denied
 
-    upcoming = shifts.get_upcoming_shifts_by_user(session["user_id"], time_now())
-    past = shifts.get_past_shifts_by_user(session["user_id"], time_now())
+    upcoming = shifts.upcoming_shifts(time_now(), session["user_id"])
+    past = shifts.past_shifts(session["user_id"], time_now())
 
     return render_template("my_shifts.html", upcoming=upcoming, past=past)
 
 @app.route("/")
 def index():
     if "user_id" in session:
-        my_shifts = shifts.get_my_signed_shifts(session["user_id"], time_now())
-        open_shifts = shifts.get_available_shifts(session["user_id"], time_now())
+        my_shifts = shifts.my_shifts(session["user_id"], time_now())
+        open_shifts = shifts.available_shifts(session["user_id"], time_now())
     else:
         my_shifts = []
-        open_shifts = shifts.get_upcoming_shifts_all(time_now())
+        open_shifts = shifts.upcoming_shifts(time_now())
 
     return render_template("index.html", my_shifts=my_shifts, open_shifts=open_shifts)
 
@@ -404,9 +404,9 @@ def create_shift():
         return render_template("add_shift.html", shift=shift, date=date, hour=hour, minutes=minutes)
 
     shifts.create_shift(shift)
-    shift_id = shifts.get_last_shift_id(session["user_id"])
+    shift_id = shifts.last_shift(session["user_id"])
     shifts.signup(session["user_id"], shift_id)
-    shifts.add_player_count(shift_id)
+    shifts.increase_player(shift_id)
     return redirect("/")
 
 @app.route("/logout")
