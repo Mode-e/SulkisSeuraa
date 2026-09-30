@@ -63,7 +63,7 @@ def check_location(location):
                 "Otaniemi Unisport", "Töölö Unisport", "Viikki Unisport"]
     if location not in locations:
         return f"Virhe, et voi varata vuorolle paikkaa {location}"
-    return True
+    return None
 
 def check_time(time):
     proposed_day = request.form["day"]
@@ -74,21 +74,34 @@ def check_time(time):
 
     if proposed_time < time:
         return "Virhe: Et voi valita aikaa menneisyydestä"
+    return None
 
 def check_player_level(level):
     levels = ["Aloittelija", "Harrastaja", "Kilpatasa"]
     if level not in levels:
         return "Virhe: väärä pelaajan taso valittu"
+    return None
 
 def check_total_players(count):
     if count != "2" and count != "4":
         return "Virhe: valitse määräksi kaksinpeli (2) tai nelinpeliksi (4)"
-    return True
+    return None
+
+def check_players(players, user):
+    for player in players:
+        if user == player["username"]:
+            return "Virhe: olet jo ilmoittautunut vuorolle"
+    return None
 
 def check_description(description):
     if len(description) > 500:
         return "Virhe: Kuvaus saa olla enintään 500 merkkiä pitkä"
-    return True
+    return None
+
+def check_availability(shift):
+    if shift["player_count"] >= shift["total_players"]:
+        return "Virhe: vuoro on täynnä"
+    return None
 
 def check_login():
     if "username" not in session:
@@ -166,12 +179,28 @@ def cancel_registration(shift_id):
 def signup_registration(shift_id):
     if access_denied := check_login():
         return access_denied
+
     prev = check_prev()
     shift = check_shift(shift_id)
     if not shift:
         return redirect(prev)
 
-    shifts.signup_registration(session["user_id"], shift_id)
+    if shift["time"] < time_now():
+        flash("Virhe: et voi ilmoittautua menneeseen vuoroon", "error")
+        return redirect(prev)
+
+    available = check_availability(shift)
+    if isinstance(available, str):
+        flash(available, "error")
+        return redirect(prev)
+
+    signed_up = check_players(shifts.get_sign_up_players(shift_id), session["username"])
+    if isinstance(signed_up, str):
+        flash(signed_up, "error")
+        return redirect(prev)
+
+    shifts.signup(session["user_id"], shift_id)
+    shifts.add_player_count(shift_id)
 
     flash("Ilmoittautuminen onnistui.", "success")
     return redirect("/")
