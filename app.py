@@ -18,44 +18,53 @@ def split_time(date_str):
     hour, minutes = time.split(":")
     return day, hour, minutes
 
-def get_form_data(word = None):
-    if word == "info":
-        return {
+def get_info_data():
+    return {
         "player_level": request.form.get("player_level", ""),
         "description": request.form.get("description", "")
     }
 
-    if word == "search":
-        return {
-            "location": request.args.get("location", "").strip(),
-            "day": request.args.get("day", "").strip(),
-            "player_level": request.args.get("player_level", "").strip(),
-            "total_players": request.args.get("total_players", "").strip(),
-            "username": request.args.get("username", "").strip()
-        }
+def get_search_data():
+    return {
+        "location": request.args.get("location", "").strip(),
+        "day": request.args.get("day", "").strip(),
+        "player_level": request.args.get("player_level", "").strip(),
+        "total_players": request.args.get("total_players", "").strip(),
+        "username": request.args.get("username", "").strip()
+    }
 
-    if word in ["user_login", "user_create"]:
-        user_data = {
-            "username": request.form["username"],
-            "password1": request.form["password1"]
-        }
-
-        if word == "user_create":
-            user_data["password2"] = request.form["password2"]
-
-        return user_data
-
+def get_create_data():
     shift = {
         "location": request.form["location"],
         "time": f"{request.form["day"]} {request.form["hours"]}:{request.form["minutes"]}",
         "player_level": request.form["player_level"],
-        "total_players": request.form["total_players"]
+        "total_players": request.form["total_players"],
+        "user_id": session["user_id"],
+        "player_count": 0
+    }
+    return shift
+
+def get_edit_data():
+    shift = {
+        "location": request.form["location"],
+        "time": f"{request.form["day"]} {request.form["hours"]}:{request.form["minutes"]}",
+        "player_level": request.form["player_level"],
+        "total_players": request.form["total_players"],
+    }
+    return shift
+
+def get_login_data():
+    return {
+        "username": request.form["username"],
+        "password1": request.form["password1"]
     }
 
-    if word == "create":
-        shift["user_id"] = session["user_id"]
-        shift["player_count"] = 1
-    return shift
+def get_register_data():
+    return {
+        "username": request.form["username"],
+        "password1": request.form["password1"],
+        "password2": request.form["password2"]
+    }
 
 def check_location(location):
     locations = ["Kluuvi Unisport", "Kumpula Unisport", "Meilahti Unisport",
@@ -153,13 +162,15 @@ def signup_page(shift_id):
     if access_denied := check_login():
         return access_denied
 
+    prev = check_prev()
+
     shift = check_shift(shift_id)
     if not shift:
-        return redirect("/")
+        return redirect(prev)
 
     if shift["time"] < time_now():
         flash("Virhe: tietoja menneistä vuoroista ei ole saatavilla", "error")
-        return redirect("/")
+        return redirect(prev)
 
     players = shifts.get_signed_up_players(shift_id)
 
@@ -167,7 +178,6 @@ def signup_page(shift_id):
     for player in players:
         if player["username"] == session["username"]:
             signed_up = True
-    prev = check_prev()
 
     return render_template("signup.html", shift=shift, players=players, signed_up=signed_up, prev=prev)
 
@@ -230,7 +240,7 @@ def search():
     if access_denied := check_login():
         return access_denied
 
-    search_data = get_form_data("search")
+    search_data = get_search_data()
     location, day, player_level, total_players, username = check_search(
         search_data["location"], search_data["day"],
         search_data["player_level"], search_data["total_players"],
@@ -248,6 +258,7 @@ def edit_shift(shift_id):
         return access_denied
     prev = check_prev()
     shift = shifts.get_shift(shift_id)
+    day_now = time_now().split(" ")
     if not shift:
         flash("VIRHE: Hakemaasi pelivuoroa ei ole olemassa.", "error")
         return redirect(prev)
@@ -261,27 +272,28 @@ def edit_shift(shift_id):
             shifts.delete_shift(shift_id)
             flash("Pelivuoro poistettu.")
             return redirect("/my_shifts")
-        data = get_form_data()
-
-        location_error = check_location(data["location"])
-        if isinstance(location_error, str):
-            flash(location_error, "error")
-            return redirect(prev)
+        data = get_edit_data()
+        d, h, m = split_time(data["time"])
 
         time_error = check_time(data["time"])
         if isinstance(time_error, str):
             flash(time_error, "error")
-            return redirect(prev)
+            return render_template("edit_shift.html", shift=data, date=d, hour=h, minutes=m, prev=prev, time=day_now[0])
+
+        location_error = check_location(data["location"])
+        if isinstance(location_error, str):
+            flash(location_error, "error")
+            return render_template("edit_shift.html", shift=data, date=d, hour=h, minutes=m, prev=prev, time=day_now[0])
 
         player_level_error = check_player_level(data["player_level"])
         if isinstance(player_level_error, str):
             flash(player_level_error, "error")
-            return redirect(prev)
+            return render_template("edit_shift.html", shift=data, date=d, hour=h, minutes=m, prev=prev, time=day_now[0])
 
         total_players_error = check_total_players(data["total_players"])
         if isinstance(total_players_error, str):
             flash(total_players_error, "error")
-            return redirect(prev)
+            return render_template("edit_shift.html", shift=data, date=d, hour=h, minutes=m, prev=prev, time=day_now[0])
 
         shifts.update_shift(shift_id, data["location"], data["time"],
                 data["player_level"], data["total_players"])
@@ -289,14 +301,20 @@ def edit_shift(shift_id):
         return redirect("/my_shifts")
 
     date, hour, minutes = split_time(shift["time"])
-    prev = check_prev()
-    return render_template("edit_shift.html", shift=shift, date=date, hour=hour, minutes=minutes, prev=prev)
+    return render_template("edit_shift.html", shift=shift, date=date, hour=hour, minutes=minutes, prev=prev, time=day_now[0])
 
 @app.route("/my_info/<int:user_id>")
 def my_info(user_id):
     if access_denied := check_login():
         return access_denied
+
+    prev = check_prev()
     info = shifts.user_info(user_id)
+
+    if not info:
+        flash("Virhe: käyttäjää ei ole olemassa", "error")
+        return redirect(prev)
+
     upcoming = shifts.get_upcoming_shifts_by_user(user_id, time_now())
 
     return render_template("my_info.html", upcoming=upcoming, info=info, my_page=(user_id == session["user_id"]))
@@ -306,28 +324,29 @@ def edit_info(user_id):
     if access_denied := check_login():
         return access_denied
     prev = check_prev()
-    if user_id != session["user_id"]:
-        flash("Virhe: et voi muokata toisten tietoja", "error")
-        return redirect(prev)
 
     if request.method == "POST":
-        data = get_form_data("info")
+        if user_id != session["user_id"]:
+            flash("Virhe: et voi muokata toisten tietoja", "error")
+            return redirect(prev)
+
+        data = get_info_data()
 
         level_error = check_player_level(data["player_level"])
         if isinstance(level_error, str):
             flash(level_error, "error")
-            return redirect(prev)
+            return render_template("edit_info.html", info=data, prev=prev)
 
         description_error = check_description(data["description"])
         if isinstance(description_error, str):
             flash(description_error, "error")
-            return redirect(prev)
+            return render_template("edit_info.html", info=data, prev=prev)
 
         shifts.update_info(data, user_id)
         return redirect(f"/my_info/{user_id}")
 
     info = shifts.user_info(user_id)
-    return render_template("edit_info.html", info=info)
+    return render_template("edit_info.html", info=info, prev=prev)
 
 @app.route("/my_shifts")
 def my_shifts():
@@ -354,37 +373,35 @@ def index():
 def add_shift():
     if access_denied := check_login():
         return access_denied
-    return render_template("add_shift.html", date=time_now)
+    return render_template("add_shift.html", date=time_now())
 
 @app.route("/create_shift", methods=["POST"])
 def create_shift():
     if access_denied := check_login():
         return access_denied
     prev = check_prev()
-    shift = get_form_data("create")
+    shift = get_create_data()
+    date, hour, minutes = split_time(shift["time"])
 
     location_error = check_location(shift["location"])
     if isinstance(location_error, str):
         flash(location_error, "error")
-        return redirect(prev)
+        return render_template("add_shift.html", shift=shift, date=date, hour=hour, minutes=minutes)
 
     time_error = check_time(shift["time"])
     if isinstance(time_error, str):
         flash(time_error, "error")
-        return redirect(prev)
+        return render_template("add_shift.html", shift=shift, date=date, hour=hour, minutes=minutes)
 
     player_level_error = check_player_level(shift["player_level"])
     if isinstance(player_level_error, str):
         flash(player_level_error, "error")
-        return redirect(prev)
+        return render_template("add_shift.html", shift=shift, date=date, hour=hour, minutes=minutes)
 
     total_players_error = check_total_players(shift["total_players"])
     if isinstance(total_players_error, str):
         flash(total_players_error, "error")
-        return redirect(prev)
-
-    shift["user_id"] = session["user_id"]
-    shift["player_count"] = 0
+        return render_template("add_shift.html", shift=shift, date=date, hour=hour, minutes=minutes)
 
     shifts.create_shift(shift)
     shift_id = shifts.get_last_shift_id(session["user_id"])
@@ -403,10 +420,10 @@ def login():
     if request.method == "GET":
         return render_template("login.html")
     prev = check_prev()
-    user = get_form_data("user_login")
+    user = get_login_data()
     if not shifts.user_exists(user["username"]):
         flash("VIRHE: käyttäjätunnus väärin", "error")
-        return redirect(prev)
+        return render_template("login.html", user=user)
 
     user_id = shifts.check_login(user["username"], user["password1"])
 
@@ -416,7 +433,7 @@ def login():
         return redirect("/")
     
     flash("VIRHE: väärä salasana", "error")
-    return redirect(prev)
+    return render_template("login.html", user=user)
 
 @app.route("/register")
 def register():
@@ -425,24 +442,24 @@ def register():
 @app.route("/create", methods=["POST"])
 def create():
     prev = check_prev()
-    user = get_form_data("user_create")
+    user = get_register_data()
     username_error = check_username(user["username"])
     if isinstance(username_error, str):
         flash(username_error, "error")
-        return redirect(prev)
+        return render_template("register.html", user=user)
 
     password_error = check_password(user["password1"])
     if isinstance(password_error, str):
         flash(password_error, "error")
-        return redirect(prev)
+        return render_template("register.html", user=user)
 
     if shifts.user_exists(user["username"]):
         flash("VIRHE: käyttäjätunnus varattu", "error")
-        return redirect(prev)
+        return render_template("register.html", user=user)
 
     if user["password1"] != user["password2"]:
         flash("VIRHE: väärä salasana", "error")
-        return redirect(prev)
+        return render_template("register.html", user=user)
 
     password_hash = generate_password_hash(user["password1"])
     shifts.create_user(user["username"], password_hash)
