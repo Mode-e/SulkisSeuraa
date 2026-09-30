@@ -158,6 +158,10 @@ def signup_page(shift_id):
     if not shift:
         return redirect("/")
 
+    if shift["time"] < time_now:
+        flash("Virhe: tietoja menneistä vuoroista ei ole saatavilla", "error")
+        return redirect("/")
+
     players = shifts.get_signed_up_players(shift_id)
 
     signed_up = False
@@ -188,7 +192,7 @@ def cancel_registration(shift_id):
 
     shifts.cancel(session["user_id"], shift_id):
     shifts.remove_player_count(shift_id)
-    
+
     flash("Ilmoittautuminen peruttu onnistuneesti.", "success")
     return redirect("/")
 
