@@ -175,11 +175,11 @@ body {
 }
 
 /* ==========================================
-   6. SHIFT ROWS
+   6. SLOT ROWS
    ========================================== */
 
-/* Upcoming shifts */
-.shift_row {
+/* Upcoming slots */
+.slot_row {
     border-bottom: 1px dashed #2b0a0a;
     padding: 12px 0;
     font-size: 14px;
@@ -190,11 +190,6 @@ body {
     color: #888282;
 }
 
-/* Past shifts */
-.shift_row.past {
-    opacity: 0.6;
-    background-color: #f9f9f9;
-}
 
 /* ==========================================
    7. BUTTONS AND CONTAINERS
@@ -231,6 +226,10 @@ body {
     color:#e0e0e0;
 }
 
+/* ==========================================
+   8. TIME SELECT OPTIONS
+   ========================================== */
+
 .time_select_group {
     flex: 1.5;
     max-width: 260px;
@@ -243,6 +242,10 @@ body {
     flex: 1;
     width: 100%;
 }
+
+/* ==========================================
+   9. FLASH MESSAGES
+   ========================================== */
 
 .flash-message {
   padding: 10px 20px;

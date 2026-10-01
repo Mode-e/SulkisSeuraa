@@ -5,14 +5,14 @@
 
 <div class="Cohesive_framework">
     <div class="Cohesive_form_line">
-        <div class="shift-texts">
-            <strong>Lisäsi</strong> {{ shift['username'] }}
+        <div class="slot-texts">
+            <strong>Lisäsi</strong> {{ slot['username'] }}
             <br>
-            <strong>Paikka:</strong> {{ shift['location'] }}
+            <strong>Paikka:</strong> {{ slot['location'] }}
             <br>
-            <strong>Aika:</strong> {{ shift['time'] }}
+            <strong>Aika:</strong> {{ slot['time'] }}
             <br>
-            <strong>Pelaajat:</strong> {{ shift['player_count'] }}/{{ shift['total_players'] }}
+            <strong>Pelaajat:</strong> {{ slot['player_count'] }}/{{ slot['total_players'] }}
             <br>
             <strong>Osallistujat:</strong>
             {% for player in players %}
@@ -22,21 +22,21 @@
     </div>
         
     <div class="button_container">
-        {% if session.get('user_id') == shift['user_id'] or signed_up %}
+        {% if session.get('user_id') == slot['user_id'] or signed_up %}
             <span style="color: #5cb85c; font-style: italic; font-weight: bold; padding: 6px 12px; display: inline-block;">
                 Olet ilmoittautunut vuorolle
             </span>
-            {% if session.get('user_id') == shift['user_id'] %}
-                <a href="/edit_shift/{{ shift['id'] }}" class="button">Muokkaa</a>
+            {% if session.get('user_id') == slot['user_id'] %}
+                <a href="/edit_slot/{{ slot['id'] }}" class="button">Muokkaa</a>
                 <a href="{{ prev }}" class="button">Takaisin</a>
             {% else %}
-                <form action="/cancel_registration/{{ shift['id'] }}" method="POST">
+                <form action="/cancel_signup/{{ slot['id'] }}" method="POST">
                     <a href="{{ prev }}" class="button" style="display: inline-block; min-width: 200px; padding: 12px 20px; text-align: center; box-sizing: border-box; text-decoration: none;">Takaisin</a>
                     <button type="submit" class="button" style="display: inline-block; min-width: 200px; padding: 12px 20px; text-align: center; box-sizing: border-box;">Peru ilmoittautuminen</button>
                 </form>        
             {% endif %}   
-        {% elif shift['player_count'] < shift['total_players'] %}
-            <form action="/signup_registration/{{ shift['id'] }}" method="POST">
+        {% elif slot['player_count'] < slot['total_players'] %}
+            <form action="/signup/{{ slot['id'] }}" method="POST">
                 <button type="submit" class="button" style="display: inline-block; min-width: 200px; padding: 12px 20px; text-align: center; box-sizing: border-box;">Vahvista ilmoittautuminen</button>
             </form>
         {% else %}

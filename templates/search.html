@@ -55,23 +55,23 @@
 <div class="Cohesive_framework">
     <h3 class="Cohesive_form_title">Tulevat vuorot ({{ results|length }})</h3>
     {% if results %}
-        {% for shift in results %}
-            <div class="shift_row">
-                <div class="shift-texts">
-                    <strong>Lisäsi</strong> <a href="/my_info/{{ shift['user_id'] }}" style="color: #ff8552; text-decoration: underline; font-weight: bold;">{{ shift['username'] }}</a> | 
-                    <strong>Paikka:</strong> {{ shift['location'] }}
+        {% for slot in results %}
+            <div class="slot_row">
+                <div class="slot-texts">
+                    <strong>Lisäsi</strong> <a href="/my_info/{{ slot['user_id'] }}" style="color: #ff8552; text-decoration: underline; font-weight: bold;">{{ slot['username'] }}</a> | 
+                    <strong>Paikka:</strong> {{ slot['location'] }}
                     <br>
-                    <strong>Aika:</strong> {{ shift['time'] }} | 
-                    <strong>Pelaajat:</strong> {{ shift['player_count'] }}/{{ shift['total_players'] }}
+                    <strong>Aika:</strong> {{ slot['time'] }} | 
+                    <strong>Pelaajat:</strong> {{ slot['player_count'] }}/{{ slot['total_players'] }}
                 </div>
-                {% if session and session.get('user_id') == shift['user_id'] %}
-                    <a href="/edit_shift/{{ shift['id'] }}" class="button">Muokkaa</a>
-                    <a href="/signup/{{ shift['id'] }}" class="button">Tiedot</a>
+                {% if session and session.get('user_id') == slot['user_id'] %}
+                    <a href="/edit_slot/{{ slot['id'] }}" class="button">Muokkaa</a>
+                    <a href="/signup/{{ slot['id'] }}" class="button">Tiedot</a>
                 {% else %}
-                    {% if shift['id'] in signed_up_shift_ids %}
-                        <a href="/signup/{{ shift['id'] }}" class="button">Tiedot</a>
-                    {% elif shift['player_count'] < shift['total_players'] %}
-                        <a href="/signup/{{ shift['id'] }}" class="button">Ilmoittaudu</a>
+                    {% if slot['id'] in signed_up_slot_ids %}
+                        <a href="/signup/{{ slot['id'] }}" class="button">Tiedot</a>
+                    {% elif slot['player_count'] < slot['total_players'] %}
+                        <a href="/signup/{{ slot['id'] }}" class="button">Ilmoittaudu</a>
                     {% else %}
                         <span style="color: #888888; font-weight: bold; margin-left: 10px; vertical-align: middle;">
                             Vuoro täynnä

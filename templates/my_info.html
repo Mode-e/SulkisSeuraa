@@ -9,8 +9,8 @@
 {% block content %}
 <h2 class="Cohesive_headline">Omat tiedot</h2>
 <div class="Cohesive_framework">
-    <div class="shift_row">
-        <div class="shift-texts">
+    <div class="slot_row">
+        <div class="slot-texts">
             <li><strong>Käyttäjätunnus:</strong> {{ info[0].username }}</li>
             <li><strong>Pelaajataso:</strong> {{ info[0].player_level if info[0].player_level else 'Ei määritelty' }}</li>
             <li><strong>Kuvaus:</strong></li>
@@ -30,19 +30,19 @@
     {% if upcoming|length == 0 %}
         <p class="Empty">Ei lisättyjä tulevia pelivuoroja.</p>
     {% else %}
-        {% for shift in upcoming %}
-            <div class="shift_row">
-                <div class="shift-texts">
-                    <strong>Lisäsi</strong> <a href="/my_info/{{ shift['user_id'] }}" style="color: #ff8552; text-decoration: underline; font-weight: bold;">{{ shift['username'] }}</a> | 
-                    <strong>Paikka:</strong> {{ shift['location'] }}
+        {% for slot in upcoming %}
+            <div class="slot_row">
+                <div class="slot-texts">
+                    <strong>Lisäsi</strong> <a href="/my_info/{{ slot['user_id'] }}" style="color: #ff8552; text-decoration: underline; font-weight: bold;">{{ slot['username'] }}</a> | 
+                    <strong>Paikka:</strong> {{ slot['location'] }}
                     <br>
-                    <strong>Aika:</strong> {{ shift['time'] }} | 
-                    <strong>Pelaajat:</strong> {{ shift['player_count'] }}/{{ shift['total_players'] }}
+                    <strong>Aika:</strong> {{ slot['time'] }} | 
+                    <strong>Pelaajat:</strong> {{ slot['player_count'] }}/{{ slot['total_players'] }}
                 </div>
-                {% if session.get('user_id') == shift['user_id'] %}
-                    <a href="/edit_shift/{{ shift['id'] }}" class="button">Muokkaa</a>
+                {% if session.get('user_id') == slot['user_id'] %}
+                    <a href="/edit_slot/{{ slot['id'] }}" class="button">Muokkaa</a>
                 {% endif %}
-                <a href="/signup/{{ shift['id'] }}" class="button">Tiedot</a>
+                <a href="/signup/{{ slot['id'] }}" class="button">Tiedot</a>
             </div>
         {% endfor %}
     {% endif %}

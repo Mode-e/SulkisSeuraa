@@ -3,17 +3,17 @@
 {% block content %}
 <h2 class="Cohesive_headline">Muokkaa vuoroa</h2>
 <div class="Cohesive_framework">
-    <form action="/edit_shift/{{ shift['id'] }}" method="post">
+    <form action="/edit_slot/{{ slot['id'] }}" method="post">
         <div class="Cohesive_form_line">
             <label for="location">Paikka:</label>
             <select id="location" name="location" required>
                 <option value="" disabled selected>Valitse paikka...</option>
-                <option value="Kluuvi Unisport" {% if shift["location"] == "Kluuvi Unisport" %}selected{% endif %}>Kluuvi Unisport</option>
-                <option value="Kumpula Unisport" {% if shift["location"] == "Kumpula Unisport" %}selected{% endif %}>Kumpula Unisport</option>
-                <option value="Meilahti Unisport" {% if shift["location"] == "Meilahti Unisport" %}selected{% endif %}>Meilahti Unisport</option>
-                <option value="Otaniemi Unisport" {% if shift["location"] == "Otaniemi Unisport" %}selected{% endif %}>Otaniemi Unisport</option>
-                <option value="Töölö Unisport" {% if shift["location"] == "Töölö Unisport" %}selected{% endif %}>Töölö Unisport</option>
-                <option value="Viikki Unisport" {% if shift["location"] == "Viikki Unisport" %}selected{% endif %}>Viikki Unisport</option>
+                <option value="Kluuvi Unisport" {% if slot["location"] == "Kluuvi Unisport" %}selected{% endif %}>Kluuvi Unisport</option>
+                <option value="Kumpula Unisport" {% if slot["location"] == "Kumpula Unisport" %}selected{% endif %}>Kumpula Unisport</option>
+                <option value="Meilahti Unisport" {% if slot["location"] == "Meilahti Unisport" %}selected{% endif %}>Meilahti Unisport</option>
+                <option value="Otaniemi Unisport" {% if slot["location"] == "Otaniemi Unisport" %}selected{% endif %}>Otaniemi Unisport</option>
+                <option value="Töölö Unisport" {% if slot["location"] == "Töölö Unisport" %}selected{% endif %}>Töölö Unisport</option>
+                <option value="Viikki Unisport" {% if slot["location"] == "Viikki Unisport" %}selected{% endif %}>Viikki Unisport</option>
             </select>
         </div>
 
@@ -41,9 +41,9 @@
             <label for="player_level">Taso:</label>
             <select id="player_level" name="player_level" required>
                 <option value="" disabled selected>Valitse taso...</option>
-                <option value="Aloittelija" {% if shift["player_level"] == "Aloittelija" %}selected{% endif %}>Aloittelija</option>
-                <option value="Harrastaja" {% if shift["player_level"] == "Harrastaja" %}selected{% endif %}>Harrastaja</option>
-                <option value="Kilpataso" {% if shift["player_level"] == "Kilpataso" %}selected{% endif %}>Kilpataso</option>
+                <option value="Aloittelija" {% if slot["player_level"] == "Aloittelija" %}selected{% endif %}>Aloittelija</option>
+                <option value="Harrastaja" {% if slot["player_level"] == "Harrastaja" %}selected{% endif %}>Harrastaja</option>
+                <option value="Kilpataso" {% if slot["player_level"] == "Kilpataso" %}selected{% endif %}>Kilpataso</option>
             </select>
         </div>
 
@@ -51,8 +51,8 @@
             <label for="total_players">Määrä:</label>
             <select id="total_players" name="total_players" required>
                 <option value="" disabled selected>Valitse pelaajamäärä...</option>
-                <option value="2"{% if shift["total_players"] | int == 2 %}selected{% endif %}>2 pelaajaa</option>
-                <option value="4"{% if shift["total_players"] | int == 4 %}selected{% endif %}>4 pelaajaa</option>
+                <option value="2"{% if slot["total_players"] | int == 2 %}selected{% endif %}>2 pelaajaa</option>
+                <option value="4"{% if slot["total_players"] | int == 4 %}selected{% endif %}>4 pelaajaa</option>
             </select>
         </div>
 

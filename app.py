@@ -4,7 +4,7 @@ from flask import Flask, redirect, render_template, request, session, flash
 from werkzeug.security import check_password_hash, generate_password_hash
 from config import secret_key
 import db
-import shifts, users
+import time_slots, users
 import re
 
 app = Flask(__name__)
@@ -34,7 +34,7 @@ def get_search_data():
     }
 
 def get_create_data():
-    shift = {
+    slot = {
         "location": request.form["location"],
         "time": f"{request.form["day"]} {request.form["hours"]}:{request.form["minutes"]}",
         "player_level": request.form["player_level"],
@@ -42,16 +42,16 @@ def get_create_data():
         "user_id": session["user_id"],
         "player_count": 0
     }
-    return shift
+    return slot
 
 def get_edit_data():
-    shift = {
+    slot = {
         "location": request.form["location"],
         "time": f"{request.form["day"]} {request.form["hours"]}:{request.form["minutes"]}",
         "player_level": request.form["player_level"],
         "total_players": request.form["total_players"],
     }
-    return shift
+    return slot
 
 def get_login_data():
     return {
@@ -112,8 +112,8 @@ def check_description(description):
         return "Virhe: Kuvaus saa olla enintään 500 merkkiä pitkä"
     return None
 
-def check_availability(shift):
-    if shift["player_count"] >= shift["total_players"]:
+def check_availability(slot):
+    if slot["player_count"] >= slot["total_players"]:
         return "Virhe: vuoro on täynnä"
     return None
 
@@ -127,19 +127,19 @@ def check_username(username):
         return "Virhe: käyttäjätunnuksen pituus pitää olla väliltä 3-20"
     if not re.match("^[a-zA-Z0-9_åäöÅÄÖ]+$", username):
         return "Virhe: käyttäjätunnuksessa saa olla vain kirjaimia, numeroita ja alaviivoja"
-    return True
+    return None
 
 def check_password(password):
     if len(password) < 8 or len(password) > 20:
         return "Virhe: salasanan pituus pitää olla väliltä 8-20"
-    return True
+    return None
 
-def check_shift(shift_id):
-    shift = shifts.get_shift(shift_id)
-    if not shift:
+def check_slot(slot_id):
+    slot = time_slots.get_slot(slot_id)
+    if not slot:
         flash("VIRHE: Hakemaasi pelivuoroa ei ole olemassa.")
         return None 
-    return shift
+    return slot
 
 def check_search(location, day, player_level, total_players, username):
     if location == "Valitse paikka...":
@@ -157,80 +157,80 @@ def check_search(location, day, player_level, total_players, username):
 def check_prev():
     return request.referrer
 
-@app.route("/signup/<int:shift_id>", methods=["GET"])
-def signup_page(shift_id):
+@app.route("/signup/<int:slot_id>", methods=["GET"])
+def signup_page(slot_id):
     if access_denied := check_login():
         return access_denied
 
     prev = check_prev()
 
-    shift = check_shift(shift_id)
-    if not shift:
+    slot = check_slot(slot_id)
+    if not slot:
         return redirect(prev)
 
-    if shift["time"] < time_now():
+    if slot["time"] < time_now():
         flash("Virhe: tietoja menneistä vuoroista ei ole saatavilla", "error")
         return redirect(prev)
 
-    players = shifts.get_players(shift_id)
+    players = time_slots.get_players(slot_id)
 
     signed_up = False
     for player in players:
         if player["username"] == session["username"]:
             signed_up = True
 
-    return render_template("signup.html", shift=shift, players=players, signed_up=signed_up, prev=prev)
+    return render_template("signup.html", slot=slot, players=players, signed_up=signed_up, prev=prev)
 
-@app.route("/cancel_registration/<int:shift_id>", methods=["POST"])
-def cancel_registration(shift_id):
+@app.route("/cancel_signup/<int:slot_id>", methods=["POST"])
+def cancel_signup(slot_id):
     if access_denied := check_login():
         return access_denied
     prev = check_prev()
-    shift = check_shift(shift_id)
-    if not shift:
+    slot = check_slot(slot_id)
+    if not slot:
         return redirect(prev)
 
-    if shift["time"] < time_now():
+    if slot["time"] < time_now():
         flash("Virhe: et voi perua ilmoitusta menneeseen vuoroon", "error")
         return redirect(prev)
 
-    not_signed_up = check_if_not_players(shifts.get_players(shift_id), session["username"])
+    not_signed_up = check_if_not_players(time_slots.get_players(slot_id), session["username"])
     if isinstance(not_signed_up, str):
         flash(not_signed_up, "error")
         return redirect(prev)
 
-    shifts.cancel_signup(session["user_id"], shift_id)
-    shifts.decrease_players(shift_id)
+    time_slots.cancel_signup(session["user_id"], slot_id)
+    time_slots.decrease_players(slot_id)
 
     flash("Ilmoittautuminen peruttu onnistuneesti.", "success")
     return redirect("/")
 
-@app.route("/signup_registration/<int:shift_id>", methods=["POST"])
-def signup_registration(shift_id):
+@app.route("/signup/<int:slot_id>", methods=["POST"])
+def signup(slot_id):
     if access_denied := check_login():
         return access_denied
 
     prev = check_prev()
-    shift = check_shift(shift_id)
-    if not shift:
+    slot = check_slot(slot_id)
+    if not slot:
         return redirect(prev)
 
-    if shift["time"] < time_now():
+    if slot["time"] < time_now():
         flash("Virhe: et voi ilmoittautua menneeseen vuoroon", "error")
         return redirect(prev)
 
-    available = check_availability(shift)
+    available = check_availability(slot)
     if isinstance(available, str):
         flash(available, "error")
         return redirect(prev)
 
-    signed_up = check_players(shifts.get_players(shift_id), session["username"])
+    signed_up = check_players(time_slots.get_players(slot_id), session["username"])
     if isinstance(signed_up, str):
         flash(signed_up, "error")
         return redirect(prev)
 
-    shifts.signup(session["user_id"], shift_id)
-    shifts.increase_player(shift_id)
+    time_slots.signup(session["user_id"], slot_id)
+    time_slots.increase_player(slot_id)
 
     flash("Ilmoittautuminen onnistui.", "success")
     return redirect("/")
@@ -246,62 +246,62 @@ def search():
         search_data["player_level"], search_data["total_players"],
         search_data["username"])
 
-    results = shifts.find_shifts(time_now(), location, day, player_level, total_players, username)
+    results = time_slots.find_slots(time_now(), location, day, player_level, total_players, username)
 
     return render_template("search.html", results=results,
     location=location, day=day, player_level=player_level,
     total_players=total_players, username=username)
 
-@app.route("/edit_shift/<int:shift_id>", methods=["GET", "POST"])
-def edit_shift(shift_id):
+@app.route("/edit_slot/<int:slot_id>", methods=["GET", "POST"])
+def edit_slot(slot_id):
     if access_denied := check_login():
         return access_denied
     prev = check_prev()
-    shift = shifts.get_shift(shift_id)
+    slot = time_slots.get_slot(slot_id)
     day_now = time_now().split(" ")
-    if not shift:
+    if not slot:
         flash("VIRHE: Hakemaasi pelivuoroa ei ole olemassa.", "error")
         return redirect(prev)
 
-    if session["user_id"] != shift["user_id"]:
+    if session["user_id"] != slot["user_id"]:
         flash("VIRHE: Sinulla ei ole oikeutta muokata tätä vuoroa!", "error")
         return redirect(prev)
 
     if request.method == "POST":
         if request.form.get("action") == "delete":
-            shifts.delete_shift(shift_id)
+            time_slots.delete_slot(slot_id)
             flash("Pelivuoro poistettu.")
-            return redirect("/my_shifts")
+            return redirect("/my_slots")
         data = get_edit_data()
         d, h, m = split_time(data["time"])
 
         time_error = check_time(data["time"])
         if isinstance(time_error, str):
             flash(time_error, "error")
-            return render_template("edit_shift.html", shift=data, date=d, hour=h, minutes=m, prev=prev, time=day_now[0])
+            return render_template("edit_slot.html", slot=data, date=d, hour=h, minutes=m, prev=prev, time=day_now[0])
 
         location_error = check_location(data["location"])
         if isinstance(location_error, str):
             flash(location_error, "error")
-            return render_template("edit_shift.html", shift=data, date=d, hour=h, minutes=m, prev=prev, time=day_now[0])
+            return render_template("edit_slot.html", slot=data, date=d, hour=h, minutes=m, prev=prev, time=day_now[0])
 
         player_level_error = check_player_level(data["player_level"])
         if isinstance(player_level_error, str):
             flash(player_level_error, "error")
-            return render_template("edit_shift.html", shift=data, date=d, hour=h, minutes=m, prev=prev, time=day_now[0])
+            return render_template("edit_slot.html", slot=data, date=d, hour=h, minutes=m, prev=prev, time=day_now[0])
 
         total_players_error = check_total_players(data["total_players"])
         if isinstance(total_players_error, str):
             flash(total_players_error, "error")
-            return render_template("edit_shift.html", shift=data, date=d, hour=h, minutes=m, prev=prev, time=day_now[0])
+            return render_template("edit_slot.html", slot=data, date=d, hour=h, minutes=m, prev=prev, time=day_now[0])
 
-        shifts.update_shift(shift_id, data["location"], data["time"],
+        time_slots.update_slot(slot_id, data["location"], data["time"],
                 data["player_level"], data["total_players"])
         flash("Pelivuoro päivitetty onnistuneesti.", "success")
-        return redirect("/my_shifts")
+        return redirect("/my_slots")
 
-    date, hour, minutes = split_time(shift["time"])
-    return render_template("edit_shift.html", shift=shift, date=date, hour=hour, minutes=minutes, prev=prev, time=day_now[0])
+    date, hour, minutes = split_time(slot["time"])
+    return render_template("edit_slot.html", slot=slot, date=date, hour=hour, minutes=minutes, prev=prev, time=day_now[0])
 
 @app.route("/my_info/<int:user_id>")
 def my_info(user_id):
@@ -315,7 +315,7 @@ def my_info(user_id):
         flash("Virhe: käyttäjää ei ole olemassa", "error")
         return redirect(prev)
 
-    upcoming = shifts.created_shifts(user_id, time_now())
+    upcoming = time_slots.created_slots(user_id, time_now())
 
     return render_template("my_info.html", upcoming=upcoming, info=info, my_page=(user_id == session["user_id"]))
 
@@ -342,71 +342,71 @@ def edit_info(user_id):
             flash(description_error, "error")
             return render_template("edit_info.html", info=data, prev=prev)
 
-        users_user_update(data, user_id)
+        users.user_update(data, user_id)
         return redirect(f"/my_info/{user_id}")
 
     info = users.user_info(user_id)
     return render_template("edit_info.html", info=info, prev=prev)
 
-@app.route("/my_shifts")
-def my_shifts():
+@app.route("/my_slots")
+def my_slots():
     if access_denied := check_login():
         return access_denied
 
-    upcoming = shifts.upcoming_shifts(time_now(), session["user_id"])
-    past = shifts.past_shifts(session["user_id"], time_now())
+    upcoming = time_slots.upcoming_slots(time_now(), session["user_id"])
+    past = time_slots.past_slots(session["user_id"], time_now())
 
-    return render_template("my_shifts.html", upcoming=upcoming, past=past)
+    return render_template("my_slots.html", upcoming=upcoming, past=past)
 
 @app.route("/")
 def index():
     if "user_id" in session:
-        my_shifts = shifts.my_shifts(session["user_id"], time_now())
-        open_shifts = shifts.available_shifts(session["user_id"], time_now())
+        my_slots = time_slots.my_slots(session["user_id"], time_now())
+        open_slots = time_slots.available_slots(session["user_id"], time_now())
     else:
-        my_shifts = []
-        open_shifts = shifts.upcoming_shifts(time_now())
+        my_time_slots = []
+        open_slots = time_slots.upcoming_slots(time_now())
 
-    return render_template("index.html", my_shifts=my_shifts, open_shifts=open_shifts)
+    return render_template("index.html", my_slots=my_slots, open_slots=open_slots)
 
-@app.route("/add_shift", methods=["GET"])
-def add_shift():
+@app.route("/add_slot", methods=["GET"])
+def add_slot():
     if access_denied := check_login():
         return access_denied
-    return render_template("add_shift.html", date=time_now())
+    return render_template("add_slot.html", date=time_now())
 
-@app.route("/create_shift", methods=["POST"])
-def create_shift():
+@app.route("/create_slot", methods=["POST"])
+def create_slot():
     if access_denied := check_login():
         return access_denied
     prev = check_prev()
-    shift = get_create_data()
-    date, hour, minutes = split_time(shift["time"])
+    slot = get_create_data()
+    date, hour, minutes = split_time(slot["time"])
 
-    location_error = check_location(shift["location"])
+    location_error = check_location(slot["location"])
     if isinstance(location_error, str):
         flash(location_error, "error")
-        return render_template("add_shift.html", shift=shift, date=date, hour=hour, minutes=minutes)
+        return render_template("add_slot.html", slot=slot, date=date, hour=hour, minutes=minutes)
 
-    time_error = check_time(shift["time"])
+    time_error = check_time(slot["time"])
     if isinstance(time_error, str):
         flash(time_error, "error")
-        return render_template("add_shift.html", shift=shift, date=date, hour=hour, minutes=minutes)
+        return render_template("add_slot.html", slot=slot, date=date, hour=hour, minutes=minutes)
 
-    player_level_error = check_player_level(shift["player_level"])
+    player_level_error = check_player_level(slot["player_level"])
     if isinstance(player_level_error, str):
         flash(player_level_error, "error")
-        return render_template("add_shift.html", shift=shift, date=date, hour=hour, minutes=minutes)
+        return render_template("add_slot.html", slot=slot, date=date, hour=hour, minutes=minutes)
 
-    total_players_error = check_total_players(shift["total_players"])
+    total_players_error = check_total_players(slot["total_players"])
     if isinstance(total_players_error, str):
         flash(total_players_error, "error")
-        return render_template("add_shift.html", shift=shift, date=date, hour=hour, minutes=minutes)
+        return render_template("add_slot.html", slot=slot, date=date, hour=hour, minutes=minutes)
 
-    shifts.create_shift(shift)
-    shift_id = shifts.last_shift(session["user_id"])
-    shifts.signup(session["user_id"], shift_id)
-    shifts.increase_player(shift_id)
+    time_slots.create_slot(slot)
+    slot_id = time_slots.last_slot(session["user_id"])
+    time_slots.signup(session["user_id"], slot_id)
+    time_slots.increase_player(slot_id)
     return redirect("/")
 
 @app.route("/logout")
@@ -425,7 +425,7 @@ def login():
         flash("VIRHE: käyttäjätunnus väärin", "error")
         return render_template("login.html", user=user)
 
-    user_id = users_user_login(user["username"], user["password1"])
+    user_id = users.user_login(user["username"], user["password1"])
 
     if user_id:
         session["username"] = user["username"]

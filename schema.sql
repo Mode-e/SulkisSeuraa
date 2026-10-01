@@ -7,7 +7,7 @@ CREATE TABLE users (
     profile_ready INTEGER DEFAULT 0
 );
 
-CREATE TABLE shifts (
+CREATE TABLE time_slots (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     user_id INTEGER NOT NULL,
     location TEXT NOT NULL,
@@ -21,7 +21,7 @@ CREATE TABLE shifts (
 CREATE TABLE signups (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     user_id INTEGER NOT NULL,
-    shift_id INTEGER NOT NULL,
+    slot_id INTEGER NOT NULL,
     FOREIGN KEY (user_id) REFERENCES users (id),
-    FOREIGN KEY (shift_id) REFERENCES shifts (id)
+    FOREIGN KEY (slot_id) REFERENCES slots (id)
 );
