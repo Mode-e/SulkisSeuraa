@@ -5,7 +5,7 @@
 {% if not session.username %}
 <div class="Cohesive_framework">
     <h3 class="Cohesive_form_title">Tulevat pelivuorot ({{ open_slots|length }})</h3>
-    {% if open_slots_count == 0 %}
+    {% if open_slots|length == 0 %}
         <p class="Empty">Ei avoimia pelivuoroja.</p>
     {% else %}
         {% for slot in open_slots %}
@@ -24,7 +24,7 @@
 {% else %}
 <div class="Cohesive_framework">
     <h3 class="Cohesive_form_title">Omat pelivuorot ({{ my_slots|length }})</h3>
-    {% if my_slots_count == 0 %}
+    {% if my_slots|length == 0 %}
         <p class="Empty">Et ole ilmoittautunut yhteenkään vuoroon.</p>
     {% else %}
         {% for slot in my_slots %}
@@ -46,7 +46,7 @@
 </div>
 <div class="Cohesive_framework">
     <h3 class="Cohesive_form_title">Avoimet pelivuorot ({{ open_slots|length }})</h3>
-    {% if open_slots_count == 0 %}
+    {% if open_slots|length == 0 %}
         <p class="Empty">Ei avoimia pelivuoroja.</p>
     {% else %}
         {% for slot in open_slots %}
