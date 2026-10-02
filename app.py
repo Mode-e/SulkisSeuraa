@@ -1,11 +1,10 @@
 import datetime
-import sqlite3
-from flask import Flask, redirect, render_template, request, session, flash
-from werkzeug.security import check_password_hash, generate_password_hash
-from config import secret_key
-import db
-import time_slots, users
 import re
+from flask import Flask, redirect, render_template, request, session, flash
+from werkzeug.security import generate_password_hash
+from config import secret_key
+import time_slots
+import users
 
 app = Flask(__name__)
 app.secret_key = secret_key
@@ -40,11 +39,12 @@ def get_create_data():
     location_id = time_slots.get_location_id(location_name)
     level_id = time_slots.get_level_id(level_name)
     max_players_id = time_slots.get_max_id(max_players_amount)
-            
+
     slot = {
         "location": location_name,
         "location_id": location_id,
-        "slot_time": f"{request.form.get('date')} {request.form.get('hours')}:{request.form.get('minutes')}",
+        "slot_time": f"""{request.form.get('date')} {request.form.get('hours')}:
+            {request.form.get('minutes')}""",
         "player_level": level_name,
         "level_id": level_id,
         "total_players": max_players_amount,
@@ -60,11 +60,12 @@ def get_edit_data():
     location_id = time_slots.get_location_id(location_name)
     level_id = time_slots.get_level_id(level_name)
     max_players_id = time_slots.get_max_id(max_players_amount)
-    
+
     slot = {
         "location": location_name,
         "location_id": location_id,
-        "slot_time": f"{request.form.get('date')} {request.form.get('hours')}:{request.form.get('minutes')}",
+        "slot_time": f"""{request.form.get('date')} {request.form.get('hours')}:
+            {request.form.get('minutes')}""",
         "player_level": level_name,
         "level_id": level_id,
         "total_players": max_players_amount,
@@ -160,12 +161,12 @@ def check_slot(slot_id):
     slot = time_slots.get_slot(slot_id)
     if not slot:
         flash("VIRHE: Hakemaasi pelivuoroa ei ole olemassa.")
-        return None 
+        return None
     return slot
 
 def create_error(error_msg, slot, date, hour, minutes):
     flash(error_msg, "error")
-    return render_template("add_slot.html", slot=slot, date=date, 
+    return render_template("add_slot.html", slot=slot, date=date,
         hour=hour, minutes=minutes, locations=time_slots.get_locations(),
         levels=time_slots.get_levels(), total=time_slots.get_total()
     )
@@ -184,7 +185,7 @@ def check_search(location, day, player_level, total_players, username):
     player_level = player_level if player_level else None
     total_players = total_players if total_players else None
     username = username if username else None
-    
+
     return location, day, player_level, total_players, username
 
 def check_prev():
@@ -212,7 +213,8 @@ def signup_page(slot_id):
         if player["username"] == session["username"]:
             signed_up = True
 
-    return render_template("signup.html", slot=slot, players=players, signed_up=signed_up, prev=prev)
+    return render_template("signup.html", slot=slot, players=players,
+        signed_up=signed_up, prev=prev)
 
 @app.route("/cancel_signup/<int:slot_id>", methods=["POST"])
 def cancel_signup(slot_id):
@@ -233,7 +235,6 @@ def cancel_signup(slot_id):
         return redirect(prev)
 
     time_slots.cancel_signup(session["user_id"], slot_id)
-    time_slots.decrease_players(slot_id)
 
     flash("Ilmoittautuminen peruttu onnistuneesti.", "success")
     return redirect("/")
@@ -263,7 +264,6 @@ def signup(slot_id):
         return redirect(prev)
 
     time_slots.signup(session["user_id"], slot_id)
-    time_slots.increase_player(slot_id)
 
     flash("Ilmoittautuminen onnistui.", "success")
     return redirect("/")
@@ -279,11 +279,12 @@ def search():
         search_data["player_level"], search_data["total_players"],
         search_data["username"])
 
-    results = time_slots.find_slots(time_now(), location, day, player_level, total_players, username)
+    results = time_slots.find_slots(time_now(), location, day,
+        player_level, total_players, username)
 
-    return render_template("search.html", results=results,location=location,
-        day=day, player_level=player_level,total_players=total_players, 
-        username=username,locations=time_slots.get_locations(),
+    return render_template("search.html", results=results, location=location,
+        day=day, player_level=player_level, total_players=total_players,
+        username=username, locations=time_slots.get_locations(),
         levels=time_slots.get_levels(), total=time_slots.get_total()
     )
 
@@ -323,10 +324,11 @@ def edit_slot(slot_id):
         if isinstance(total_players_error := check_total_players(data["total_players"]), str):
             return edit_error(total_players_error, data, d, h, m)
 
-        time_slots.update_slot(slot_id, data["location_id"], data["slot_time"], data["level_id"], data["max_players_id"])
+        time_slots.update_slot(slot_id, data["location_id"], data["slot_time"],
+            data["level_id"], data["max_players_id"])
         flash("Pelivuoro päivitetty onnistuneesti.", "success")
         return redirect("/my_slots")
-    
+
     date, hour, minutes = split_time(slot["time"])
 
     return render_template("edit_slot.html", slot=slot,
@@ -349,7 +351,8 @@ def my_info(user_id):
 
     upcoming = time_slots.created_slots(user_id, time_now())
 
-    return render_template("my_info.html", upcoming=upcoming, info=info, my_page=(user_id == session["user_id"]))
+    return render_template("my_info.html", upcoming=upcoming,
+        info=info, my_page=user_id == session["user_id"])
 
 @app.route("/edit_info/<int:user_id>", methods=["GET", "POST"])
 def edit_info(user_id):
@@ -393,13 +396,13 @@ def my_slots():
 @app.route("/")
 def index():
     if "user_id" in session:
-        my_slots = time_slots.my_slots(session["user_id"], time_now())
+        my_open_slots = time_slots.my_slots(session["user_id"], time_now())
         open_slots = time_slots.available_slots(session["user_id"], time_now())
     else:
-        my_slots = []
+        my_open_slots = []
         open_slots = time_slots.upcoming_slots(time_now())
 
-    return render_template("index.html", my_slots=my_slots, open_slots=open_slots)
+    return render_template("index.html", my_open_slots=my_open_slots, open_slots=open_slots)
 
 @app.route("/add_slot", methods=["GET"])
 def add_slot():
@@ -408,25 +411,25 @@ def add_slot():
     locations = time_slots.get_locations()
     levels = time_slots.get_levels()
     total = time_slots.get_total()
-    return render_template("add_slot.html", date=time_now(), locations=locations, levels=levels, total=total)
+    return render_template("add_slot.html", date=time_now(),
+        locations=locations, levels=levels, total=total)
 
 @app.route("/create_slot", methods=["POST"])
 def create_slot():
     if access_denied := check_login():
         return access_denied
-    prev = check_prev()
     slot = get_create_data()
     date, hour, minutes = split_time(slot["slot_time"])
 
     if isinstance(location_error := check_location(slot["location"]), str):
         return create_error(location_error, slot, date, hour, minutes)
-        
+
     if isinstance(time_error := check_time(slot["slot_time"]), str):
         return create_error(time_error, slot, date, hour, minutes)
-        
+
     if isinstance(player_level_error := check_player_level(slot["player_level"]), str):
         return create_error(player_level_error, slot, date, hour, minutes)
-        
+
     if isinstance(total_players_error := check_total_players(slot["total_players"]), str):
         return create_error(total_players_error, slot, date, hour, minutes)
 
@@ -445,7 +448,6 @@ def logout():
 def login():
     if request.method == "GET":
         return render_template("login.html")
-    prev = check_prev()
     user = get_login_data()
     if not users.user_exists(user["username"]):
         flash("VIRHE: käyttäjätunnus väärin", "error")
@@ -457,7 +459,7 @@ def login():
         session["username"] = user["username"]
         session["user_id"] = user_id
         return redirect("/")
-    
+
     flash("VIRHE: väärä salasana", "error")
     return render_template("login.html", user=user)
 
@@ -467,7 +469,6 @@ def register():
 
 @app.route("/create", methods=["POST"])
 def create():
-    prev = check_prev()
     user = get_register_data()
     username_error = check_username(user["username"])
     if isinstance(username_error, str):

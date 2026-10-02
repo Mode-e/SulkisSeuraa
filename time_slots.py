@@ -15,7 +15,7 @@ def upcoming_slots(time_now, user_id=None):
     params = []
 
     if user_id is not None:
-        sql += """ 
+        sql += """
             JOIN signups S_filter ON T.id = S_filter.slot_id 
             WHERE S_filter.user_id = ? AND T.slot_time >= ? 
         """
@@ -64,7 +64,7 @@ def get_slot(slot_id):
         GROUP BY T.id
     """
     result = db.query(sql, [slot_id])
-    
+
     if not result:
         return None
     return result
@@ -87,7 +87,8 @@ def update_slot(slot_id, location_id, slot_time, level_id, max_players_id):
     """
     db.execute(sql, [location_id, slot_time, level_id, max_players_id, slot_id])
 
-def find_slots(time_now, location_id=None, day=None, level_id=None, max_players_id=None, username=None):
+def find_slots(time_now, location_id=None, day=None, level_id=None,
+                max_players_id=None, username=None):
     sql = """
         SELECT T.id, T.user_id, U.username, L.name AS location,
                T.slot_time AS time, P.level_name AS player_level,

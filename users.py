@@ -1,4 +1,4 @@
-from werkzeug.security import check_password_hash, generate_password_hash
+from werkzeug.security import check_password_hash
 import db
 
 def user_create(username, password_hash):
@@ -16,8 +16,7 @@ def user_login(username, password):
 
     if check_password_hash(password_hash, password):
         return user_id
-    else:
-        return None
+    return None
 
 def user_info(user_id):
     sql = """
