@@ -26,30 +26,49 @@ def get_info_data():
 
 def get_search_data():
     return {
-        "location": request.args.get("location", "").strip(),
-        "day": request.args.get("day", "").strip(),
-        "player_level": request.args.get("player_level", "").strip(),
-        "total_players": request.args.get("total_players", "").strip(),
-        "username": request.args.get("username", "").strip()
+        "location": request.args.get("location_id", ""),
+        "day": request.args.get("date", ""),
+        "player_level": request.args.get("level_id", ""),
+        "total_players": request.args.get("max_players_id", ""),
+        "username": request.args.get("username", "")
     }
 
 def get_create_data():
+    location_name = request.form.get("location_id")
+    level_name = request.form.get("level_id")
+    max_players_amount = request.form.get("max_players_id")
+    location_id = time_slots.get_location_id(location_name)
+    level_id = time_slots.get_level_id(level_name)
+    max_players_id = time_slots.get_max_id(max_players_amount)
+            
     slot = {
-        "location": request.form["location"],
-        "time": f"{request.form["day"]} {request.form["hours"]}:{request.form["minutes"]}",
-        "player_level": request.form["player_level"],
-        "total_players": request.form["total_players"],
-        "user_id": session["user_id"],
-        "player_count": 0
+        "location": location_name,
+        "location_id": location_id,
+        "slot_time": f"{request.form.get('date')} {request.form.get('hours')}:{request.form.get('minutes')}",
+        "player_level": level_name,
+        "level_id": level_id,
+        "total_players": max_players_amount,
+        "max_players_id": max_players_id,
+        "user_id": session.get("user_id")
     }
     return slot
 
 def get_edit_data():
+    location_name = request.form.get("location_id")
+    level_name = request.form.get("level_id")
+    max_players_amount = request.form.get("max_players_id")
+    location_id = time_slots.get_location_id(location_name)
+    level_id = time_slots.get_level_id(level_name)
+    max_players_id = time_slots.get_max_id(max_players_amount)
+    
     slot = {
-        "location": request.form["location"],
-        "time": f"{request.form["day"]} {request.form["hours"]}:{request.form["minutes"]}",
-        "player_level": request.form["player_level"],
-        "total_players": request.form["total_players"],
+        "location": location_name,
+        "location_id": location_id,
+        "slot_time": f"{request.form.get('date')} {request.form.get('hours')}:{request.form.get('minutes')}",
+        "player_level": level_name,
+        "level_id": level_id,
+        "total_players": max_players_amount,
+        "max_players_id": max_players_id
     }
     return slot
 
@@ -74,7 +93,7 @@ def check_location(location):
     return None
 
 def check_time(time):
-    proposed_day = request.form["day"]
+    proposed_day = request.form["date"]
     proposed_hours = request.form["hours"]
     proposed_minutes = request.form["minutes"]
     proposed_time = f"{proposed_day} {proposed_hours}:{proposed_minutes}"
@@ -84,16 +103,19 @@ def check_time(time):
         return "Virhe: Et voi valita aikaa menneisyydestä"
     return None
 
-def check_player_level(level):
-    levels = ["Aloittelija", "Harrastaja", "Kilpatasa"]
-    if level not in levels:
+def check_player_level(level_name):
+    valid_levels = time_slots.get_levels()
+    valid_names = [lvl["level_name"] for lvl in valid_levels]
+    if level_name not in valid_names:
         return "Virhe: väärä pelaajan taso valittu"
-    return None
+    return True
 
-def check_total_players(count):
-    if count != "2" and count != "4":
+def check_total_players(amount):
+    valid_totals = time_slots.get_total()
+    valid_amounts = [str(t["amount"]) for t in valid_totals]
+    if str(amount) not in valid_amounts:
         return "Virhe: valitse määräksi kaksinpeli (2) tai nelinpeliksi (4)"
-    return None
+    return True
 
 def check_players(players, user):
     for player in players:
@@ -141,17 +163,28 @@ def check_slot(slot_id):
         return None 
     return slot
 
+def create_error(error_msg, slot, date, hour, minutes):
+    flash(error_msg, "error")
+    return render_template("add_slot.html", slot=slot, date=date, 
+        hour=hour, minutes=minutes, locations=time_slots.get_locations(),
+        levels=time_slots.get_levels(), total=time_slots.get_total()
+    )
+
+def edit_error(error_msg, slot_data, date, hour, minutes):
+    flash(error_msg, "error")
+    return render_template("edit_slot.html", slot=slot_data,
+        slot_data=slot_data, date=date, hour=hour,
+        minutes=minutes, locations=time_slots.get_locations(),
+        levels=time_slots.get_levels(), total=time_slots.get_total()
+    )
+
 def check_search(location, day, player_level, total_players, username):
-    if location == "Valitse paikka...":
-        location = None
-    if player_level == "Valitse taso...":
-        player_level = None
-    if not day:
-        day = None
-    if total_players == "Valitse pelaajamäärä...":
-        total_players = None
-    if not username:
-        username = None
+    location = location if location else None
+    day = day if day else None
+    player_level = player_level if player_level else None
+    total_players = total_players if total_players else None
+    username = username if username else None
+    
     return location, day, player_level, total_players, username
 
 def check_prev():
@@ -248,16 +281,19 @@ def search():
 
     results = time_slots.find_slots(time_now(), location, day, player_level, total_players, username)
 
-    return render_template("search.html", results=results,
-    location=location, day=day, player_level=player_level,
-    total_players=total_players, username=username)
+    return render_template("search.html", results=results,location=location,
+        day=day, player_level=player_level,total_players=total_players, 
+        username=username,locations=time_slots.get_locations(),
+        levels=time_slots.get_levels(), total=time_slots.get_total()
+    )
 
 @app.route("/edit_slot/<int:slot_id>", methods=["GET", "POST"])
 def edit_slot(slot_id):
     if access_denied := check_login():
         return access_denied
     prev = check_prev()
-    slot = time_slots.get_slot(slot_id)
+    slot_res = time_slots.get_slot(slot_id)
+    slot = slot_res[0]
     day_now = time_now().split(" ")
     if not slot:
         flash("VIRHE: Hakemaasi pelivuoroa ei ole olemassa.", "error")
@@ -273,35 +309,31 @@ def edit_slot(slot_id):
             flash("Pelivuoro poistettu.")
             return redirect("/my_slots")
         data = get_edit_data()
-        d, h, m = split_time(data["time"])
+        d, h, m = split_time(data["slot_time"])
 
-        time_error = check_time(data["time"])
-        if isinstance(time_error, str):
-            flash(time_error, "error")
-            return render_template("edit_slot.html", slot=data, date=d, hour=h, minutes=m, prev=prev, time=day_now[0])
+        if isinstance(time_error := check_time(data["slot_time"]), str):
+            return edit_error(time_error, data, d, h, m)
 
-        location_error = check_location(data["location"])
-        if isinstance(location_error, str):
-            flash(location_error, "error")
-            return render_template("edit_slot.html", slot=data, date=d, hour=h, minutes=m, prev=prev, time=day_now[0])
+        if isinstance(location_error := check_location(data["location"]), str):
+            return edit_error(location_error, data, d, h, m)
 
-        player_level_error = check_player_level(data["player_level"])
-        if isinstance(player_level_error, str):
-            flash(player_level_error, "error")
-            return render_template("edit_slot.html", slot=data, date=d, hour=h, minutes=m, prev=prev, time=day_now[0])
+        if isinstance(player_level_error := check_player_level(data["player_level"]), str):
+            return edit_error(player_level_error, data, d, h, m)
 
-        total_players_error = check_total_players(data["total_players"])
-        if isinstance(total_players_error, str):
-            flash(total_players_error, "error")
-            return render_template("edit_slot.html", slot=data, date=d, hour=h, minutes=m, prev=prev, time=day_now[0])
+        if isinstance(total_players_error := check_total_players(data["total_players"]), str):
+            return edit_error(total_players_error, data, d, h, m)
 
-        time_slots.update_slot(slot_id, data["location"], data["time"],
-                data["player_level"], data["total_players"])
+        time_slots.update_slot(slot_id, data["location_id"], data["slot_time"], data["level_id"], data["max_players_id"])
         flash("Pelivuoro päivitetty onnistuneesti.", "success")
         return redirect("/my_slots")
-
+    
     date, hour, minutes = split_time(slot["time"])
-    return render_template("edit_slot.html", slot=slot, date=date, hour=hour, minutes=minutes, prev=prev, time=day_now[0])
+
+    return render_template("edit_slot.html", slot=slot,
+        slot_data=slot, date=date, hour=hour, minutes=minutes,
+        prev=prev, time=day_now[0], locations=time_slots.get_locations(),
+        levels=time_slots.get_levels(), total=time_slots.get_total()
+    )
 
 @app.route("/my_info/<int:user_id>")
 def my_info(user_id):
@@ -364,7 +396,7 @@ def index():
         my_slots = time_slots.my_slots(session["user_id"], time_now())
         open_slots = time_slots.available_slots(session["user_id"], time_now())
     else:
-        my_time_slots = []
+        my_slots = []
         open_slots = time_slots.upcoming_slots(time_now())
 
     return render_template("index.html", my_slots=my_slots, open_slots=open_slots)
@@ -373,7 +405,10 @@ def index():
 def add_slot():
     if access_denied := check_login():
         return access_denied
-    return render_template("add_slot.html", date=time_now())
+    locations = time_slots.get_locations()
+    levels = time_slots.get_levels()
+    total = time_slots.get_total()
+    return render_template("add_slot.html", date=time_now(), locations=locations, levels=levels, total=total)
 
 @app.route("/create_slot", methods=["POST"])
 def create_slot():
@@ -381,32 +416,23 @@ def create_slot():
         return access_denied
     prev = check_prev()
     slot = get_create_data()
-    date, hour, minutes = split_time(slot["time"])
+    date, hour, minutes = split_time(slot["slot_time"])
 
-    location_error = check_location(slot["location"])
-    if isinstance(location_error, str):
-        flash(location_error, "error")
-        return render_template("add_slot.html", slot=slot, date=date, hour=hour, minutes=minutes)
-
-    time_error = check_time(slot["time"])
-    if isinstance(time_error, str):
-        flash(time_error, "error")
-        return render_template("add_slot.html", slot=slot, date=date, hour=hour, minutes=minutes)
-
-    player_level_error = check_player_level(slot["player_level"])
-    if isinstance(player_level_error, str):
-        flash(player_level_error, "error")
-        return render_template("add_slot.html", slot=slot, date=date, hour=hour, minutes=minutes)
-
-    total_players_error = check_total_players(slot["total_players"])
-    if isinstance(total_players_error, str):
-        flash(total_players_error, "error")
-        return render_template("add_slot.html", slot=slot, date=date, hour=hour, minutes=minutes)
+    if isinstance(location_error := check_location(slot["location"]), str):
+        return create_error(location_error, slot, date, hour, minutes)
+        
+    if isinstance(time_error := check_time(slot["slot_time"]), str):
+        return create_error(time_error, slot, date, hour, minutes)
+        
+    if isinstance(player_level_error := check_player_level(slot["player_level"]), str):
+        return create_error(player_level_error, slot, date, hour, minutes)
+        
+    if isinstance(total_players_error := check_total_players(slot["total_players"]), str):
+        return create_error(total_players_error, slot, date, hour, minutes)
 
     time_slots.create_slot(slot)
     slot_id = time_slots.last_slot(session["user_id"])
     time_slots.signup(session["user_id"], slot_id)
-    time_slots.increase_player(slot_id)
     return redirect("/")
 
 @app.route("/logout")
