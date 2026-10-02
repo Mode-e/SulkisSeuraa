@@ -3,23 +3,23 @@
 {% block content %}
 <h2 class="Cohesive_headline">Muokkaa vuoroa</h2>
 <div class="Cohesive_framework">
-    <form action="/edit_slot/{{ slot['id'] }}" method="post">
+    <form method="POST">
         <div class="Cohesive_form_line">
             <label for="location">Paikka:</label>
-            <select id="location" name="location" required>
-                <option value="" disabled selected>Valitse paikka...</option>
-                <option value="Kluuvi Unisport" {% if slot["location"] == "Kluuvi Unisport" %}selected{% endif %}>Kluuvi Unisport</option>
-                <option value="Kumpula Unisport" {% if slot["location"] == "Kumpula Unisport" %}selected{% endif %}>Kumpula Unisport</option>
-                <option value="Meilahti Unisport" {% if slot["location"] == "Meilahti Unisport" %}selected{% endif %}>Meilahti Unisport</option>
-                <option value="Otaniemi Unisport" {% if slot["location"] == "Otaniemi Unisport" %}selected{% endif %}>Otaniemi Unisport</option>
-                <option value="Töölö Unisport" {% if slot["location"] == "Töölö Unisport" %}selected{% endif %}>Töölö Unisport</option>
-                <option value="Viikki Unisport" {% if slot["location"] == "Viikki Unisport" %}selected{% endif %}>Viikki Unisport</option>
+            <select id="location" name="location_id" required>
+                {% for location in locations %}
+                    <option value="{{ location.name }}" 
+                        {% if slot_data and slot_data.location == location.name %}selected
+                        {% elif slot and slot.location == location.name %}selected{% endif %}>
+                        {{ location.name }}
+                    </option>
+                {% endfor %}
             </select>
         </div>
 
         <div class="Cohesive_form_line">
             <label for="day">Päivämäärä:</label>
-            <input type="date" name="day" value="{{ date }}"required min="{{ day_now }}"/>
+            <input type="date" name="date" value="{{ date }}"required min="{{ day_now }}"/>
         </div>
 
         <div class="Cohesive_form_line">
@@ -39,21 +39,28 @@
 
         <div class="Cohesive_form_line">
             <label for="player_level">Taso:</label>
-            <select id="player_level" name="player_level" required>
-                <option value="" disabled selected>Valitse taso...</option>
-                <option value="Aloittelija" {% if slot["player_level"] == "Aloittelija" %}selected{% endif %}>Aloittelija</option>
-                <option value="Harrastaja" {% if slot["player_level"] == "Harrastaja" %}selected{% endif %}>Harrastaja</option>
-                <option value="Kilpataso" {% if slot["player_level"] == "Kilpataso" %}selected{% endif %}>Kilpataso</option>
+            <select id="player_level" name="level_id" required>
+                {% for lvl in levels %}
+                    <option value="{{ lvl.level_name }}" 
+                        {% if slot_data and slot_data.player_level == lvl.level_name %}selected
+                        {% elif slot and slot.player_level == lvl.level_name %}selected{% endif %}>
+                        {{ lvl.level_name }}
+                    </option>
+                {% endfor %}
             </select>
         </div>
 
         <div class="Cohesive_form_line">
             <label for="total_players">Määrä:</label>
-            <select id="total_players" name="total_players" required>
-                <option value="" disabled selected>Valitse pelaajamäärä...</option>
-                <option value="2"{% if slot["total_players"] | int == 2 %}selected{% endif %}>2 pelaajaa</option>
-                <option value="4"{% if slot["total_players"] | int == 4 %}selected{% endif %}>4 pelaajaa</option>
-            </select>
+            <select id="total_players" name="max_players_id" required>
+            {% for val in total %}
+                <option value="{{ val.amount }}" 
+                    {% if slot_data and slot_data.total_players == val.amount %}selected
+                    {% elif slot and slot.total_players == val.amount %}selected{% endif %}>
+                    {{ val.amount }} pelaajaa
+                </option>
+            {% endfor %}
+        </select>
         </div>
 
         <div class="button_container">
