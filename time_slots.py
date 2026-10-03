@@ -63,11 +63,11 @@ def get_slot(slot_id):
         WHERE T.id = ?
         GROUP BY T.id
     """
-    result = db.query(sql, [slot_id])
+    res = db.query(sql, [slot_id])
 
-    if not result:
+    if not res:
         return None
-    return result
+    return res
 
 def last_slot(user_id):
     sql = "SELECT id FROM time_slots WHERE user_id = ? ORDER BY id DESC LIMIT 1"
@@ -223,6 +223,17 @@ def created_slots(user_id, time_now):
         ORDER BY T.slot_time ASC
     """
     return db.query(sql, [user_id, time_now])
+
+def all_created_slots(user_id):
+    sql = """
+        SELECT COUNT(*) 
+        FROM time_slots 
+        WHERE user_id = ?
+    """
+    res  = db.query(sql, [user_id])
+    if res:
+        return res[0][0]
+    return 0
 
 def get_locations():
     return db.query("SELECT id, name FROM locations", [])
