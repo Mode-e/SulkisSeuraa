@@ -4,7 +4,7 @@
 <h2 class="Cohesive_headline">Muokkaa vuoroa</h2>
 <div class="Cohesive_framework">
     <form method="POST">
-        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+        <input type="hidden" name="csrf_token" value="{{ session['csrf_token'] }}">
         <div class="Cohesive_form_line">
             <label for="location">Paikka:</label>
             <select id="location" name="location_id" required>

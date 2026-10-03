@@ -4,7 +4,7 @@
 <h2 class="Cohesive_headline">Päivitä omia tietoja</h2>
 <div class="Cohesive_framework">
     <form action="/edit_info/{{ session['user_id'] }}" method="POST">
-        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+        <input type="hidden" name="csrf_token" value="{{ session['csrf_token'] }}">
         <div class="Cohesive_form_line">
             <label for="player_level">Pelaajan taso:</label>
             <select id="player_level" name="player_level" required>
