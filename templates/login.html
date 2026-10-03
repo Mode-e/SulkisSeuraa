@@ -3,7 +3,7 @@
 {% block content %}
 <h2 class="Cohesive_headline">Kirjaudu sisään</h2>
 <div class="Cohesive_framework">
-    <form action="/login" method="post">
+    <form action="/login" method="POST">
         <div class="Cohesive_form_line">
             <label for="username">Käyttäjätunnus:</label>
             <input type="text" name="username" value="{{ user['username'] if user else '' }}" required/>

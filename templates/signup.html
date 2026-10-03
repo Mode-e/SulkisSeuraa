@@ -31,12 +31,14 @@
                 <a href="{{ prev }}" class="button">Takaisin</a>
             {% else %}
                 <form action="/cancel_signup/{{ slot['id'] }}" method="POST">
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
                     <a href="{{ prev }}" class="button" style="display: inline-block; min-width: 200px; padding: 12px 20px; text-align: center; box-sizing: border-box; text-decoration: none;">Takaisin</a>
                     <button type="submit" class="button" style="display: inline-block; min-width: 200px; padding: 12px 20px; text-align: center; box-sizing: border-box;">Peru ilmoittautuminen</button>
                 </form>        
             {% endif %}   
         {% elif slot['player_count'] < slot['total_players'] %}
             <form action="/signup/{{ slot['id'] }}" method="POST">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
                 <button type="submit" class="button" style="display: inline-block; min-width: 200px; padding: 12px 20px; text-align: center; box-sizing: border-box;">Vahvista ilmoittautuminen</button>
             </form>
         {% else %}

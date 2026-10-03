@@ -1,5 +1,6 @@
 import datetime
 import re
+import secrets
 from flask import Flask, redirect, render_template, request, session, flash
 from werkzeug.security import generate_password_hash
 from config import secret_key
@@ -11,6 +12,12 @@ app.secret_key = secret_key
 
 def time_now():
     return datetime.datetime.now().strftime("%Y-%m-%d %H:%M")
+
+def check_csrf():
+    if "csrf_token" not in request.form:
+        abort(403)
+    if request.form["csrf_token"] != session["csrf_token"]:
+        abort(403)
 
 def split_time(date_str):
     day, time = date_str.split(" ")
@@ -218,6 +225,8 @@ def signup_page(slot_id):
 def cancel_signup(slot_id):
     if access_denied := check_login():
         return access_denied
+    check_csrf()
+
     prev = check_prev()
     slot = check_slot(slot_id)
     if not slot:
@@ -241,6 +250,7 @@ def cancel_signup(slot_id):
 def signup(slot_id):
     if access_denied := check_login():
         return access_denied
+    check_csrf()
 
     prev = check_prev()
     slot = check_slot(slot_id)
@@ -290,6 +300,7 @@ def search():
 def edit_slot(slot_id):
     if access_denied := check_login():
         return access_denied
+
     prev = check_prev()
     slot = time_slots.get_slot(slot_id)
     day_now = time_now().split(" ")
@@ -302,6 +313,7 @@ def edit_slot(slot_id):
         return redirect(prev)
 
     if request.method == "POST":
+        check_csrf()
         if request.form.get("action") == "delete":
             time_slots.delete_slot(slot_id)
             flash("Pelivuoro poistettu.")
@@ -359,9 +371,11 @@ def my_info(user_id):
 def edit_info(user_id):
     if access_denied := check_login():
         return access_denied
+
     prev = check_prev()
 
     if request.method == "POST":
+        check_csrf()
         if user_id != session["user_id"]:
             flash("Virhe: et voi muokata toisten tietoja", "error")
             return redirect(prev)
@@ -419,6 +433,7 @@ def add_slot():
 def create_slot():
     if access_denied := check_login():
         return access_denied
+    check_csrf()
     slot = get_create_data()
     date, hour, minutes = split_time(slot["slot_time"])
 
@@ -459,6 +474,7 @@ def login():
     if user_id:
         session["username"] = user["username"]
         session["user_id"] = user_id
+        session["csrf_token"] = secrets.token_hex(16)
         return redirect("/")
 
     flash("VIRHE: väärä salasana", "error")
