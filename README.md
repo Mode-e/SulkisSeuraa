@@ -25,4 +25,5 @@
 + $ source venv/bin/activate
 + $ pip install flask
 + $ sqlite3 database.db < schema.sql
++ $ sqlite3 database.db < init.sql
 + $ flask run
