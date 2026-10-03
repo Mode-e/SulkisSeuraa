@@ -43,8 +43,7 @@ def get_create_data():
     slot = {
         "location": location_name,
         "location_id": location_id,
-        "slot_time": f"""{request.form.get('date')} {request.form.get('hours')}:
-            {request.form.get('minutes')}""",
+        "slot_time": f"{request.form.get('date')} {request.form.get('hours')}:{request.form.get('minutes')}",
         "player_level": level_name,
         "level_id": level_id,
         "total_players": max_players_amount,
@@ -64,8 +63,7 @@ def get_edit_data():
     slot = {
         "location": location_name,
         "location_id": location_id,
-        "slot_time": f"""{request.form.get('date')} {request.form.get('hours')}:
-            {request.form.get('minutes')}""",
+        "slot_time": f"{request.form.get('date')} {request.form.get('hours')}:{request.form.get('minutes')}",
         "player_level": level_name,
         "level_id": level_id,
         "total_players": max_players_amount,
