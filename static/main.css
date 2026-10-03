@@ -269,3 +269,13 @@ body {
     border-color: transparent;
     color: #f5061e;
 }
+
+/* ==========================================
+   10. STATISTICS FRAMEWORK
+   ========================================== */
+
+.statistics_framework {
+    top: 42px;
+    right: 30px;
+    position: absolute;
+}
