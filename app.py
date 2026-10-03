@@ -347,9 +347,13 @@ def my_info(user_id):
         return redirect(prev)
 
     upcoming = time_slots.created_slots(user_id, time_now())
+    created = time_slots.all_created_slots(user_id)
+    future = time_slots.my_slots(user_id, time_now())
+    past = time_slots.past_slots(user_id, time_now())
 
     return render_template("my_info.html", upcoming=upcoming,
-        info=info, my_page=user_id == session["user_id"])
+        info=info, my_page=user_id == session["user_id"], created=created,
+        future=future, past=past,)
 
 @app.route("/edit_info/<int:user_id>", methods=["GET", "POST"])
 def edit_info(user_id):
