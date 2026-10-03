@@ -7,10 +7,19 @@
 {% extends "layout.html" %}
 
 {% block content %}
-<h2 class="Cohesive_headline">Omat tiedot</h2>
+{% if session["username"] == info[0].username %}
+    <h2 class="Cohesive_headline">Omat tiedot</h2>
+{% else %}
+    <h2 class="Cohesive_headline">Käyttäjän {{ info[0].username }} tiedot</h2>
+{% endif %}
 <div class="Cohesive_framework">
     <div class="slot_row">
         <div class="slot-texts">
+            <div class="statistics_framework">
+                <li><strong>Vuoroja yhteensä lisätty:</strong> {{ created }}</li>
+                <li><strong>Ilmoittauduttu yhteensä:</strong> {{ future|length + past|length }}</li>
+                <li><strong>Pelattuja tunteja yhteensä:</strong> {{ past|length }}</li>
+            </div>
             <li><strong>Käyttäjätunnus:</strong> {{ info[0].username }}</li>
             <li><strong>Pelaajataso:</strong> {{ info[0].player_level if info[0].player_level else 'Ei määritelty' }}</li>
             <li><strong>Kuvaus:</strong></li>
