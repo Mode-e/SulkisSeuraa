@@ -114,6 +114,7 @@ body {
     max-width: 500px;
     margin-left: 0;
     box-sizing: border-box;
+    position: relative;
 }
 
 /* Cohesive form headline styles */
