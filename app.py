@@ -202,7 +202,7 @@ def signup_page(slot_id):
     if not slot:
         return redirect(prev)
 
-    if slot["time"] < time_now():
+    if slot["slot_time"] < time_now():
         flash("Virhe: tietoja menneistä vuoroista ei ole saatavilla", "error")
         return redirect(prev)
 
@@ -225,7 +225,7 @@ def cancel_signup(slot_id):
     if not slot:
         return redirect(prev)
 
-    if slot["time"] < time_now():
+    if slot["slot_time"] < time_now():
         flash("Virhe: et voi perua ilmoitusta menneeseen vuoroon", "error")
         return redirect(prev)
 
@@ -249,7 +249,7 @@ def signup(slot_id):
     if not slot:
         return redirect(prev)
 
-    if slot["time"] < time_now():
+    if slot["slot_time"] < time_now():
         flash("Virhe: et voi ilmoittautua menneeseen vuoroon", "error")
         return redirect(prev)
 
@@ -293,8 +293,7 @@ def edit_slot(slot_id):
     if access_denied := check_login():
         return access_denied
     prev = check_prev()
-    slot_res = time_slots.get_slot(slot_id)
-    slot = slot_res[0]
+    slot = time_slots.get_slot(slot_id)
     day_now = time_now().split(" ")
     if not slot:
         flash("VIRHE: Hakemaasi pelivuoroa ei ole olemassa.", "error")
@@ -329,7 +328,7 @@ def edit_slot(slot_id):
         flash("Pelivuoro päivitetty onnistuneesti.", "success")
         return redirect("/my_slots")
 
-    date, hour, minutes = split_time(slot["time"])
+    date, hour, minutes = split_time(slot["slot_time"])
 
     return render_template("edit_slot.html", slot=slot,
         slot_data=slot, date=date, hour=hour, minutes=minutes,
