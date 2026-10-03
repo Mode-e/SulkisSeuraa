@@ -52,7 +52,7 @@ def past_slots(user_id, time_now):
 def get_slot(slot_id):
     sql = """
         SELECT T.id, T.user_id, U.username, L.name AS location, 
-            T.slot_time AS time, P.level_name AS player_level, 
+            T.slot_time, P.level_name AS player_level, 
             M.amount AS total_players, COUNT(S.id) AS player_count
         FROM time_slots T
         JOIN users U ON T.user_id = U.id
@@ -67,7 +67,7 @@ def get_slot(slot_id):
 
     if not res:
         return None
-    return res
+    return res[0]
 
 def last_slot(user_id):
     sql = "SELECT id FROM time_slots WHERE user_id = ? ORDER BY id DESC LIMIT 1"
