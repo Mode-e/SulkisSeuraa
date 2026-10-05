@@ -242,9 +242,7 @@ def cancel_signup(slot_id):
         return redirect(prev)
 
     time_slots.cancel_signup(session["user_id"], slot_id)
-
-    flash("Ilmoittautuminen peruttu onnistuneesti.", "success")
-    return redirect("/")
+    return redirect("/my_slots")
 
 @app.route("/signup/<int:slot_id>", methods=["POST"])
 def signup(slot_id):
@@ -272,9 +270,7 @@ def signup(slot_id):
         return redirect(prev)
 
     time_slots.signup(session["user_id"], slot_id)
-
-    flash("Ilmoittautuminen onnistui.", "success")
-    return redirect("/")
+    return redirect("/my_slots")
 
 @app.route("/search", methods=["GET"])
 def search():
