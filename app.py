@@ -1,7 +1,7 @@
 import datetime
 import re
 import secrets
-from flask import Flask, redirect, render_template, request, session, flash
+from flask import Flask, redirect, render_template, request, session, flash, abort
 from werkzeug.security import generate_password_hash
 from config import secret_key
 import time_slots
@@ -169,15 +169,13 @@ def check_slot(slot_id):
         return None
     return slot
 
-def create_error(error_msg, slot, date, hour, minutes):
-    flash(error_msg, "error")
+def create_error(slot, date, hour, minutes):
     return render_template("add_slot.html", slot=slot, date=date,
         hour=hour, minutes=minutes, locations=time_slots.get_locations(),
         levels=time_slots.get_levels(), total=time_slots.get_total()
     )
 
-def edit_error(error_msg, slot_data, date, hour, minutes):
-    flash(error_msg, "error")
+def edit_error(slot_data, date, hour, minutes):
     return render_template("edit_slot.html", slot=slot_data,
         slot_data=slot_data, date=date, hour=hour,
         minutes=minutes, locations=time_slots.get_locations(),
@@ -316,18 +314,24 @@ def edit_slot(slot_id):
             return redirect("/my_slots")
         data = get_edit_data()
         d, h, m = split_time(data["slot_time"])
+        errors = []
 
         if isinstance(time_error := check_time(data["slot_time"]), str):
-            return edit_error(time_error, data, d, h, m)
+            errors.append(time_error)
 
         if isinstance(location_error := check_location(data["location"]), str):
-            return edit_error(location_error, data, d, h, m)
+            errors.append(location_error)
 
         if isinstance(player_level_error := check_player_level(data["player_level"]), str):
-            return edit_error(player_level_error, data, d, h, m)
+            errors.append(player_level_error)
 
         if isinstance(total_players_error := check_total_players(data["total_players"]), str):
-            return edit_error(total_players_error, data, d, h, m)
+            errors.append(total_players_error)
+
+        if errors:
+            for error in errors:
+                flash(error, "error")
+            return edit_error(data, d, h, m)
 
         time_slots.update_slot(slot_id, data["location_id"], data["slot_time"],
             data["level_id"], data["max_players_id"])
@@ -377,15 +381,17 @@ def edit_info(user_id):
             return redirect(prev)
 
         data = get_info_data()
-
+        errors = []
         level_error = check_player_level(data["player_level"])
-        if isinstance(level_error, str):
-            flash(level_error, "error")
-            return render_template("edit_info.html", info=data, prev=prev)
+        if isinstance(level_error := check_player_level(data["player_level"]), str):
+            errors.append(level_error)
 
-        description_error = check_description(data["description"])
-        if isinstance(description_error, str):
-            flash(description_error, "error")
+        if isinstance(description_error := check_description(data["description"]), str):
+            errors.append(description_error)
+
+        if errors:
+            for error in errors:
+                flash(error, "error")
             return render_template("edit_info.html", info=data, prev=prev)
 
         users.user_update(data, user_id)
@@ -432,19 +438,25 @@ def create_slot():
     check_csrf()
     slot = get_create_data()
     date, hour, minutes = split_time(slot["slot_time"])
+    errors = []
 
     if isinstance(location_error := check_location(slot["location"]), str):
-        return create_error(location_error, slot, date, hour, minutes)
+        errors.append(location_error)
 
     if isinstance(time_error := check_time(slot["slot_time"]), str):
-        return create_error(time_error, slot, date, hour, minutes)
+        errors.append(time_error)
 
     if isinstance(player_level_error := check_player_level(slot["player_level"]), str):
-        return create_error(player_level_error, slot, date, hour, minutes)
+        errors.append(player_level_error)
 
     if isinstance(total_players_error := check_total_players(slot["total_players"]), str):
-        return create_error(total_players_error, slot, date, hour, minutes)
+        errors.append(total_players_error)
 
+    if errors:
+        for error in errors:
+            flash(error, "error")
+        return create_error(slot, date, hour, minutes)
+    
     time_slots.create_slot(slot)
     slot_id = time_slots.last_slot(session["user_id"])
     time_slots.signup(session["user_id"], slot_id)
@@ -484,21 +496,23 @@ def register():
 def create():
     user = get_register_data()
     username_error = check_username(user["username"])
+    errors = []
     if isinstance(username_error, str):
-        flash(username_error, "error")
-        return render_template("register.html", user=user)
+        errors.append(username_error)
 
     password_error = check_password(user["password1"])
     if isinstance(password_error, str):
-        flash(password_error, "error")
-        return render_template("register.html", user=user)
+        errors.append(password_error)
 
     if users.user_exists(user["username"]):
-        flash("VIRHE: käyttäjätunnus varattu", "error")
-        return render_template("register.html", user=user)
+        errors.append("VIRHE: käyttäjätunnus varattu")
 
     if user["password1"] != user["password2"]:
-        flash("VIRHE: väärä salasana", "error")
+        errors.append("VIRHE: väärä salasana")
+
+    if errors:
+        for error in errors:
+            flash(error, "error")
         return render_template("register.html", user=user)
 
     password_hash = generate_password_hash(user["password1"])
