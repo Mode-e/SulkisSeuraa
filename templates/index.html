@@ -25,7 +25,7 @@
 <div class="Cohesive_framework">
     <h3 class="Cohesive_form_title">Omat pelivuorot ({{ my_open_slots|length }})</h3>
     {% if my_open_slots|length == 0 %}
-        <p class="Empty">Et ole ilmoittautunut yhteenkään vuoroon.</p>
+        <p class="Empty" style="color: red">Et ole ilmoittautunut yhteenkään vuoroon.</p>
     {% else %}
         {% for slot in my_open_slots %}
             <div class="slot_row">
@@ -47,7 +47,7 @@
 <div class="Cohesive_framework">
     <h3 class="Cohesive_form_title">Avoimet pelivuorot ({{ open_slots|length }})</h3>
     {% if open_slots|length == 0 %}
-        <p class="Empty">Ei avoimia pelivuoroja.</p>
+        <p class="Empty" style="color: red">Ei avoimia pelivuoroja.</p>
     {% else %}
         {% for slot in open_slots %}
             <div class="slot_row">

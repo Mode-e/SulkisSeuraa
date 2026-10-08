@@ -37,7 +37,7 @@
     <h3 class="Cohesive_form_title">Lisätyt tulevat vuorot ({{ upcoming|length }})</h3>
     
     {% if upcoming|length == 0 %}
-        <p class="Empty">Ei lisättyjä tulevia pelivuoroja.</p>
+        <p class="Empty" style="color: red">Ei lisättyjä tulevia pelivuoroja.</p>
     {% else %}
         {% for slot in upcoming %}
             <div class="slot_row">
