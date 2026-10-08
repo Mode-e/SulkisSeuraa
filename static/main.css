@@ -10,7 +10,7 @@
 body {
     margin: 0;
     padding: 0;
-    background: #1c0f0d; /* fallback */
+    background: #1c0f0d;
     background: linear-gradient(135deg, #1c0f0d 25%, #da2510 100%);
     min-height: 100vh;
 }
@@ -30,7 +30,7 @@ body {
 
 /* Header title styles */
 .header h1 {
-    color: #ff0000;
+    color: #a15959;
     margin: 0;
     font-size: 30px;
 }
@@ -216,7 +216,7 @@ body {
         0 4px 6px rgba(0, 0, 0, 0.4), 
         inset 0 2px 3px rgba(255, 255, 255, 0.4);
     transition: all 0.15s ease;
-    background: linear-gradient(180deg, #ffd700 0%, #b8860b 100%); /* Esimerkki: Tallenna */
+    background: linear-gradient(180deg, #ffd700 0%, #b8860b 100%);
     color: #1a0505;
     text-decoration: none;
 }
