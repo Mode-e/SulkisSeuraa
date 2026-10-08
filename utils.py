@@ -17,8 +17,10 @@ def check_login():
     return None
 
 def check_location(location):
-    locations = ["Kluuvi Unisport", "Kumpula Unisport", "Meilahti Unisport",
-                "Otaniemi Unisport", "Töölö Unisport", "Viikki Unisport"]
+    locations = ["Kluuvi Unisport", "Kumpula Unisport",
+                "Meilahti Unisport", "Otaniemi Unisport",
+                "Töölö Unisport", "Viikki Unisport"
+                ]
     if location not in locations:
         return f"Virhe, et voi varata vuorolle paikkaa {location}"
     return None
@@ -45,7 +47,10 @@ def check_total_players(amount):
     valid_totals = time_slots.get_total()
     valid_amounts = [str(t["amount"]) for t in valid_totals]
     if str(amount) not in valid_amounts:
-        return "Virhe: valitse määräksi kaksinpeli (2) tai nelinpeliksi (4)"
+        return (
+            "Virhe: valitse määräksi kaksinpeli (2)"
+            "tai nelinpeliksi (4)"
+        )
     return True
 
 def check_players(players, user):
@@ -73,9 +78,13 @@ def check_availability(slot):
 
 def check_username(username):
     if len(username) < 3 or len(username) > 20:
-        return "Virhe: käyttäjätunnuksen pituus pitää olla väliltä 3-20"
+        return (
+            "Virhe: käyttäjätunnuksen pituuspitää"
+            "olla väliltä 3-20")
     if not re.match("^[a-zA-Z0-9_åäöÅÄÖ]+$", username):
-        return "Virhe: käyttäjätunnuksessa saa olla vain kirjaimia, numeroita ja alaviivoja"
+        return (
+            "Virhe: käyttäjätunnuksessa saa olla vain"
+            "kirjaimia, numeroita ja alaviivoja")
     return None
 
 def check_password(password):
@@ -90,7 +99,8 @@ def check_slot(slot_id):
         return None
     return slot
 
-def check_search(location, day, player_level, total_players, username):
+def check_search(
+        location, day, player_level, total_players, username):
     location = location if location else None
     day = day if day else None
     player_level = player_level if player_level else None
@@ -111,8 +121,9 @@ def split_time(date_str):
     return day, hour, minutes
 
 def create_error(slot, date, hour, minutes):
-    return render_template("add_slot.html", slot=slot, date=date,
-        hour=hour, minutes=minutes, locations=time_slots.get_locations(),
+    return render_template(
+        "add_slot.html", slot=slot, date=date, hour=hour,
+        minutes=minutes, locations=time_slots.get_locations(),
         levels=time_slots.get_levels(), total=time_slots.get_total()
     )
 
