@@ -23,7 +23,7 @@
             <li><strong>Käyttäjätunnus:</strong> {{ info[0].username }}</li>
             <li><strong>Pelaajataso:</strong> {{ info[0].player_level if info[0].player_level else 'Ei määritelty' }}</li>
             <li><strong>Kuvaus:</strong></li>
-            <textarea name="description" rows="5" readonly style="width: 400px; max-width: 100%; resize: none;">{{ info[0].description if info[0].description else '' }}</textarea>
+            <span>{{ info[0].description if info[0].description else 'Ei kuvausta saatavilla.' }}</span>
             {% if my_page %}
             <div class="button_container">
                 <a href="/edit_info/{{ session['user_id'] }}" class="button" style="width: 95px;">Päivitä tietoja</a>
