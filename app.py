@@ -194,6 +194,14 @@ def check_search(location, day, player_level, total_players, username):
 def check_prev():
     return request.referrer
 
+@app.errorhandler(404)
+def not_found(error):
+    return render_template("404.html"), 404
+
+@app.errorhandler(403)
+def forbidden(error):
+    return render_template("403.html"), 403
+
 @app.route("/signup/<int:slot_id>", methods=["GET"])
 def signup_page(slot_id):
     if access_denied := check_login():
@@ -257,14 +265,17 @@ def signup(slot_id):
         flash("Virhe: et voi ilmoittautua menneeseen vuoroon", "error")
         return redirect(prev)
 
-    available = check_availability(slot)
-    if isinstance(available, str):
-        flash(available, "error")
-        return redirect(prev)
+    errors = []
 
-    signed_up = check_players(time_slots.get_players(slot_id), session["username"])
-    if isinstance(signed_up, str):
-        flash(signed_up, "error")
+    if isinstance(available := check_availability(slot), str):
+        errors.append(available)
+
+    if isinstance(signed_up := check_players(time_slots.get_players(slot_id), session["username"]), str):
+        errors.append(signed_up)
+
+    if errors:
+        for error in errors:
+            flash(error, "error")
         return redirect(prev)
 
     time_slots.signup(session["user_id"], slot_id)
@@ -299,12 +310,10 @@ def edit_slot(slot_id):
     slot = time_slots.get_slot(slot_id)
     day_now = time_now().split(" ")
     if not slot:
-        flash("VIRHE: Hakemaasi pelivuoroa ei ole olemassa.", "error")
-        return redirect(prev)
+        abort(404)
 
     if session["user_id"] != slot["user_id"]:
-        flash("VIRHE: Sinulla ei ole oikeutta muokata tätä vuoroa!", "error")
-        return redirect(prev)
+        abort(403)
 
     if request.method == "POST":
         check_csrf()
@@ -355,8 +364,7 @@ def my_info(user_id):
     info = users.user_info(user_id)
 
     if not info:
-        flash("Virhe: käyttäjää ei ole olemassa", "error")
-        return redirect(prev)
+        abort(404)
 
     upcoming = time_slots.created_slots(user_id, time_now())
     created = time_slots.all_created_slots(user_id)
@@ -377,8 +385,7 @@ def edit_info(user_id):
     if request.method == "POST":
         check_csrf()
         if user_id != session["user_id"]:
-            flash("Virhe: et voi muokata toisten tietoja", "error")
-            return redirect(prev)
+            abort(403)
 
         data = get_info_data()
         errors = []
