@@ -2,45 +2,34 @@
 <h2 class="Cohesive_headline">Etusivu</h2>
 {% if not session.username %}
 <div class="Cohesive_framework">
-  <h3 class="Cohesive_form_title">
-    Tulevat pelivuorot ({{ open_slots|length }})
-  </h3>
+  <h3 class="Cohesive_form_title">Tulevat pelivuorot ({{ open_slots|length }})</h3>
   {% if open_slots|length == 0 %}
   <p class="Empty">Ei avoimia pelivuoroja.</p>
   {% else %} {% for slot in open_slots %}
   <div class="slot_row">
     <div class="slot-texts">
-      <strong>Lisäsi:</strong> {{ slot['username'] }} |
-      <strong>Paikka:</strong> {{ slot['location'] }}
+      <strong>Lisäsi:</strong> {{ slot['username'] }} | <strong>Paikka:</strong> {{ slot['location'] }}
       <br />
-      <strong>Aika:</strong> {{ slot['time'] }} | <strong>Pelaajat:</strong> {{
-      slot['player_count'] }}/{{ slot['total_players'] }}
+      <strong>Aika:</strong> {{ slot['time'] }} | <strong>Pelaajat:</strong> {{ slot['player_count'] }}/{{ slot['total_players'] }}
     </div>
   </div>
   {% endfor %} {% endif %}
 </div>
 {% else %}
 <div class="Cohesive_framework">
-  <h3 class="Cohesive_form_title">
-    Omat pelivuorot ({{ my_open_slots|length }})
-  </h3>
+  <h3 class="Cohesive_form_title">Omat pelivuorot ({{ my_open_slots|length }})</h3>
   {% if my_open_slots|length == 0 %}
-  <p class="Empty" style="color: red">
-    Et ole ilmoittautunut yhteenkään vuoroon.
-  </p>
+  <p class="Empty" style="color: red">Et ole ilmoittautunut yhteenkään vuoroon.</p>
   {% else %} {% for slot in my_open_slots %}
   <div class="slot_row">
     <div class="slot-texts">
       <strong>Lisäsi</strong>
-      <a
-        href="/my_info/{{ slot['user_id'] }}"
-        style="color: #ff8552; text-decoration: underline; font-weight: bold"
+      <a href="/my_info/{{ slot['user_id'] }}" style="color: #ff8552; text-decoration: underline; font-weight: bold"
         >{{ slot['username'] }}</a
       >
       | <strong>Paikka:</strong> {{ slot['location'] }}
       <br />
-      <strong>Aika:</strong> {{ slot['time'] }} | <strong>Pelaajat:</strong> {{
-      slot['player_count'] }}/{{ slot['total_players'] }}
+      <strong>Aika:</strong> {{ slot['time'] }} | <strong>Pelaajat:</strong> {{ slot['player_count'] }}/{{ slot['total_players'] }}
     </div>
     {% if session.get('user_id') == slot['user_id'] %}
     <a href="/edit_slot/{{ slot['id'] }}" class="button">Muokkaa</a>
@@ -50,39 +39,25 @@
   {% endfor %} {% endif %}
 </div>
 <div class="Cohesive_framework">
-  <h3 class="Cohesive_form_title">
-    Avoimet pelivuorot ({{ open_slots|length }})
-  </h3>
+  <h3 class="Cohesive_form_title">Avoimet pelivuorot ({{ open_slots|length }})</h3>
   {% if open_slots|length == 0 %}
   <p class="Empty" style="color: red">Ei avoimia pelivuoroja.</p>
   {% else %} {% for slot in open_slots %}
   <div class="slot_row">
     <div class="slot-texts">
       <strong>Lisäsi:</strong>
-      <a
-        href="/my_info/{{ slot['user_id'] }}"
-        style="color: #ff8552; text-decoration: underline; font-weight: bold"
+      <a href="/my_info/{{ slot['user_id'] }}" style="color: #ff8552; text-decoration: underline; font-weight: bold"
         >{{ slot['username'] }}</a
       >
       | <strong>Paikka:</strong> {{ slot['location'] }}
       <br />
-      <strong>Aika:</strong> {{ slot['time'] }} | <strong>Pelaajat:</strong> {{
-      slot['player_count'] }}/{{ slot['total_players'] }}
+      <strong>Aika:</strong> {{ slot['time'] }} | <strong>Pelaajat:</strong> {{ slot['player_count'] }}/{{ slot['total_players'] }}
     </div>
     <div>
       {% if slot['player_count'] < slot['total_players'] and session.username %}
       <a href="/signup/{{ slot['id'] }}" class="button">Ilmoittaudu</a>
       {% else %}
-      <span
-        style="
-          color: #888888;
-          font-weight: bold;
-          margin-left: 10px;
-          vertical-align: middle;
-        "
-      >
-        Vuoro täynnä
-      </span>
+      <span style="color: #888888; font-weight: bold; margin-left: 10px; vertical-align: middle"> Vuoro täynnä </span>
       {% endif %}
     </div>
   </div>

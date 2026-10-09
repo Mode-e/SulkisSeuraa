@@ -8,30 +8,14 @@
       <select id="location" name="location_id">
         <option value="">Valitse paikka...</option>
         {% for loc in locations %}
-        <option
-          value="{{ loc.name }}"
-          {%
-          if
-          location=""
-          ="loc.name"
-          %}selected{%
-          endif
-          %}
-        >
-          {{ loc.name }}
-        </option>
+        <option value="{{ loc.name }}" {% if location="" ="loc.name" %}selected{% endif %}>{{ loc.name }}</option>
         {% endfor %}
       </select>
     </div>
 
     <div class="Cohesive_form_line">
       <label for="day">Päivämäärä:</label>
-      <input
-        type="date"
-        id="day"
-        name="date"
-        value="{{ day if day else '' }}"
-      />
+      <input type="date" id="day" name="date" value="{{ day if day else '' }}" />
     </div>
 
     <div class="Cohesive_form_line">
@@ -39,18 +23,7 @@
       <select id="player_level" name="level_id">
         <option value="">Valitse pelaajien taso</option>
         {% for lvl in levels %}
-        <option
-          value="{{ lvl.level_name }}"
-          {%
-          if
-          player_level=""
-          ="lvl.level_name"
-          %}selected{%
-          endif
-          %}
-        >
-          {{ lvl.level_name }}
-        </option>
+        <option value="{{ lvl.level_name }}" {% if player_level == lvl.level_name %}selected{% endif %}>{{ lvl.level_name }}</option>
         {% endfor %}
       </select>
     </div>
@@ -60,31 +33,14 @@
       <select id="total_players" name="max_players_id">
         <option value="">Valitse pelaajamäärä</option>
         {% for val in total %}
-        <option
-          value="{{ val.amount }}"
-          {%
-          if
-          total_players=""
-          ="val.amount"
-          %}selected{%
-          endif
-          %}
-        >
-          {{ val.amount }} pelaajaa
-        </option>
+        <option value="{{ val.amount }}" {% if total_players== val.amount %}selected{% endif %}>{{ val.amount }} pelaajaa</option>
         {% endfor %}
       </select>
     </div>
 
     <div class="Cohesive_form_line">
       <label for="username">Käyttäjänimi:</label>
-      <input
-        type="text"
-        id="username"
-        name="username"
-        value="{{ username if username else '' }}"
-        placeholder="Hae nimellä..."
-      />
+      <input type="text" id="username" name="username" value="{{ username if username else '' }}" placeholder="Hae nimellä..." />
     </div>
 
     <div class="button_container">
@@ -98,15 +54,12 @@
   <div class="slot_row">
     <div class="slot-texts">
       <strong>Lisäsi</strong>
-      <a
-        href="/my_info/{{ slot['user_id'] }}"
-        style="color: #ff8552; text-decoration: underline; font-weight: bold"
+      <a href="/my_info/{{ slot['user_id'] }}" style="color: #ff8552; text-decoration: underline; font-weight: bold"
         >{{ slot['username'] }}</a
       >
       | <strong>Paikka:</strong> {{ slot['location'] }}
       <br />
-      <strong>Aika:</strong> {{ slot['time'] }} | <strong>Pelaajat:</strong> {{
-      slot['player_count'] }}/{{ slot['total_players'] }}
+      <strong>Aika:</strong> {{ slot['time'] }} | <strong>Pelaajat:</strong> {{ slot['player_count'] }}/{{ slot['total_players'] }}
     </div>
     {% if session and session.get('user_id') == slot['user_id'] %}
     <a href="/edit_slot/{{ slot['id'] }}" class="button">Muokkaa</a>
@@ -116,16 +69,7 @@
     {% elif slot['player_count'] < slot['total_players'] %}
     <a href="/signup/{{ slot['id'] }}" class="button">Ilmoittaudu</a>
     {% else %}
-    <span
-      style="
-        color: #888888;
-        font-weight: bold;
-        margin-left: 10px;
-        vertical-align: middle;
-      "
-    >
-      Vuoro täynnä
-    </span>
+    <span style="color: #888888; font-weight: bold; margin-left: 10px; vertical-align: middle"> Vuoro täynnä </span>
     {% endif %} {% endif %}
   </div>
   {% endfor %} {% else %}

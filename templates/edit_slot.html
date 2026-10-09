@@ -2,11 +2,7 @@
 <h2 class="Cohesive_headline">Muokkaa vuoroa</h2>
 <div class="Cohesive_framework">
   <form method="POST">
-    <input
-      type="hidden"
-      name="csrf_token"
-      value="{{ session['csrf_token'] }}"
-    />
+    <input type="hidden" name="csrf_token" value="{{ session['csrf_token'] }}" />
     <div class="Cohesive_form_line">
       <label for="location">Paikka:</label>
       <select id="location" name="location_id" required>
@@ -38,13 +34,7 @@
 
     <div class="Cohesive_form_line">
       <label for="day">Päivämäärä:</label>
-      <input
-        type="date"
-        name="date"
-        value="{{ date }}"
-        required
-        min="{{ day_now }}"
-      />
+      <input type="date" name="date" value="{{ date }}" required min="{{ day_now }}" />
     </div>
 
     <div class="Cohesive_form_line">
@@ -52,20 +42,13 @@
       <div class="time_select_group">
         <select id="hours" name="hours" required>
           {% for h in
-          ['00','01','02','03','04','05','06','07','08','09','10','11','12','13','14','15','16','17','18','19','20','21','22','23']
-          %}
-          <option value="{{ h }}" {% if h="" ="hour" %}selected{% endif %}>
-            {{ h }}
-          </option>
+          ['00','01','02','03','04','05','06','07','08','09','10','11','12','13','14','15','16','17','18','19','20','21','22','23'] %}
+          <option value="{{ h }}" {% if h="" ="hour" %}selected{% endif %}>{{ h }}</option>
           {% endfor %}
         </select>
         <select id="minutes" name="minutes" required>
-          <option value="00" {% if minutes="" ="00" %}selected{% endif %}>
-            00
-          </option>
-          <option value="30" {% if minutes="" ="30" %}selected{% endif %}>
-            30
-          </option>
+          <option value="00" {% if minutes="" ="00" %}selected{% endif %}>00</option>
+          <option value="30" {% if minutes="" ="30" %}selected{% endif %}>30</option>
         </select>
       </div>
     </div>
@@ -130,9 +113,7 @@
 
     <div class="button_container">
       <button type="submit" class="button">Tallenna</button>
-      <button type="submit" name="action" value="delete" class="button">
-        Poista
-      </button>
+      <button type="submit" name="action" value="delete" class="button">Poista</button>
       <a href="{{ prev }}" class="button">Takaisin</a>
     </div>
   </form>

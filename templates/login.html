@@ -4,12 +4,7 @@
   <form action="/login" method="POST">
     <div class="Cohesive_form_line">
       <label for="username">Käyttäjätunnus:</label>
-      <input
-        type="text"
-        name="username"
-        value="{{ user['username'] if user else '' }}"
-        required
-      />
+      <input type="text" name="username" value="{{ user['username'] if user else '' }}" required />
     </div>
 
     <div class="Cohesive_form_line">

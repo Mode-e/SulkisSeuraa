@@ -9,15 +9,12 @@
   <div class="slot_row">
     <div class="slot-texts">
       <strong>Lisäsi</strong>
-      <a
-        href="/my_info/{{ slot['user_id'] }}"
-        style="color: #ff8552; text-decoration: underline; font-weight: bold"
+      <a href="/my_info/{{ slot['user_id'] }}" style="color: #ff8552; text-decoration: underline; font-weight: bold"
         >{{ slot['username'] }}</a
       >
       | <strong>Paikka:</strong> {{ slot['location'] }}
       <br />
-      <strong>Aika:</strong> {{ slot['time'] }} | <strong>Pelaajat:</strong> {{
-      slot['player_count'] }}/{{ slot['total_players'] }}
+      <strong>Aika:</strong> {{ slot['time'] }} | <strong>Pelaajat:</strong> {{ slot['player_count'] }}/{{ slot['total_players'] }}
     </div>
     {% if slot['user_id'] == session['user_id'] %}
     <a href="/edit_slot/{{ slot['id'] }}" class="button">Muokkaa</a>
@@ -36,15 +33,12 @@
   <div class="slot_row past">
     <div class="slot-texts">
       <strong>Lisäsi</strong>
-      <a
-        href="/my_info/{{ slot['user_id'] }}"
-        style="color: #ff8552; text-decoration: underline; font-weight: bold"
+      <a href="/my_info/{{ slot['user_id'] }}" style="color: #ff8552; text-decoration: underline; font-weight: bold"
         >{{ slot['username'] }}</a
       >
       | <strong>Paikka:</strong> {{ slot['location'] }}
       <br />
-      <strong>Aika:</strong> {{ slot['time'] }} | <strong>Pelaajat:</strong> {{
-      slot['player_count'] }}/{{ slot['total_players'] }}
+      <strong>Aika:</strong> {{ slot['time'] }} | <strong>Pelaajat:</strong> {{ slot['player_count'] }}/{{ slot['total_players'] }}
     </div>
   </div>
   {% endfor %} {% endif %}
