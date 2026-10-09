@@ -1,30 +1,53 @@
-{% extends "layout.html" %}
-
-{% block content %}
+{% extends "layout.html" %} {% block content %}
 <h2 class="Cohesive_headline">Luo tunnus</h2>
 
 <div class="Cohesive_framework">
-    <form action="/create" method="POST">
-        <div class="Cohesive_form_line">
-            <label for="username">Käyttäjätunnus:</label>
-            <input type="text" id="username" name="username" required minlength="3" maxlength="20" value="{{ username }}">
-        </div>
-        
-        <div class="Cohesive_form_line">
-            <label for="password">Salasana:</label>
-            <input type="password" id="password1" name="password1" required minlength="8" maxlength="20">
-        </div>
+  <form action="/create" method="POST">
+    <div class="Cohesive_form_line">
+      <label for="username">Käyttäjätunnus:</label>
+      <input
+        type="text"
+        id="username"
+        name="username"
+        required
+        minlength="3"
+        maxlength="20"
+        value="{{ username }}"
+      />
+    </div>
 
-        <div class="Cohesive_form_line">
-            <label for="password_confirm">Salasana uudelleen:</label>
-            <input type="password" id="password2" name="password2" required minlength="8" maxlength="20">
-        </div>
-        
-        <div class="button_container">
-            <button type="submit" class="button">Luo tunnus</button>
-        </div>
-    </form>
+    <div class="Cohesive_form_line">
+      <label for="password">Salasana:</label>
+      <input
+        type="password"
+        id="password1"
+        name="password1"
+        required
+        minlength="8"
+        maxlength="20"
+      />
+    </div>
+
+    <div class="Cohesive_form_line">
+      <label for="password_confirm">Salasana uudelleen:</label>
+      <input
+        type="password"
+        id="password2"
+        name="password2"
+        required
+        minlength="8"
+        maxlength="20"
+      />
+    </div>
+
+    <div class="button_container">
+      <button type="submit" class="button">Luo tunnus</button>
+    </div>
+  </form>
 </div>
 
-<p style="color: #ffffff;">Onko sinulla jo tunnus? <a href="/login" style="color: #c9c632;">Kirjaudu sisään tästä.</a></p>
+<p style="color: #ffffff">
+  Onko sinulla jo tunnus?
+  <a href="/login" style="color: #c9c632">Kirjaudu sisään tästä.</a>
+</p>
 {% endblock %}

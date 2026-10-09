@@ -1,94 +1,136 @@
-{% extends "layout.html" %}
-
-{% block content %}
+{% extends "layout.html" %} {% block content %}
 <h2 class="Cohesive_headline">Etsi vuoroja</h2>
 
 <div class="Cohesive_framework">
-    <form action="/search" method="GET">
-        <div class="Cohesive_form_line">
-            <label for="location">Paikka:</label>
-            <select id="location" name="location_id">
-                <option value="">Valitse paikka...</option>
-                {% for loc in locations %}
-                    <option value="{{ loc.name }}" {% if location == loc.name %}selected{% endif %}>
-                        {{ loc.name }}
-                    </option>
-                {% endfor %}
-            </select>
-        </div>
+  <form action="/search" method="GET">
+    <div class="Cohesive_form_line">
+      <label for="location">Paikka:</label>
+      <select id="location" name="location_id">
+        <option value="">Valitse paikka...</option>
+        {% for loc in locations %}
+        <option
+          value="{{ loc.name }}"
+          {%
+          if
+          location=""
+          ="loc.name"
+          %}selected{%
+          endif
+          %}
+        >
+          {{ loc.name }}
+        </option>
+        {% endfor %}
+      </select>
+    </div>
 
-        <div class="Cohesive_form_line">
-            <label for="day">Päivämäärä:</label>
-            <input type="date" id="day" name="date" value="{{ day if day else '' }}" />
-        </div>
+    <div class="Cohesive_form_line">
+      <label for="day">Päivämäärä:</label>
+      <input
+        type="date"
+        id="day"
+        name="date"
+        value="{{ day if day else '' }}"
+      />
+    </div>
 
-        <div class="Cohesive_form_line">
-            <label for="player_level">Pelaajien taso:</label>
-            <select id="player_level" name="level_id">
-                <option value="">Valitse pelaajien taso</option>
-                {% for lvl in levels %}
-                    <option value="{{ lvl.level_name }}" {% if player_level == lvl.level_name %}selected{% endif %}>
-                        {{ lvl.level_name }}
-                    </option>
-                {% endfor %}
-            </select>
-        </div>
+    <div class="Cohesive_form_line">
+      <label for="player_level">Pelaajien taso:</label>
+      <select id="player_level" name="level_id">
+        <option value="">Valitse pelaajien taso</option>
+        {% for lvl in levels %}
+        <option
+          value="{{ lvl.level_name }}"
+          {%
+          if
+          player_level=""
+          ="lvl.level_name"
+          %}selected{%
+          endif
+          %}
+        >
+          {{ lvl.level_name }}
+        </option>
+        {% endfor %}
+      </select>
+    </div>
 
-        <div class="Cohesive_form_line">
-            <label for="total_players">Määrä:</label>
-            <select id="total_players" name="max_players_id">
-                <option value="">Valitse pelaajamäärä</option>
-                {% for val in total %}
-                    <option value="{{ val.amount }}" {% if total_players == val.amount %}selected{% endif %}>
-                        {{ val.amount }} pelaajaa
-                    </option>
-                {% endfor %}
-            </select>
-        </div>
+    <div class="Cohesive_form_line">
+      <label for="total_players">Määrä:</label>
+      <select id="total_players" name="max_players_id">
+        <option value="">Valitse pelaajamäärä</option>
+        {% for val in total %}
+        <option
+          value="{{ val.amount }}"
+          {%
+          if
+          total_players=""
+          ="val.amount"
+          %}selected{%
+          endif
+          %}
+        >
+          {{ val.amount }} pelaajaa
+        </option>
+        {% endfor %}
+      </select>
+    </div>
 
-        <div class="Cohesive_form_line">
-            <label for="username">Käyttäjänimi:</label>
-            <input type="text" id="username" name="username" value="{{ username if username else '' }}" placeholder="Hae nimellä..." />
-        </div>
+    <div class="Cohesive_form_line">
+      <label for="username">Käyttäjänimi:</label>
+      <input
+        type="text"
+        id="username"
+        name="username"
+        value="{{ username if username else '' }}"
+        placeholder="Hae nimellä..."
+      />
+    </div>
 
-        <div class="button_container">
-            <button type="submit" class="button">Hae vuoroja</button>
-        </div>
-    </form>
+    <div class="button_container">
+      <button type="submit" class="button">Hae vuoroja</button>
+    </div>
+  </form>
 </div>
 <div class="Cohesive_framework">
-    <h3 class="Cohesive_form_title">Tulevat vuorot ({{ results|length }})</h3>
-    {% if results %}
-        {% for slot in results %}
-            <div class="slot_row">
-                <div class="slot-texts">
-                    <strong>Lisäsi</strong> <a href="/my_info/{{ slot['user_id'] }}" style="color: #ff8552; text-decoration: underline; font-weight: bold;">{{ slot['username'] }}</a> | 
-                    <strong>Paikka:</strong> {{ slot['location'] }}
-                    <br>
-                    <strong>Aika:</strong> {{ slot['time'] }} | 
-                    <strong>Pelaajat:</strong> {{ slot['player_count'] }}/{{ slot['total_players'] }}
-                </div>
-                {% if session and session.get('user_id') == slot['user_id'] %}
-                    <a href="/edit_slot/{{ slot['id'] }}" class="button">Muokkaa</a>
-                    <a href="/signup/{{ slot['id'] }}" class="button">Tiedot</a>
-                {% else %}
-                    {% if slot['id'] in signed_up_slot_ids %}
-                        <a href="/signup/{{ slot['id'] }}" class="button">Tiedot</a>
-                    {% elif slot['player_count'] < slot['total_players'] %}
-                        <a href="/signup/{{ slot['id'] }}" class="button">Ilmoittaudu</a>
-                    {% else %}
-                        <span style="color: #888888; font-weight: bold; margin-left: 10px; vertical-align: middle;">
-                            Vuoro täynnä
-                        </span>
-                    {% endif %}
-                {% endif %}
-            </div>
-        {% endfor %}
-
+  <h3 class="Cohesive_form_title">Tulevat vuorot ({{ results|length }})</h3>
+  {% if results %} {% for slot in results %}
+  <div class="slot_row">
+    <div class="slot-texts">
+      <strong>Lisäsi</strong>
+      <a
+        href="/my_info/{{ slot['user_id'] }}"
+        style="color: #ff8552; text-decoration: underline; font-weight: bold"
+        >{{ slot['username'] }}</a
+      >
+      | <strong>Paikka:</strong> {{ slot['location'] }}
+      <br />
+      <strong>Aika:</strong> {{ slot['time'] }} | <strong>Pelaajat:</strong> {{
+      slot['player_count'] }}/{{ slot['total_players'] }}
+    </div>
+    {% if session and session.get('user_id') == slot['user_id'] %}
+    <a href="/edit_slot/{{ slot['id'] }}" class="button">Muokkaa</a>
+    <a href="/signup/{{ slot['id'] }}" class="button">Tiedot</a>
+    {% else %} {% if slot['id'] in signed_up_slot_ids %}
+    <a href="/signup/{{ slot['id'] }}" class="button">Tiedot</a>
+    {% elif slot['player_count'] < slot['total_players'] %}
+    <a href="/signup/{{ slot['id'] }}" class="button">Ilmoittaudu</a>
     {% else %}
-        <p class="Empty" style="color: red">Ei tuloksia.</p>
-    {% endif %}
+    <span
+      style="
+        color: #888888;
+        font-weight: bold;
+        margin-left: 10px;
+        vertical-align: middle;
+      "
+    >
+      Vuoro täynnä
+    </span>
+    {% endif %} {% endif %}
+  </div>
+  {% endfor %} {% else %}
+  <p class="Empty" style="color: red">Ei tuloksia.</p>
+  {% endif %}
 </div>
-
 
 {% endblock %}

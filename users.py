@@ -1,9 +1,11 @@
 from werkzeug.security import check_password_hash
 import db
 
+
 def user_create(username, password_hash):
     sql = "INSERT INTO users (username, password_hash) VALUES (?, ?)"
     db.execute(sql, [username, password_hash])
+
 
 def user_login(username, password):
     sql = "SELECT id, password_hash FROM users WHERE username = ?"
@@ -18,6 +20,7 @@ def user_login(username, password):
         return user_id
     return None
 
+
 def user_info(user_id):
     sql = """
         SELECT username , player_level, description
@@ -26,10 +29,12 @@ def user_info(user_id):
     """
     return db.query(sql, [user_id])
 
+
 def user_exists(username):
     sql = "SELECT 1 FROM users WHERE username = ?"
     result = db.query(sql, [username])
     return bool(result)
+
 
 def user_update(user_data, user_id):
     sql = """

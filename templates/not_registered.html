@@ -1,12 +1,15 @@
-{% extends "layout.html" %}
-
-{% block content %}
+{% extends "layout.html" %} {% block content %}
 <h2 class="Cohesive_headline">Vaatii kirjautumista</h2>
 
 <div class="Cohesive_framework">
-    <p style="color: red">Eikö sinulla ole tunnusta? <a href="/register" style="color: blue;">Rekisteröidy tästä</a>.</p>
-    <p style="color: red">Onko sinulla jo tunnus? <a href="/login" style="color: blue;">Kirjaudu sisään tästä</a>.</p>
+  <p style="color: red">
+    Eikö sinulla ole tunnusta?
+    <a href="/register" style="color: blue">Rekisteröidy tästä</a>.
+  </p>
+  <p style="color: red">
+    Onko sinulla jo tunnus?
+    <a href="/login" style="color: blue">Kirjaudu sisään tästä</a>.
+  </p>
 </div>
-
 
 {% endblock %}

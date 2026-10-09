@@ -1,61 +1,77 @@
 <style>
-    textarea[readonly]:focus {
-        outline: none;
-    }
+  textarea[readonly]:focus {
+    outline: none;
+  }
 </style>
 
-{% extends "layout.html" %}
-
-{% block content %}
-{% if session["username"] == info[0].username %}
-    <h2 class="Cohesive_headline">Omat tiedot</h2>
+{% extends "layout.html" %} {% block content %} {% if session["username"] ==
+info[0].username %}
+<h2 class="Cohesive_headline">Omat tiedot</h2>
 {% else %}
-    <h2 class="Cohesive_headline">Käyttäjän {{ info[0].username }} tiedot</h2>
+<h2 class="Cohesive_headline">Käyttäjän {{ info[0].username }} tiedot</h2>
 {% endif %}
 <div class="Cohesive_framework">
-    <div class="slot_row">
-        <div class="slot-texts">
-            <div class="statistics_framework">
-                <li><strong>Vuoroja yhteensä lisätty:</strong> {{ created }}</li>
-                <li><strong>Ilmoittauduttu yhteensä:</strong> {{ future|length + past|length }}</li>
-                <li><strong>Pelattuja tunteja yhteensä:</strong> {{ past|length }}</li>
-            </div>
-            <li><strong>Käyttäjätunnus:</strong> {{ info[0].username }}</li>
-            <li><strong>Pelaajataso:</strong> {{ info[0].player_level if info[0].player_level else 'Ei määritelty' }}</li>
-            <li><strong>Kuvaus:</strong></li>
-            <span>{{ info[0].description if info[0].description else 'Ei kuvausta saatavilla.' }}</span>
-            {% if my_page %}
-            <div class="button_container">
-                <a href="/edit_info/{{ session['user_id'] }}" class="button" style="width: 95px;">Päivitä tietoja</a>
-            </div>
-            {% endif %}
-        </div>
+  <div class="slot_row">
+    <div class="slot-texts">
+      <div class="statistics_framework">
+        <li><strong>Vuoroja yhteensä lisätty:</strong> {{ created }}</li>
+        <li>
+          <strong>Ilmoittauduttu yhteensä:</strong> {{ future|length +
+          past|length }}
+        </li>
+        <li><strong>Pelattuja tunteja yhteensä:</strong> {{ past|length }}</li>
+      </div>
+      <li><strong>Käyttäjätunnus:</strong> {{ info[0].username }}</li>
+      <li>
+        <strong>Pelaajataso:</strong> {{ info[0].player_level if
+        info[0].player_level else 'Ei määritelty' }}
+      </li>
+      <li><strong>Kuvaus:</strong></li>
+      <span
+        >{{ info[0].description if info[0].description else 'Ei kuvausta
+        saatavilla.' }}</span
+      >
+      {% if my_page %}
+      <div class="button_container">
+        <a
+          href="/edit_info/{{ session['user_id'] }}"
+          class="button"
+          style="width: 95px"
+          >Päivitä tietoja</a
+        >
+      </div>
+      {% endif %}
     </div>
+  </div>
 </div>
 
 <div class="Cohesive_framework">
-    <h3 class="Cohesive_form_title">Lisätyt tulevat vuorot ({{ upcoming|length }})</h3>
-    
-    {% if upcoming|length == 0 %}
-        <p class="Empty" style="color: red">Ei lisättyjä tulevia pelivuoroja.</p>
-    {% else %}
-        {% for slot in upcoming %}
-            <div class="slot_row">
-                <div class="slot-texts">
-                    <strong>Lisäsi</strong> <a href="/my_info/{{ slot['user_id'] }}" style="color: #ff8552; text-decoration: underline; font-weight: bold;">{{ slot['username'] }}</a> | 
-                    <strong>Paikka:</strong> {{ slot['location'] }}
-                    <br>
-                    <strong>Aika:</strong> {{ slot['time'] }} | 
-                    <strong>Pelaajat:</strong> {{ slot['player_count'] }}/{{ slot['total_players'] }}
-                </div>
-                {% if session.get('user_id') == slot['user_id'] %}
-                    <a href="/edit_slot/{{ slot['id'] }}" class="button">Muokkaa</a>
-                {% endif %}
-                <a href="/signup/{{ slot['id'] }}" class="button">Tiedot</a>
-            </div>
-        {% endfor %}
-    {% endif %}
-</div>
+  <h3 class="Cohesive_form_title">
+    Lisätyt tulevat vuorot ({{ upcoming|length }})
+  </h3>
 
+  {% if upcoming|length == 0 %}
+  <p class="Empty" style="color: red">Ei lisättyjä tulevia pelivuoroja.</p>
+  {% else %} {% for slot in upcoming %}
+  <div class="slot_row">
+    <div class="slot-texts">
+      <strong>Lisäsi</strong>
+      <a
+        href="/my_info/{{ slot['user_id'] }}"
+        style="color: #ff8552; text-decoration: underline; font-weight: bold"
+        >{{ slot['username'] }}</a
+      >
+      | <strong>Paikka:</strong> {{ slot['location'] }}
+      <br />
+      <strong>Aika:</strong> {{ slot['time'] }} | <strong>Pelaajat:</strong> {{
+      slot['player_count'] }}/{{ slot['total_players'] }}
+    </div>
+    {% if session.get('user_id') == slot['user_id'] %}
+    <a href="/edit_slot/{{ slot['id'] }}" class="button">Muokkaa</a>
+    {% endif %}
+    <a href="/signup/{{ slot['id'] }}" class="button">Tiedot</a>
+  </div>
+  {% endfor %} {% endif %}
+</div>
 
 {% endblock %}
