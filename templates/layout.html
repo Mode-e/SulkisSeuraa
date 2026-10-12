@@ -9,7 +9,7 @@
       <h1>Sulkapalloseura</h1>
       <div class="links">
         {% if session.username %}
-        <span style="color: red">Kirjautunut käyttäjä: {{ session.username }}</span>
+        <span style="color: yellow">Kirjautunut käyttäjä: {{ session.username }}</span>
         <a href="/logout">Kirjaudu ulos</a>
         {% else %}
         <a href="/register">Rekisteröidy</a>

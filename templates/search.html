@@ -8,7 +8,7 @@
       <select id="location" name="location_id">
         <option value="">Valitse paikka...</option>
         {% for loc in locations %}
-        <option value="{{ loc.name }}" {% if location="" ="loc.name" %}selected{% endif %}>{{ loc.name }}</option>
+        <option value="{{ loc.name }}" {% if location == "loc.name" %}selected{% endif %}>{{ loc.name }}</option>
         {% endfor %}
       </select>
     </div>
@@ -73,7 +73,7 @@
     {% endif %} {% endif %}
   </div>
   {% endfor %} {% else %}
-  <p class="Empty" style="color: red">Ei tuloksia.</p>
+  <p class="Empty" style="color: yellow">Ei tuloksia.</p>
   {% endif %}
 </div>
 
