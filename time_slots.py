@@ -145,7 +145,7 @@ def find_slots(
 
 def get_players(slot_id):
     sql = """
-        SELECT U.username 
+        SELECT U.id, U.username 
         FROM signups S
         JOIN users U ON S.user_id = U.id
         WHERE S.slot_id = ?
