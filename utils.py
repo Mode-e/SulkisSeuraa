@@ -1,9 +1,8 @@
 import datetime
 import re
 
+import time_slots
 from flask import abort, flash, render_template, request, session
-
-from SulkisSeuraa import time_slots
 
 
 def check_csrf():
@@ -91,9 +90,7 @@ def check_username(username):
     if len(username) < 3 or len(username) > 20:
         return "Virhe: käyttäjätunnuksen pituuspitääolla väliltä 3-20"
     if not re.match("^[a-zA-Z0-9_åäöÅÄÖ]+$", username):
-        return (
-            "Virhe: käyttäjätunnuksessa saa olla vainkirjaimia, numeroita ja alaviivoja"
-        )
+        return "Virhe: käyttäjätunnuksessa saa olla vain kirjaimia, numeroita ja alaviivoja"
     return None
 
 
