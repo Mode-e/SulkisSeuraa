@@ -5,7 +5,7 @@
 
 + Käyttäjä pystyy luomaan tunnuksen ja kirjautumaan sisään sovellukseen.
 
-+ Käyttäjä pystyy lisäämään ilmoituksia ja muokkaamaan ja poistamaan niitä.
++ Käyttäjä pystyy lisäämään ilmoituksia, muokkaamaan ja poistamaan niitä.
 
 + Käyttäjä näkee sovellukseen lisätyt ilmoitukset.
 
@@ -14,10 +14,10 @@
 + Käyttäjäsivu näyttää, montako ilmoitusta käyttäjä on lähettänyt ja listan ilmoituksista.
 
 + Käyttäjä pystyy valitsemaan esimerkiksi seuraavia luokitteluja:
-    +Pelipaikka: Kumpula Unisport tai Otaniemi Unisport
-    +Pelaajan taso: aloittelija, keskitaso tai edistynyt
+    + Pelipaikka: Kumpula Unisport tai Otaniemi Unisport
+    + Pelaajan taso: aloittelija, harrastaja, kilpataso
 
-+ Käyttäjä pystyy ilmoittautumaan pelivuoroon. Ilmoituksessa näytetään, ketkä käyttäjät ovat ilmoittautuneet.
++ Käyttäjä pystyy ilmoittautumaan pelivuoroon. Ilmoittautuessa näkee ketkä käyttäjät ovat ilmoittautuneet.
 
 ## Sovelluksen käyttöönotto ##
 
