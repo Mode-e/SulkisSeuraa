@@ -12,12 +12,12 @@ app.secret_key = secret_key
 
 
 @app.errorhandler(404)
-def not_found():
+def not_found(error):
     return render_template("404.html"), 404
 
 
 @app.errorhandler(403)
-def forbidden():
+def forbidden(error):
     return render_template("403.html"), 403
 
 
