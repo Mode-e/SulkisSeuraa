@@ -7,26 +7,9 @@
       <label for="location">Paikka:</label>
       <select id="location" name="location_id" required>
         {% for location in locations %}
-        <option
-          value="{{ location.name }}"
-          {%
-          if
-          slot_data
-          and
-          slot_data.location=""
-          ="location.name"
-          %}selected
-          {%
-          elif
-          slot
-          and
-          slot.location=""
-          ="location.name"
-          %}selected{%
-          endif
-          %}
-        >
-          {{ location.name }}
+        <option 
+          value="{{ location.name }}" 
+          {% if slot and slot.location == location.name %}selected{% endif %}>{{ location.name }}
         </option>
         {% endfor %}
       </select>
@@ -43,12 +26,12 @@
         <select id="hours" name="hours" required>
           {% for h in
           ['00','01','02','03','04','05','06','07','08','09','10','11','12','13','14','15','16','17','18','19','20','21','22','23'] %}
-          <option value="{{ h }}" {% if h="" ="hour" %}selected{% endif %}>{{ h }}</option>
+          <option value="{{ h }}" {% if h=="hour" %}selected{% endif %}>{{ h }}</option>
           {% endfor %}
         </select>
         <select id="minutes" name="minutes" required>
-          <option value="00" {% if minutes="" ="00" %}selected{% endif %}>00</option>
-          <option value="30" {% if minutes="" ="30" %}selected{% endif %}>30</option>
+          <option value="00" {% if minutes=="00" %}selected{% endif %}>00</option>
+          <option value="30" {% if minutes=="30" %}selected{% endif %}>30</option>
         </select>
       </div>
     </div>
@@ -57,26 +40,9 @@
       <label for="player_level">Taso:</label>
       <select id="player_level" name="level_id" required>
         {% for lvl in levels %}
-        <option
-          value="{{ lvl.level_name }}"
-          {%
-          if
-          slot_data
-          and
-          slot_data.player_level=""
-          ="lvl.level_name"
-          %}selected
-          {%
-          elif
-          slot
-          and
-          slot.player_level=""
-          ="lvl.level_name"
-          %}selected{%
-          endif
-          %}
-        >
-          {{ lvl.level_name }}
+        <option 
+          value="{{ lvl.level_name }}" 
+          {% if slot and slot.level_id == lvl.level_name %}selected{% endif %}>{{ lvl.level_name }}
         </option>
         {% endfor %}
       </select>
@@ -86,26 +52,9 @@
       <label for="total_players">Määrä:</label>
       <select id="total_players" name="max_players_id" required>
         {% for val in total %}
-        <option
-          value="{{ val.amount }}"
-          {%
-          if
-          slot_data
-          and
-          slot_data.total_players=""
-          ="val.amount"
-          %}selected
-          {%
-          elif
-          slot
-          and
-          slot.total_players=""
-          ="val.amount"
-          %}selected{%
-          endif
-          %}
-        >
-          {{ val.amount }} pelaajaa
+        <option 
+          value="{{ val.amount }}" 
+          {% if slot and slot.total_players == val.amount %}selected{% endif %}>{{ val.amount }} pelaajaa
         </option>
         {% endfor %}
       </select>
