@@ -1,5 +1,5 @@
-from werkzeug.security import check_password_hash
 import db
+from werkzeug.security import check_password_hash
 
 
 def user_create(username, password_hash):
@@ -39,7 +39,15 @@ def user_exists(username):
 def user_update(user_data, user_id):
     sql = """
         UPDATE users 
-        SET player_level = ?, description = ?
+        SET player_level = ?, description = ?, profile_ready = 1
         WHERE id = ?
     """
     db.execute(sql, [user_data["player_level"], user_data["description"], user_id])
+
+
+def is_profile_ready(user_id):
+    sql = "SELECT profile_ready FROM users WHERE id = ?"
+    result = db.query(sql, [user_id])
+    if not result:
+        return False
+    return result[0]["profile_ready"] == 1

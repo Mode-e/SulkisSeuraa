@@ -25,6 +25,9 @@ def forbidden(error):
 def signup_page(slot_id):
     if access_denied := utils.check_login():
         return access_denied
+    if not users.is_profile_ready(session["user_id"]):
+        flash("Päivitä profiilisi tiedot ennen vuorotoimintojen käyttöä!", "error")
+        return redirect(f"/edit_info/{session['user_id']}")
 
     prev = utils.check_prev()
 
@@ -79,6 +82,9 @@ def signup(slot_id):
     if access_denied := utils.check_login():
         return access_denied
     utils.check_csrf()
+    if not users.is_profile_ready(session["user_id"]):
+        flash("Päivitä profiilisi tiedot ennen vuorotoimintojen käyttöä!", "error")
+        return redirect(f"/edit_info/{session['user_id']}")
 
     prev = utils.check_prev()
     slot = utils.check_slot(slot_id)
@@ -306,6 +312,10 @@ def index():
 def add_slot():
     if access_denied := utils.check_login():
         return access_denied
+    if not users.is_profile_ready(session["user_id"]):
+        flash("Päivitä profiilisi tiedot ennen vuorotoimintojen käyttöä!", "error")
+        return redirect(f"/edit_info/{session['user_id']}")
+
     locations = time_slots.get_locations()
     levels = time_slots.get_levels()
     total = time_slots.get_total()
