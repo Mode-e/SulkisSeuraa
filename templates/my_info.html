@@ -11,7 +11,7 @@
 {% endif %}
 <div class="Cohesive_framework">
   <div class="slot_row">
-    <div class="slot-texts">
+    <div class="slot-texts" style="color: #e0e0e0;">
       <div class="statistics_framework">
         <li><strong>Vuoroja yhteensä lisätty:</strong> {{ created }}</li>
         <li><strong>Ilmoittauduttu yhteensä:</strong> {{ future|length + past|length }}</li>
@@ -19,13 +19,15 @@
       </div>
       <li><strong>Käyttäjätunnus:</strong> {{ info[0].username }}</li>
       <li><strong>Pelaajataso:</strong> {{ info[0].player_level if info[0].player_level else 'Ei määritelty' }}</li>
-      <li><strong>Kuvaus:</strong></li>
-      <span>{{ info[0].description if info[0].description else 'Ei kuvausta saatavilla.' }}</span>
-      {% if my_page %}
+      <div style="margin-top: 30px;">
+      <strong>Kuvaus:</strong>
+        <p style="margin-top: 5px; font-style: italic; line-height: 1.6;">
+          {{ info[0].description if info[0].description else 'Ei kuvausta saatavilla.' }}
+        </p>
+      </div>
       <div class="button_container">
         <a href="/edit_info/{{ session['user_id'] }}" class="button" style="width: 95px">Päivitä tietoja</a>
       </div>
-      {% endif %}
     </div>
   </div>
 </div>
