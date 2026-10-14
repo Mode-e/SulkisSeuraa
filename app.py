@@ -49,8 +49,12 @@ def signup_page(slot_id):
     if request.method == "POST":
         message_text = request.form.get("message_text")
         if message_text and message_text.strip() and signed_up:
-            time_slots.add_message(slot_id, session["username"], message_text.strip())
-
+            if len(message_text.strip()) > 129:
+                flash("Viesti on liian pitkä (enintään 129 merkkiä)", "error")
+            else:
+                time_slots.add_message(
+                    slot_id, session["username"], message_text.strip()
+                )
         return redirect(f"/signup/{slot_id}")
 
     messages = time_slots.get_messages(slot_id)
