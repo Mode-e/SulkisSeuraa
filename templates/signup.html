@@ -1,6 +1,11 @@
 {% extends "layout.html" %} {% block content %}
-<h2 class="Cohesive_headline">Ilmoittaudu</h2>
-
+<h2 class="Cohesive_headline">
+  {% if session.get('user_id') == slot['user_id'] or signed_up %}
+        Vuoron tiedot
+    {% else %}
+        Ilmoittaudu
+    {% endif %}
+</h2>
 <div class="Cohesive_framework">
   <div class="Cohesive_form_line">
     <div class="slot-texts">
@@ -21,35 +26,21 @@
         </a>{% if not loop.last %}, {% endif %} {% endfor %}
     </div>
 
-  <div class="button_container">
-    {% if session.get('user_id') == slot['user_id'] or signed_up %}
-    <span style="color: #5cb85c; font-style: italic; font-weight: bold; padding: 6px 12px; display: inline-block">
-      Olet ilmoittautunut vuorolle
-    </span>
+  <div class="button_container" style="display: flex; gap: 10px; align-items: center; width: 100%; margin-top: 20px; flex-wrap: wrap;">
     {% if session.get('user_id') == slot['user_id'] %}
-    <a href="/edit_slot/{{ slot['id'] }}" class="button">Muokkaa</a>
-    <a href="{{ prev }}" class="button">Takaisin</a>
-    {% else %}
-    <form action="/cancel_signup/{{ slot['id'] }}" method="POST" style="width: auto;">
+    <a href="/edit_slot/{{ slot['id'] }}" class="button" style="min-width: 200px; padding: 12px 20px; box-sizing: border-box;">Muokkaa</a>
+    <a href="{{ prev }}" class="button" style="min-width: 200px; padding: 12px 20px; box-sizing: border-box;">Takaisin</a>
+    {% elif signed_up %}
+    <form action="/cancel_signup/{{ slot['id'] }}" method="POST" style="display: inline-block; margin: 0; padding: 0;">
       <input type="hidden" name="csrf_token" value="{{ session['csrf_token'] }}" />
-      <a
-        href="{{ prev }}"
-        class="button"
-        style="display: inline-block; min-width: 200px; padding: 12px 20px; text-align: center; box-sizing: border-box; text-decoration: none;">Takaisin</a>
-      <button
-        type="submit"
-        class="button"
-        style="display: inline-block; min-width: 200px; padding: 12px 20px; text-align: center; box-sizing: border-box">Peru ilmoittautuminen
-      </button>
+      <button type="submit" class="button" style="display: inline-block; min-width: 200px; padding: 12px 20px; box-sizing: border-box">Peru ilmoittautuminen</button>
+      <a href="{{ prev }}" class="button" style="display: inline-block; min-width: 200px; padding: 12px 20px; box-sizing: border-box">Takaisin</a>
     </form>
-    {% endif %} {% elif slot['player_count'] < slot['total_players'] %}
-    <form action="/signup/{{ slot['id'] }}" method="POST" style="width: auto;">
+    {% elif slot['player_count'] < slot['total_players'] %}
+    <form action="/signup/{{ slot['id'] }}" method="POST" style="display: inline-block; margin: 0; padding: 0;">
       <input type="hidden" name="csrf_token" value="{{ session['csrf_token'] }}" />
-      <button
-        type="submit"
-        class="button"
-        style="min-width: 200px">Vahvista ilmoittautuminen
-      </button>
+      <button type="submit" class="button" style="display: inline-block; min-width: 200px; padding: 12px 20px; box-sizing: border-box">Ilmoittaudu</button>
+      <a href="{{ prev }}" class="button" style="display: inline-block; min-width: 200px; padding: 12px 20px; box-sizing: border-box;">Takaisin</a>
     </form>
     {% else %}
     <span style="color: #888; font-style: italic; padding: 6px 12px; display: inline-block">Vuoro täynnä</span>
