@@ -23,7 +23,7 @@ def user_login(username, password):
 
 def user_info(user_id):
     sql = """
-        SELECT username , player_level, description
+        SELECT username , player_level, description, modified_slots_count
         FROM users
         WHERE id = ?
     """
@@ -51,3 +51,11 @@ def is_profile_ready(user_id):
     if not result:
         return False
     return result[0]["profile_ready"] == 1
+
+
+def update_modified_slots_count(user_id):
+    sql = """
+        UPDATE users
+        SET modified_slots_count = modified_slots_count + 1
+        WHERE id = ?"""
+    db.execute(sql, [user_id])

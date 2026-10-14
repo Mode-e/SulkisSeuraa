@@ -18,7 +18,7 @@
       <li><strong>Vuoroja yhteensä lisätty:</strong> {{ created }}</li>
       <li><strong>Ilmoittauduttu yhteensä:</strong> {{ future|length + past|length }}</li>
       <li><strong>Pelattuja tunteja yhteensä:</strong> {{ past|length }}</li>
-      <li><strong>Muokattu/peruttu varauksia: (0)</strong></li>
+      <li><strong>Muokattu/peruttu vuoroja: {{ info[0].modified_slots_count }}</strong></li>
       <strong>Kuvaus:</strong>
         <p style="margin-top: 5px; font-style: italic; line-height: 1.6;">
           {{ info[0].description if info[0].description else 'Ei kuvausta saatavilla.' }}

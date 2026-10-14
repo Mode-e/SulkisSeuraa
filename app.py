@@ -201,6 +201,9 @@ def edit_slot(slot_id):
             data["level_id"],
             data["max_players_id"],
         )
+        players = time_slots.get_players(slot_id)
+        if len(players) > 1:
+            users.update_modified_slots_count(session["user_id"])
         flash("Pelivuoro päivitetty onnistuneesti.", "success")
         return redirect("/my_slots")
 
@@ -277,6 +280,7 @@ def edit_info(user_id):
             return render_template("edit_info.html", info=data, prev=prev)
 
         users.user_update(data, user_id)
+
         return redirect(f"/my_info/{user_id}")
 
     info = users.user_info(user_id)

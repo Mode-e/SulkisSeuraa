@@ -4,7 +4,8 @@ CREATE TABLE users (
     password_hash TEXT NOT NULL,
     player_level TEXT,
     description TEXT,
-    profile_ready INTEGER DEFAULT 0
+    profile_ready INTEGER DEFAULT 0,
+    modified_slots_count INTEGER DEFAULT 0
 );
 
 CREATE TABLE time_slots (
