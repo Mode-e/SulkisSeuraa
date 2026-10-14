@@ -178,7 +178,10 @@ def edit_slot(slot_id):
 
     if request.method == "POST":
         utils.check_csrf()
+        players = time_slots.get_players(slot_id)
         if request.form.get("action") == "delete":
+            if len(players) > 1:
+                users.update_modified_slots_count(session["user_id"])
             time_slots.delete_slot(slot_id)
             flash("Pelivuoro poistettu.")
             return redirect("/my_slots")
@@ -214,7 +217,6 @@ def edit_slot(slot_id):
             data["level_id"],
             data["max_players_id"],
         )
-        players = time_slots.get_players(slot_id)
         if len(players) > 1:
             users.update_modified_slots_count(session["user_id"])
         flash("Pelivuoro päivitetty onnistuneesti.", "success")
