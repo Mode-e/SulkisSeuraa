@@ -48,5 +48,29 @@
   </div>
   </div>
 </div>
+{% if signed_up %}
+<h3 style="margin-top: 30px; color: white">Viestit</h3>
+<div class="Cohesive_framework">
+  {% if messages|length == 0 %}
+  <p class="Empty" style="color: yellow">Ei viestejä.</p>
+  {% else %} {% for message in messages %}
+  <div class="slot_row">
+    <div class="slot-texts" style="color: white;">
+      <strong>{{ message['sender_username'] }}:</strong> {{ message['timestamp'] }}<br />
+      {{ message['text'] }}
+    </div>
+  </div>
+  {% endfor %} {% endif %}
+  <form method="POST" action="" style="margin-top: 20px;">
+    <label style="color: white; font-size: 14px;">Kirjoita uusi viesti:</label>
+    <div style="display: flex; gap: 10px; margin-top: 10px;">
+      <textarea name="message_text" placeholder="Kirjoita viesti..." rows="3" style="flex-grow: 1; padding: 8px; border-radius: 4px; color: white; border: 1px solid #000000; background-color: #383838; resize: none;" required></textarea>
+      <div class="button_container">
+        <button type="submit" class="button">Lähetä</button>
+      </div>
+    </div>
+  </form>
+</div>
+{% endif %}
 
 {% endblock %}

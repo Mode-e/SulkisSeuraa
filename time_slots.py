@@ -295,3 +295,21 @@ def get_max_id(amount):
     if row:
         return row[0]["id"]
     return None
+
+
+def get_messages(slot_id):
+    sql = """
+        SELECT sender_username, text, timestamp
+        FROM messages
+        WHERE slot_id = ?
+        ORDER BY timestamp ASC
+    """
+    return db.query(sql, [slot_id])
+
+
+def add_message(slot_id, sender_username, text):
+    sql = """
+        INSERT INTO messages (slot_id, sender_username, text)
+        VALUES (?, ?, ?)
+    """
+    db.execute(sql, [slot_id, sender_username, text])

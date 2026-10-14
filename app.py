@@ -21,7 +21,7 @@ def forbidden(error):
     return render_template("403.html"), 403
 
 
-@app.route("/signup/<int:slot_id>", methods=["GET"])
+@app.route("/signup/<int:slot_id>", methods=["GET", "POST"])
 def signup_page(slot_id):
     if access_denied := utils.check_login():
         return access_denied
@@ -46,8 +46,21 @@ def signup_page(slot_id):
         if player["username"] == session["username"]:
             signed_up = True
 
+    if request.method == "POST":
+        message_text = request.form.get("message_text")
+        if message_text and message_text.strip() and signed_up:
+            time_slots.add_message(slot_id, session["username"], message_text.strip())
+
+        return redirect(f"/signup/{slot_id}")
+
+    messages = time_slots.get_messages(slot_id)
     return render_template(
-        "signup.html", slot=slot, players=players, signed_up=signed_up, prev=prev
+        "signup.html",
+        slot=slot,
+        players=players,
+        signed_up=signed_up,
+        prev=prev,
+        messages=messages,
     )
 
 
