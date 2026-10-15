@@ -1,6 +1,13 @@
+PRAGMA foreign_keys = OFF;
+DELETE FROM messages;
+DELETE FROM signups;
+DELETE FROM time_slots;
+DELETE FROM users;
 DELETE FROM locations;
 DELETE FROM player_levels;
 DELETE FROM total_players;
+DELETE FROM sqlite_sequence;
+PRAGMA foreign_keys = ON;
 
 INSERT INTO locations (name) VALUES ("Kluuvi Unisport");
 INSERT INTO locations (name) VALUES ("Kumpula Unisport");
