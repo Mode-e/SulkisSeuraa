@@ -228,6 +228,28 @@ body {
     color:#e0e0e0;
 }
 
+.next {
+    border-radius: 40% 60% 65% 35% / 40% 45% 55% 60%;
+    width: 84px;
+    height: auto;
+    border: 1px solid #000000;
+    padding: 8px 15px;
+    font-size: 14px;
+    font-weight: bold;
+    box-shadow:0 4px 6px rgba(0, 0, 0, 0.4), inset 0 2px 3px rgba(255, 255, 255, 0.4);
+    transition: all 0.15s ease;
+    background: linear-gradient(180deg, #ffd700 0%, #b8860b 100%);
+    color: #1a0505;
+    text-decoration: none;
+    text-align: center;
+}
+
+.disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    color: #888888;
+}
+
 /* ==========================================
    8. TIME SELECT OPTIONS
    ========================================== */
