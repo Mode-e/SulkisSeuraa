@@ -62,6 +62,7 @@
   </div>
   {% endfor %} {% endif %}
   <form method="POST" action="" style="margin-top: 20px;">
+    <input type="hidden" name="csrf_token" value="{{ session['csrf_token'] }}" />
     <label style="color: white; font-size: 14px;">Kirjoita uusi viesti:</label>
     <div style="display: flex; gap: 10px; margin-top: 10px;">
       <textarea name="message_text" placeholder="Kirjoita viesti..." rows="3" style="flex-grow: 1; padding: 8px; border-radius: 4px; color: white; border: 1px solid #000000; background-color: #383838; resize: none;" required maxlength="129"></textarea>
