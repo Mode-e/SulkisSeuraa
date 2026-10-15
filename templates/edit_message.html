@@ -1,0 +1,16 @@
+{% extends "layout.html" %} {% block content %}
+<div class="Cohesive_framework">
+  <form method="POST" action="" style="margin-top: 20px;">
+    <input type="hidden" name="csrf_token" value="{{ session['csrf_token'] }}" />
+    <label style="color: white; font-size: 14px;">Muokkaa viestiä:</label>
+    <div style="gap: 10px; margin-top: 10px; display: block;">
+      <textarea name="message_text" placeholder="Kirjoita viesti..." rows="3" style="width: 80%; flex-grow: 1; padding: 8px; border-radius: 4px; color: white; border: 1px solid #000000; background-color: #383838; resize: none;" required maxlength="129">{{ message.text }}</textarea>
+      <div class="button_container" style="display: flex; gap: 10px; align-items: center; width: 100%; margin-top: 20px; flex-wrap: wrap;">
+        <button type="submit" class="button">Tallenna</button>
+        <button type="submit" name="delete" value="true" class="button">Poista</button>
+        <a href="/signup/{{ message.slot_id }}" class="button">Takaisin</a>
+      </div>
+    </div>
+  </form>
+</div>
+{% endblock %}
