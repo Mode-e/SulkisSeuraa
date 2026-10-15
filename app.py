@@ -1,3 +1,4 @@
+import math
 import secrets
 
 import time_slots
@@ -19,6 +20,35 @@ def not_found(error):
 @app.errorhandler(403)
 def forbidden(error):
     return render_template("403.html"), 403
+
+
+@app.route("/edit_message/<int:message_id>/<int:slot_id>", methods=["GET", "POST"])
+def edit_message(message_id, slot_id):
+    if access_denied := utils.check_login():
+        return access_denied
+    message = time_slots.get_edit_message(message_id)
+    if not message:
+        abort(404)
+    if message["sender_username"] != session["username"]:
+        abort(403)
+
+    if request.method == "POST":
+        utils.check_csrf()
+        if "delete" in request.form:
+            time_slots.delete_message(message_id)
+            flash("Viesti poistettu onnistuneesti.", "success")
+            return redirect(f"/signup/{slot_id}")
+
+        message_text = request.form.get("message_text")
+        if message_text and message_text.strip():
+            if len(message_text.strip()) > 129:
+                flash("Viesti on liian pitkä (enintään 129 merkkiä)", "error")
+            else:
+                time_slots.update_message(message_id, message_text.strip())
+                return redirect(f"/signup/{slot_id}")
+        else:
+            flash("Viesti ei voi olla tyhjä", "error")
+    return render_template("edit_message.html", message=message, slot_id=slot_id)
 
 
 @app.route("/signup/<int:slot_id>", methods=["GET", "POST"])
@@ -55,9 +85,20 @@ def signup_page(slot_id):
                 time_slots.add_message(
                     slot_id, session["username"], message_text.strip()
                 )
-        return redirect(f"/signup/{slot_id}")
+        thread_count = time_slots.get_message_count(slot_id)
+        last_page = math.ceil(thread_count / 10)
+        last_page = max(last_page, 1)
 
-    messages = time_slots.get_messages(slot_id)
+        return redirect(f"/signup/{slot_id}?page={last_page}")
+    page = request.args.get("page", 1, type=int)
+    page_size = 6
+    thread_count = time_slots.get_message_count(slot_id)
+    page_count = math.ceil(thread_count / page_size)
+    page_count = max(page_count, 1)
+    page = max(1, min(page, page_count))
+
+    # Haetaan vain tämän sivun 10 viestiä
+    messages = time_slots.get_messages_paged(slot_id, page, page_size)
     return render_template(
         "signup.html",
         slot=slot,
@@ -65,6 +106,8 @@ def signup_page(slot_id):
         signed_up=signed_up,
         prev=prev,
         messages=messages,
+        page=page,
+        page_count=page_count,
     )
 
 
@@ -94,7 +137,7 @@ def cancel_signup(slot_id):
     return redirect("/my_slots")
 
 
-@app.route("/signup/<int:slot_id>", methods=["POST"])
+@app.route("/apply/<int:slot_id>", methods=["POST"])
 def signup(slot_id):
     if access_denied := utils.check_login():
         return access_denied
@@ -148,8 +191,22 @@ def search():
         search_data["username"],
     )
 
-    results = time_slots.find_slots(
-        utils.time_now(), location, day, player_level, total_players, username
+    page = request.args.get("page", 1, type=int)
+    page_size = 10
+    time_now = utils.time_now()
+
+    # Lasketaan kuinka monta vuoroa haku löytää yhteensä
+    thread_count = time_slots.count_found_slots(
+        time_now, location, day, player_level, total_players, username
+    )
+    page_count = math.ceil(thread_count / page_size)
+    page_count = max(page_count, 1)
+
+    page = max(1, min(page, page_count))
+
+    # 2. HAETAAN VAIN TÄMÄN SIVUN HAKUTULOKSET
+    results = time_slots.find_slots_paged(
+        time_now, location, day, player_level, total_players, username, page, page_size
     )
 
     return render_template(
@@ -163,6 +220,8 @@ def search():
         locations=time_slots.get_locations(),
         levels=time_slots.get_levels(),
         total=time_slots.get_total(),
+        page=page,
+        page_count=page_count,
     )
 
 
@@ -251,8 +310,20 @@ def my_info(user_id):
     info = users.user_info(user_id)
     if not info:
         abort(404)
+    page = request.args.get("page", 1, type=int)
+    page_size = 8
+    time_now = utils.time_now()
 
-    upcoming = time_slots.created_slots(user_id, utils.time_now())
+    thread_count = time_slots.get_created_slots_count(time_now, user_id)
+    page_count = math.ceil(thread_count / page_size)
+    page_count = max(page_count, 1)
+
+    # Korjataan sivunumero lennosta sallittuihin rajoihin ilman redirectiä
+    page = max(1, min(page, page_count))
+
+    # Haetaan tämän sivun vuorot
+    upcoming = time_slots.get_created_slots_paged(time_now, user_id, page, page_size)
+
     created = time_slots.all_created_slots(user_id)
     future = time_slots.my_slots(user_id, utils.time_now())
     past = time_slots.past_slots(user_id, utils.time_now())
@@ -265,6 +336,9 @@ def my_info(user_id):
         created=created,
         future=future,
         past=past,
+        page=page,
+        page_count=page_count,
+        current_user_id=session.get("user_id"),
     )
 
 
@@ -302,7 +376,8 @@ def edit_info(user_id):
 
         return redirect(f"/my_info/{user_id}")
 
-    info = users.user_info(user_id)
+    info = users.user_info(user_id)[0]
+    print("INFON SISÄLTÖ:", info)
     return render_template("edit_info.html", info=info, prev=prev)
 
 
@@ -310,24 +385,65 @@ def edit_info(user_id):
 def my_slots():
     if access_denied := utils.check_login():
         return access_denied
+    page = request.args.get("page", 1, type=int)
+    page_size = 8
+    user_id = session["user_id"]
+    thread_count = time_slots.get_my_upcoming_count(utils.time_now(), user_id)
+    page_count = math.ceil(thread_count / page_size)
+    page_count = max(page_count, 1)
+    page = max(1, min(page, page_count))
 
-    upcoming = time_slots.upcoming_slots(utils.time_now(), session["user_id"])
-    past = time_slots.past_slots(session["user_id"], utils.time_now())
+    upcoming = time_slots.get_my_upcoming_paged(
+        utils.time_now(), user_id, page, page_size
+    )
 
-    return render_template("my_slots.html", upcoming=upcoming, past=past)
+    return render_template(
+        "my_slots.html", upcoming=upcoming, page=page, page_count=page_count
+    )
 
 
 @app.route("/")
-def index():
+@app.route("/<int:page>")
+def index(page=1):
+    page = request.args.get("page", 1, type=int)
+    page_size = 8
+
     if "user_id" in session:
-        my_open_slots = time_slots.my_slots(session["user_id"], utils.time_now())
-        open_slots = time_slots.available_slots(session["user_id"], utils.time_now())
+        # Kirjautuneelle lasketaan vain ne tulevat vuorot, joille hän EI OLE ilmoittautunut
+        thread_count = time_slots.get_upcoming_slots_count(
+            utils.time_now(), user_id=session["user_id"]
+        )
+    else:
+        # Kirjautumattomalle lasketaan kaikki tulevat vuorot
+        thread_count = time_slots.get_upcoming_slots_count(utils.time_now())
+
+    page_count = math.ceil(thread_count / page_size)
+    page_count = max(page_count, 1)
+
+    if page < 1:
+        return redirect("/?page=1")
+    if page > page_count:
+        return redirect("/?page=" + str(page_count))
+
+    if "user_id" in session:
+        my_open_slots = time_slots.get_my_upcoming_paged(
+            utils.time_now(), session["user_id"], page, page_size
+        )
+        open_slots = time_slots.get_upcoming_slots_paged(
+            utils.time_now(), page, page_size, user_id=session["user_id"]
+        )
     else:
         my_open_slots = []
-        open_slots = time_slots.upcoming_slots(utils.time_now())
+        open_slots = time_slots.get_upcoming_slots_paged(
+            utils.time_now(), page, page_size
+        )
 
     return render_template(
-        "index.html", my_open_slots=my_open_slots, open_slots=open_slots
+        "index.html",
+        my_open_slots=my_open_slots,
+        open_slots=open_slots,
+        page=page,
+        page_count=page_count,
     )
 
 
@@ -380,9 +496,7 @@ def create_slot():
         for error in errors:
             flash(error, "error")
         return utils.create_error(slot, date, hour, minutes)
-
-    time_slots.create_slot(slot)
-    slot_id = time_slots.last_slot(session["user_id"])
+    slot_id = time_slots.create_slot(slot)
     time_slots.signup(session["user_id"], slot_id)
     return redirect("/")
 
