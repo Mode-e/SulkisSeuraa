@@ -55,9 +55,17 @@
   <p class="Empty" style="color: yellow">Ei viestejä.</p>
   {% else %} {% for message in messages %}
   <div class="slot_row">
-    <div class="slot-texts" style="color: white;">
-      <strong>{{ message['sender_username'] }}:</strong> {{ message['timestamp'] }}<br />
-      {{ message['text'] }}
+    <div class="slot-texts" style="color: white; overflow-wrap: break-word; word-break: break-word; white-space: normal; display: flex; flex-direction: column; width: 100%; box-sizing: border-box;">
+      <div>
+        <strong>{{ message['sender_username'] }}:</strong> {{ message['timestamp'] }}<br/>
+        <span style="font-style: italic; white-space: pre-wrap; overflow-wrap: break-word;">{{ message['text'] }}</span>
+      </div>
+      
+      {% if message['sender_username'] == session['username'] %}
+      <div class="button_container" style="display: flex; justify-content: flex-end; margin-top: 10px; width: 100%;">
+        <a href="/edit_message/{{ message['id'] }}/{{ message['slot_id'] }}" class="button" style="padding: 12px; text-decoration: none; display: inline-block;">Muokkaa</a>
+      </div>
+      {% endif %}
     </div>
   </div>
   {% endfor %} {% endif %}
