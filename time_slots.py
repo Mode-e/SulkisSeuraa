@@ -342,7 +342,6 @@ def update_message(message_id, new_text):
 
 
 def get_upcoming_slots_paged(time_now, page, page_size, user_id=None):
-    # Peruskysely, joka hakee vuorot
     sql = """
         SELECT T.id, T.user_id, U.username, L.name AS location,
                T.slot_time AS time, P.level_name AS player_level,
@@ -357,12 +356,9 @@ def get_upcoming_slots_paged(time_now, page, page_size, user_id=None):
     """
     params = [time_now]
 
-    # 🔥 JOS KÄYTTÄJÄ ON KIRJAUTUNUT: Suodatetaan omat ilmoittautumiset kokonaan pois!
     if user_id is not None:
         sql += " AND T.id NOT IN (SELECT slot_id FROM signups WHERE user_id = ?) "
         params.append(user_id)
-
-    # Materiaalin mukainen sivutusjärjestys loppuun
     limit = page_size
     offset = page_size * (page - 1)
 
@@ -376,11 +372,9 @@ def get_upcoming_slots_paged(time_now, page, page_size, user_id=None):
 
 
 def get_upcoming_slots_count(time_now, user_id=None):
-    # Peruskysely tuleville vuoroille
     sql = "SELECT COUNT(*) AS total FROM time_slots WHERE slot_time >= ?"
     params = [time_now]
 
-    # 🔥 JOS KÄYTTÄJÄ ON KIRJAUTUNUT: Poistetaan omat vuorot laskurista
     if user_id is not None:
         sql += " AND id NOT IN (SELECT slot_id FROM signups WHERE user_id = ?)"
         params.append(user_id)
@@ -388,13 +382,12 @@ def get_upcoming_slots_count(time_now, user_id=None):
     result = db.query(sql, params)
     if result:
         if isinstance(result, list):
-            return result[0]["total"]  # Otetaan listan ensimmäinen rivi [0]
+            return result[0]["total"]
         return result["total"]
     return 0
 
 
 def get_created_slots_count(time_now, user_id):
-    # Lasketaan käyttäjän itse luomien tulevien vuorojen kokonaismäärä
     sql = (
         "SELECT COUNT(*) AS total FROM time_slots WHERE slot_time >= ? AND user_id = ?"
     )
@@ -407,7 +400,6 @@ def get_created_slots_count(time_now, user_id):
 
 
 def get_created_slots_paged(time_now, user_id, page, page_size):
-    # SQL-kysely määritellään ensin tekstinä
     sql = """
         SELECT T.id, T.user_id, U.username, L.name AS location,
                T.slot_time AS time, P.level_name AS player_level,
@@ -422,8 +414,6 @@ def get_created_slots_paged(time_now, user_id, page, page_size):
         ORDER BY T.slot_time ASC
         LIMIT ? OFFSET ?
     """
-
-    # Lasketaan muuttujat vasta kyselyn jälkeen alhaalla materiaalin mukaisesti
     limit = page_size
     offset = page_size * (page - 1)
 
@@ -499,7 +489,6 @@ def get_my_past_paged(time_now, user_id, page, page_size):
 
 
 def count_found_slots(time_now, location, day, player_level, total_players, username):
-    # Rakennetaan dynaaminen COUNT-kysely samalla logiikalla kuin find_slots
     sql = """
         SELECT COUNT(*) AS total
         FROM time_slots T
@@ -515,7 +504,7 @@ def count_found_slots(time_now, location, day, player_level, total_players, user
         sql += " AND L.name = ?"
         params.append(location)
     if day:
-        sql += " AND STRFTIME('%w', T.slot_time) = ?"  # Tai miten viikonpäivähakusi on toteutettu
+        sql += " AND STRFTIME('%w', T.slot_time) = ?"
         params.append(day)
     if player_level:
         sql += " AND P.level_name = ?"
@@ -530,7 +519,7 @@ def count_found_slots(time_now, location, day, player_level, total_players, user
     result = db.query(sql, params)
     if result:
         if isinstance(result, list):
-            return result[0]["total"]  # 💡 Otetaan listan ensimmäinen alkio [0]
+            return result[0]["total"]
         return result["total"]
     return 0
 
@@ -538,7 +527,6 @@ def count_found_slots(time_now, location, day, player_level, total_players, user
 def find_slots_paged(
     time_now, location, day, player_level, total_players, username, page, page_size
 ):
-    # Alkuperäinen hakukyselysi dynaamisilla ehdoilla
     sql = """
         SELECT T.id, T.user_id, U.username, L.name AS location,
                T.slot_time AS time, P.level_name AS player_level,
@@ -571,7 +559,6 @@ def find_slots_paged(
 
     sql += " ORDER BY T.slot_time ASC LIMIT ? OFFSET ?"
 
-    # 🔥 MATERIAALIN MUKAINEN JÄRJESTYS: Muuttujat lasketaan vasta tässä SQL:n jälkeen
     limit = page_size
     offset = page_size * (page - 1)
     params.extend([limit, offset])
@@ -580,7 +567,6 @@ def find_slots_paged(
 
 
 def get_message_count(slot_id):
-    # Lasketaan vuoron viestien kokonaismäärä sivujen laskemista varten
     sql = "SELECT COUNT(*) AS total FROM messages WHERE slot_id = ?"
     result = db.query(sql, [slot_id])
     if result:
@@ -591,7 +577,6 @@ def get_message_count(slot_id):
 
 
 def get_messages_paged(slot_id, page, page_size):
-    # Muutetaan järjestys ASC (vanhin ensimmäisenä)
     sql = """
         SELECT *
         FROM messages
