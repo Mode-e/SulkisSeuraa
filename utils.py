@@ -123,10 +123,11 @@ def check_prev():
 
 
 def time_now():
-    return datetime.datetime.now(datetime.timezone.utc).strftime("%Y-%m-%d %H:%M")
+    return datetime.datetime.now(datetime.UTC).strftime("%Y-%m-%d %H:%M")
 
 
 def split_time(date_str):
+    print(date_str)
     day, time = date_str.split(" ")
     hour, minutes = time.split(":")
     return day, hour, minutes
