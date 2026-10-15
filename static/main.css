@@ -275,20 +275,23 @@ body {
 }
 
 /* ==========================================
-   10. STATISTICS FRAMEWORK
+   10. Paging Framework
    ========================================== */
 
-.statistics_framework {
-    top: 42px;
-    right: 30px;
-    position: absolute;
-    color:#e0e0e0;
+.pages {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+    margin-top: 20px;
+    margin-bottom: 30px;
+    align-items: center;
 }
 
 /* ==========================================
    11. ERROR FRAMEWORK
    ========================================== */
 
+/* Error framework */
 .Error_framework {
     flex-direction: column;
     align-items: center;
@@ -296,19 +299,19 @@ body {
     padding-right: 200px;
 }
 
-/* Virheviestin laatikko */
+/* Error message box */
 .Error_message {
     margin-bottom: 24px;
 }
 
-/* Uusi nimeämäsi otsikkoluokka */
+/* Error headline */
 .Error_headline {
     font-size: 90px;
     color: #f70606;
     margin: 0 0 10px 0;
 }
 
-/* Seliteteksti */
+/* Error text */
 .Error_text {
     font-size: 30px;
     color: #eebbbb;
