@@ -34,20 +34,18 @@
   <h3 class="Cohesive_form_title">Lisätyt tulevat vuorot ({{ upcoming|length }})</h3>
 
   {% if upcoming|length == 0 %}
-  <p class="Empty" style="color: yellow">Ei lisättyjä tulevia pelivuoroja.</p>
+    <p class="Empty" style="color: yellow">Ei lisättyjä tulevia pelivuoroja.</p>
   {% else %} {% for slot in upcoming %}
   <div class="slot_row">
     <div class="slot-texts">
       <strong>Lisäsi</strong>
-      <a href="/my_info/{{ slot['user_id'] }}" style="color: #ff8552; text-decoration: underline; font-weight: bold"
-        >{{ slot['username'] }}</a
-      >
-      | <strong>Paikka:</strong> {{ slot['location'] }}
+      <a href="/my_info/{{ slot['user_id'] }}" style="color: #ff8552; text-decoration: underline; font-weight: bold">{{ slot['username'] }}</a>
+      |<strong>Paikka:</strong> {{ slot['location'] }}
       <br />
       <strong>Aika:</strong> {{ slot['time'] }} | <strong>Pelaajat:</strong> {{ slot['player_count'] }}/{{ slot['total_players'] }}
     </div>
     {% if session.get('user_id') == slot['user_id'] %}
-    <a href="/edit_slot/{{ slot['id'] }}" class="button">Muokkaa</a>
+      <a href="/edit_slot/{{ slot['id'] }}" class="button">Muokkaa</a>
     {% endif %}
     <a href="/signup/{{ slot['id'] }}" class="button">Tiedot</a>
   </div>
