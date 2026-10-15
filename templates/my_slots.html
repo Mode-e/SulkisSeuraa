@@ -10,8 +10,7 @@
     <div class="slot-texts">
       <strong>Lisäsi</strong>
       <a href="/my_info/{{ slot['user_id'] }}" style="color: #ff8552; text-decoration: underline; font-weight: bold"
-        >{{ slot['username'] }}</a
-      >
+        >{{ slot['username'] }}</a>
       | <strong>Paikka:</strong> {{ slot['location'] }}
       <br />
       <strong>Aika:</strong> {{ slot['time'] }} | <strong>Pelaajat:</strong> {{ slot['player_count'] }}/{{ slot['total_players'] }}
@@ -22,26 +21,22 @@
     <a href="/signup/{{ slot['id'] }}" class="button">Tiedot</a>
   </div>
   {% endfor %} {% endif %}
-</div>
-
-<div class="Cohesive_framework">
-  <h3 class="Cohesive_form_title">Menneet vuorot ({{ past|length }})</h3>
-
-  {% if past_count == 0 %}
-  <p class="Empty">Ei menneitä pelivuoroja.</p>
-  {% else %} {% for slot in past %}
-  <div class="slot_row past">
-    <div class="slot-texts">
-      <strong>Lisäsi</strong>
-      <a href="/my_info/{{ slot['user_id'] }}" style="color: #ff8552; text-decoration: underline; font-weight: bold"
-        >{{ slot['username'] }}</a
-      >
-      | <strong>Paikka:</strong> {{ slot['location'] }}
-      <br />
-      <strong>Aika:</strong> {{ slot['time'] }} | <strong>Pelaajat:</strong> {{ slot['player_count'] }}/{{ slot['total_players'] }}
-    </div>
+<div class="pages">
+  {% if page > 1 %}
+    <a href="/my_slots?page=1" class="next">Alkuun</a>
+    <a href="/my_slots?page={{ page - 1 }}" class="next">Edellinen</a>
+  {% else %}
+    <span class="next disabled">Alkuun</span>
+    <span class="next disabled">Edellinen</span>
+  {% endif %}
+  <span style="font-weight: bold; margin: 0 10px; color: white;">Sivu {{ page }} / {{ page_count }}</span>
+  {% if page < page_count %}
+    <a href="/my_slots?page={{ page + 1 }}" class="next">Seuraava</a>
+    <a href="/my_slots?page={{ page_count }}" class="next">Loppuun</a>
+  {% else %}
+    <span class="next disabled">Seuraava</span>
+    <span class="next disabled">Loppuun</span>
+  {% endif %}
   </div>
-  {% endfor %} {% endif %}
 </div>
-
 {% endblock %}

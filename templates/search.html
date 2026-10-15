@@ -75,6 +75,23 @@
   {% endfor %} {% else %}
   <p class="Empty" style="color: yellow">Ei tuloksia.</p>
   {% endif %}
+<div class="pages">
+  {% set url_args = "&location=" ~ (location if location else "") ~ "&day=" ~ (day if day else "") ~ "&player_level=" ~ (player_level if player_level else "") ~ "&total_players=" ~ (total_players if total_players else "") ~ "&username=" ~ (username if username else "") %}
+  {% if page > 1 %}
+    <a href="/search?page=1{{ url_args }}" class="next">Alkuun</a>
+    <a href="/search?page={{ page - 1 }}{{ url_args }}" class="next">Edellinen</a>
+  {% else %}
+    <span class="next disabled">Alkuun</span>
+    <span class="next disabled">Edellinen</span>
+  {% endif %}
+  <span style="font-weight: bold; margin: 0 10px; color: white;">Sivu {{ page }} / {{ page_count }}</span>
+  {% if page < page_count %}
+    <a href="/search?page={{ page + 1 }}{{ url_args }}" class="next">Seuraava</a>
+    <a href="/search?page={{ page_count }}{{ url_args }}" class="next">Loppuun</a>
+  {% else %}
+    <span class="next disabled">Seuraava</span>
+    <span class="next disabled">Loppuun</span>
+  {% endif %}
+  </div>
 </div>
-
 {% endblock %}

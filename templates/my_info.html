@@ -50,6 +50,21 @@
     <a href="/signup/{{ slot['id'] }}" class="button">Tiedot</a>
   </div>
   {% endfor %} {% endif %}
+<div class="pages">
+  {% if page > 1 %}
+    <a href="/my_info/{{ current_user_id }}?page=1" class="next">Alkuun</a>
+    <a href="/my_info/{{ current_user_id }}?page={{ page - 1 }}" class="next">Edellinen</a>
+  {% else %}
+    <span class="next disabled">Alkuun</span>
+    <span class="next disabled">Edellinen</span>
+  {% endif %}
+  <span style="font-weight: bold; margin: 0 10px; color: white;">Sivu {{ page }} / {{ page_count }}</span>
+  {% if page < page_count %}
+    <a href="/my_info/{{ current_user_id }}?page={{ page + 1 }}" class="next">Seuraava</a>
+    <a href="/my_info/{{ current_user_id }}?page={{ page_count }}" class="next">Loppuun</a>
+  {% else %}
+    <span class="next disabled">Seuraava</span>
+    <span class="next disabled">Loppuun</span>
+  {% endif %}
 </div>
-
 {% endblock %}

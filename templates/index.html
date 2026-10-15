@@ -40,6 +40,23 @@
     </div>
   </div>
   {% endfor %} {% endif %} {% endif %}
+<div class="pages">
+  {% if page > 1 %}
+    <a href="/?page=1" class="next">Alkuun</a>
+    <a href="/?page={{ page - 1 }}" class="next">Edellinen</a>
+  {% else %}
+    <span class="next disabled">Alkuun</span>
+    <span class="next disabled">Edellinen</span>
+  {% endif %}
+  <span style="font-weight: bold; margin: 0 10px; color: white;">Sivu {{ page }} / {{ page_count }}</span>
+  {% if page < page_count %}
+    <a href="/?page={{ page + 1 }}" class="next">Seuraava</a>
+    <a href="/?page={{ page_count }}" class="next">Loppuun</a>
+  {% else %}
+    <span class="next disabled">Seuraava</span>
+    <span class="next disabled">Loppuun</span>
+  {% endif %}
+  </div>
 </div>
 
 {% endblock %}
