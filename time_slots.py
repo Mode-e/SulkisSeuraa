@@ -37,7 +37,7 @@ def past_slots(user_id, time_now):
     sql = """
         SELECT T.id, T.user_id, U.username, L.name AS location, 
             T.slot_time AS time, P.level_name AS player_level, 
-            M.amount AS total_players,COUNT(S_count.id) AS player_count
+            M.amount AS total_players, COUNT(S_count.id) AS player_count
         FROM time_slots T
         JOIN signups S_filter ON T.id = S_filter.slot_id
         JOIN users U ON T.user_id = U.id
@@ -232,22 +232,22 @@ def get_total():
 
 def get_location_id(location_name):
     sql = db.query("SELECT id FROM locations WHERE name = ?", [location_name])
-    if sql:
+    if sql and len(sql) > 0:
         return sql[0]["id"]
     return None
 
 
 def get_level_id(level_name):
-    row = db.query("SELECT id FROM player_levels WHERE level_name = ?", [level_name])
-    if row:
-        return row[0]["id"]
+    sql = db.query("SELECT id FROM player_levels WHERE level_name = ?", [level_name])
+    if sql and len(sql) > 0:
+        return sql[0]["id"]
     return None
 
 
 def get_max_id(amount):
-    row = db.query("SELECT id FROM total_players WHERE amount = ?", [amount])
-    if row:
-        return row[0]["id"]
+    sql = db.query("SELECT id FROM total_players WHERE amount = ?", [amount])
+    if sql:
+        return sql[0]["id"]
     return None
 
 
