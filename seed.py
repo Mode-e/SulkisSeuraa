@@ -18,13 +18,11 @@ def generate():
     slot_count = 10000
     message_count = 1000000
     users_data = []
-    testi_password_hash = (
-        "scrypt:32768:16:1$randomsalt$abcdefghijklmnopqrstuvwxyz123456"
-    )
+    test_password_hash = "scrypt:32768:16:1$randomsalt$abcdefghijklmnopqrstuvwxyz123456"
     for i in range(1, user_count + 1):
         username = f"user{i}"
         users_data.append(
-            (username, testi_password_hash, "Harrastaja", "Moi! Olen testipelaaja.", 1)
+            (username, test_password_hash, "Harrastaja", "Moi! Olen testipelaaja.", 1)
         )
     cursor.executemany(
         """
@@ -85,15 +83,15 @@ def generate():
 
     try:
         db.commit()
-        print("Kaikki testitiedot alustettu ja tallennettu onnistuneesti!")
+        print("All test data initialized and saved successfully!")
 
     except sqlite3.Error as e:
         db.rollback()
-        print(f"Virhe tallennuksessa, muutokset peruttu: {e}")
+        print(f"Error saving data, changes rolled back: {e}")
 
     finally:
         db.close()
-        print("Tietokantayhteys suljettu.")
+        print("Database connection closed.")
 
 
 if __name__ == "__main__":
