@@ -24,6 +24,5 @@
 + $ python3 -m venv venv
 + $ source venv/bin/activate
 + $ pip install flask
-+ $ sqlite3 database.db < schema.sql
-+ $ sqlite3 database.db < init.sql
++ $ python seed.py
 + $ flask run
