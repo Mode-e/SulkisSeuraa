@@ -170,7 +170,7 @@ def get_search_filters():
     return {
         "location": request.args.get("location_id", ""),
         "day": request.args.get("date", ""),
-        "player_level": request.args.get("level_id", ""),
+        "player_level": request.args.get("player_level", ""),
         "total_players": request.args.get("max_players_id", ""),
         "username": request.args.get("username", ""),
     }
