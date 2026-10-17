@@ -32,7 +32,7 @@ def check_location(location):
     return None
 
 
-def check_time(time):
+def check_time():
     proposed_day = request.form["date"]
     proposed_hours = request.form["hours"]
     proposed_minutes = request.form["minutes"]
@@ -49,7 +49,7 @@ def check_player_level(level_name):
     valid_names = [lvl["level_name"] for lvl in valid_levels]
     if level_name not in valid_names:
         return "Virhe: väärä pelaajan taso valittu"
-    return True
+    return None
 
 
 def check_total_players(amount):
@@ -57,7 +57,7 @@ def check_total_players(amount):
     valid_amounts = [str(t["amount"]) for t in valid_totals]
     if str(amount) not in valid_amounts:
         return "Virhe: valitse määräksi kaksinpeli (2)tai nelinpeliksi (4)"
-    return True
+    return None
 
 
 def check_players(players, user):
@@ -88,7 +88,7 @@ def check_availability(slot):
 
 def check_username(username):
     if len(username) < 3 or len(username) > 20:
-        return "Virhe: käyttäjätunnuksen pituuspitääolla väliltä 3-20"
+        return "Virhe: käyttäjätunnuksen pituus pitää olla väliltä 3-20"
     if not re.match("^[a-zA-Z0-9_åäöÅÄÖ]+$", username):
         return "Virhe: käyttäjätunnuksessa saa olla vain kirjaimia, numeroita ja alaviivoja"
     return None
