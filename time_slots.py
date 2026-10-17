@@ -93,56 +93,6 @@ def update_slot(slot_id, location_id, slot_time, level_id, max_players_id):
     db.execute(sql, [location_id, slot_time, level_id, max_players_id, slot_id])
 
 
-def find_slots(
-    time_now,
-    location_id=None,
-    day=None,
-    level_id=None,
-    max_players_id=None,
-    username=None,
-):
-    sql = """
-        SELECT T.id, T.user_id, U.username, L.name AS location,
-               T.slot_time AS time, P.level_name AS player_level,
-               M.amount AS total_players, COUNT(S.id) AS player_count
-        FROM time_slots T
-        JOIN users U ON T.user_id = U.id
-        LEFT JOIN locations L ON T.location_id = L.id
-        LEFT JOIN player_levels P ON T.level_id = P.id
-        LEFT JOIN total_players M ON T.max_players_id = M.id
-        LEFT JOIN signups S ON T.id = S.slot_id
-        WHERE T.slot_time > ?
-    """
-    params = [time_now]
-
-    if location_id and location_id != "":
-        sql += " AND L.name LIKE ? "
-        params.append(location_id)
-
-    if day and day != "":
-        sql += " AND T.slot_time LIKE ? "
-        params.append(f"{day}%")
-
-    if level_id and level_id != "":
-        sql += " AND P.level_name LIKE ? "
-        params.append(level_id)
-
-    if max_players_id and max_players_id != "":
-        sql += " AND M.amount LIKE ? "
-        params.append(max_players_id)
-
-    if username and username != "":
-        sql += " AND U.username LIKE ? "
-        params.append(f"%{username}%")
-
-    sql += """
-        GROUP BY T.id
-        ORDER BY T.slot_time ASC
-    """
-
-    return db.query(sql, params)
-
-
 def get_players(slot_id):
     sql = """
         SELECT U.id, U.username 
@@ -494,7 +444,7 @@ def count_found_slots(time_now, location, day, player_level, total_players, user
         FROM time_slots T
         JOIN users U ON T.user_id = U.id
         LEFT JOIN locations L ON T.location_id = L.id
-        LEFT JOIN player_levels P ON T.id = P.id
+        LEFT JOIN player_levels P ON T.level_id = P.id  -- KORJATTU: T.id -> T.level_id
         LEFT JOIN total_players M ON T.max_players_id = M.id
         WHERE T.slot_time >= ?
     """
@@ -504,7 +454,7 @@ def count_found_slots(time_now, location, day, player_level, total_players, user
         sql += " AND L.name = ?"
         params.append(location)
     if day:
-        sql += " AND STRFTIME('%w', T.slot_time) = ?"
+        sql += " AND DATE(T.slot_time) = ?"
         params.append(day)
     if player_level:
         sql += " AND P.level_name = ?"
@@ -535,7 +485,7 @@ def find_slots_paged(
         FROM time_slots T
         JOIN users U ON T.user_id = U.id
         LEFT JOIN locations L ON T.location_id = L.id
-        LEFT JOIN player_levels P ON T.id = P.id
+        LEFT JOIN player_levels P ON T.level_id = P.id
         LEFT JOIN total_players M ON T.max_players_id = M.id
         WHERE T.slot_time >= ?
     """
@@ -545,7 +495,7 @@ def find_slots_paged(
         sql += " AND L.name = ?"
         params.append(location)
     if day:
-        sql += " AND STRFTIME('%w', T.slot_time) = ?"
+        sql += " AND DATE(T.slot_time) = ?"
         params.append(day)
     if player_level:
         sql += " AND P.level_name = ?"
