@@ -17,6 +17,8 @@
       <br />
       <strong>Aika:</strong> {{ slot['slot_time'] }}
       <br />
+      <strong>Taso:</strong> {{ slot['player_level'] }}
+      <br />
       <strong>Pelaajat:</strong> {{ slot['player_count'] }}/{{ slot['total_players'] }}
       <br />
       <strong>Osallistujat:</strong>
@@ -79,7 +81,26 @@
       </div>
     </div>
   </form>
-</div>
 {% endif %}
+<div class="pages">
+    
+    {% if page > 1 %}
+        <a href="/signup/{{ slot.id }}?page=1" class="next">Alkuun</a>
+        <a href="/signup/{{ slot.id }}?page={{ page - 1 }}" class="next">Edellinen</a>
+    {% else %}
+        <span class="next disabled">Alkuun</span>
+        <span class="next disabled">Edellinen</span>
+    {% endif %}
 
+    <span style="font-weight: bold; margin: 0 10px; color: white;">Sivu {{ page }} / {{ page_count }}</span>
+
+    {% if page < page_count %}
+        <a href="/signup/{{ slot.id }}?page={{ page + 1 }}" class="next">Seuraava</a>
+        <a href="/signup/{{ slot.id }}?page={{ page_count }}" class="next">Loppuun</a>
+    {% else %}
+        <span class="next disabled">Seuraava</span>
+        <span class="next disabled">Loppuun</span>
+    {% endif %}
+  </div>
+</div>
 {% endblock %}
