@@ -97,7 +97,6 @@ def signup_page(slot_id):
     page_count = max(page_count, 1)
     page = max(1, min(page, page_count))
 
-    # Haetaan vain tämän sivun 10 viestiä
     messages = time_slots.get_messages_paged(slot_id, page, page_size)
     return render_template(
         "signup.html",
@@ -195,7 +194,6 @@ def search():
     page_size = 10
     time_now = utils.time_now()
 
-    # Lasketaan kuinka monta vuoroa haku löytää yhteensä
     thread_count = time_slots.count_found_slots(
         time_now, location, day, player_level, total_players, username
     )
@@ -203,8 +201,6 @@ def search():
     page_count = max(page_count, 1)
 
     page = max(1, min(page, page_count))
-
-    # 2. HAETAAN VAIN TÄMÄN SIVUN HAKUTULOKSET
     results = time_slots.find_slots_paged(
         time_now, location, day, player_level, total_players, username, page, page_size
     )
@@ -252,7 +248,7 @@ def edit_slot(slot_id):
         d, h, m = utils.split_time(data["slot_time"])
         errors = []
 
-        if isinstance(time_error := utils.check_time(data["slot_time"]), str):
+        if isinstance(time_error := utils.check_time(), str):
             errors.append(time_error)
 
         if isinstance(location_error := utils.check_location(data["location"]), str):
@@ -317,11 +313,8 @@ def my_info(user_id):
     thread_count = time_slots.get_created_slots_count(time_now, user_id)
     page_count = math.ceil(thread_count / page_size)
     page_count = max(page_count, 1)
-
-    # Korjataan sivunumero lennosta sallittuihin rajoihin ilman redirectiä
     page = max(1, min(page, page_count))
 
-    # Haetaan tämän sivun vuorot
     upcoming = time_slots.get_created_slots_paged(time_now, user_id, page, page_size)
 
     created = time_slots.all_created_slots(user_id)
@@ -377,7 +370,6 @@ def edit_info(user_id):
         return redirect(f"/my_info/{user_id}")
 
     info = users.user_info(user_id)[0]
-    print("INFON SISÄLTÖ:", info)
     return render_template("edit_info.html", info=info, prev=prev)
 
 
@@ -409,12 +401,10 @@ def index(page=1):
     page_size = 8
 
     if "user_id" in session:
-        # Kirjautuneelle lasketaan vain ne tulevat vuorot, joille hän EI OLE ilmoittautunut
         thread_count = time_slots.get_upcoming_slots_count(
             utils.time_now(), user_id=session["user_id"]
         )
     else:
-        # Kirjautumattomalle lasketaan kaikki tulevat vuorot
         thread_count = time_slots.get_upcoming_slots_count(utils.time_now())
 
     page_count = math.ceil(thread_count / page_size)
@@ -479,7 +469,7 @@ def create_slot():
     if isinstance(location_error := utils.check_location(slot["location"]), str):
         errors.append(location_error)
 
-    if isinstance(time_error := utils.check_time(slot["slot_time"]), str):
+    if isinstance(time_error := utils.check_time(), str):
         errors.append(time_error)
 
     if isinstance(
