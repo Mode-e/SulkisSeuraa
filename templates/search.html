@@ -20,10 +20,10 @@
 
     <div class="Cohesive_form_line">
       <label for="player_level">Pelaajien taso:</label>
-      <select id="player_level" name="level_id">
+      <select id="player_level" name="player_level">
         <option value="">Valitse pelaajien taso</option>
         {% for lvl in levels %}
-        <option value="{{ lvl.level_name }}" {% if player_level == lvl.level_name %}selected{% endif %}>{{ lvl.level_name }}</option>
+        <option value="{{ lvl['level_name'] }}" {% if player_level == lvl['level_name'] %}selected{% endif %}>{{ lvl['level_name'] }}</option>
         {% endfor %}
       </select>
     </div>
@@ -60,6 +60,8 @@
       | <strong>Paikka:</strong> {{ slot['location'] }}
       <br />
       <strong>Aika:</strong> {{ slot['time'] }} | <strong>Pelaajat:</strong> {{ slot['player_count'] }}/{{ slot['total_players'] }}
+      <br />
+      <strong>Taso:</strong> {{ slot['player_level'] }}
     </div>
     {% if session and session.get('user_id') == slot['user_id'] %}
     <a href="/edit_slot/{{ slot['id'] }}" class="button">Muokkaa</a>
