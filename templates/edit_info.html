@@ -6,17 +6,17 @@
     <div class="Cohesive_form_line">
       <label for="player_level">Pelaajan taso:</label>
       <select id="player_level" name="player_level" required>
-        <option value="" disabled {% if not info[0].player_level %}selected{% endif %}>Valitse pelaajien taso...</option>
-        <option value="Aloittelija" {% if info[0].player_level== "Aloittelija" %}selected{% endif %}>Aloittelija</option>
-        <option value="Harrastaja" {% if info[0].player_level== "Harrastaja" %}selected{% endif %}>Harrastaja</option>
-        <option value="Aktiivipelaaja" {% if info[0].player_level== "Aktiivipelaaja" %}selected{% endif %}>Aktiivipelaaja</option>
-        <option value="Kilpataso" {% if info[0].player_level== "Kilpataso" %}selected{% endif %}>Kilpataso</option>
+        <option value="" disabled {% if not info.player_level %}selected{% endif %}>Valitse pelaajien taso...</option>
+        <option value="Aloittelija" {% if info.player_level== "Aloittelija" %}selected{% endif %}>Aloittelija</option>
+        <option value="Harrastaja" {% if info.player_level== "Harrastaja" %}selected{% endif %}>Harrastaja</option>
+        <option value="Aktiivipelaaja" {% if info.player_level== "Aktiivipelaaja" %}selected{% endif %}>Aktiivipelaaja</option>
+        <option value="Kilpataso" {% if info.player_level== "Kilpataso" %}selected{% endif %}>Kilpataso</option>
       </select>
     </div>
 
     <div class="Cohesive_form_line">
       <label for="description">Kuvaus:</label>
-      <textarea name="description" rows="5" cols="100" style="width: 400px; max-width: 100%; resize: none" min-length="5" maxlength="500" required>{{ info[0].description if info[0].description else '' }}</textarea>
+      <textarea name="description" rows="5" cols="100" style="width: 400px; max-width: 100%; resize: none" min-length="5" maxlength="500" required>{{ info.description if info.description else '' }}</textarea>
     </div>
     <div class="button_container">
       <button type="submit" class="button">Tallenna</button>
