@@ -300,7 +300,7 @@ def get_upcoming_slots_paged(time_now, page, page_size, user_id=None):
         FROM time_slots T
         JOIN users U ON T.user_id = U.id
         LEFT JOIN locations L ON T.location_id = L.id
-        LEFT JOIN player_levels P ON T.level_id = P.id -- KORJATTU TÄMÄ RIVI
+        LEFT JOIN player_levels P ON T.level_id = P.id
         LEFT JOIN total_players M ON T.max_players_id = M.id
         WHERE T.slot_time >= ?
     """
@@ -429,7 +429,7 @@ def get_my_past_paged(time_now, user_id, page, page_size):
         LEFT JOIN player_levels P ON T.level_id = P.id
         LEFT JOIN total_players M ON T.max_players_id = M.id
         WHERE T.slot_time < ? AND S.user_id = ?
-        ORDER BY T.slot_time DESC  -- Menneet vuorot näytetään uusimmasta vanhimpaan
+        ORDER BY T.slot_time DESC
         LIMIT ? OFFSET ?
     """
     limit = page_size
@@ -443,7 +443,7 @@ def count_found_slots(time_now, location, day, player_level, total_players, user
         FROM time_slots T
         JOIN users U ON T.user_id = U.id
         LEFT JOIN locations L ON T.location_id = L.id
-        LEFT JOIN player_levels P ON T.level_id = P.id  -- KORJATTU: T.id -> T.level_id
+        LEFT JOIN player_levels P ON T.level_id = P.id
         LEFT JOIN total_players M ON T.max_players_id = M.id
         WHERE T.slot_time >= ?
     """
