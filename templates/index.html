@@ -42,9 +42,7 @@
     <div class="slot-texts">
       <strong>Lisäsi:</strong>
       <a href="/my_info/{{ slot['user_id'] }}" style="color: #369fcf; text-decoration: underline; font-weight: bold"
-        >{{ slot['username'] }}</a
-      >
-      | <strong>Paikka:</strong> {{ slot['location'] }}
+        >{{ slot['username'] }}</a> | <strong>Paikka:</strong> {{ slot['location'] }}
       <br />
       <strong>Aika:</strong> {{ slot['time'] }} | <strong>Pelaajat:</strong> {{ slot['player_count'] }}/{{ slot['total_players'] }}
     </div>
@@ -57,7 +55,7 @@
     </div>
   </div>
   {% endfor %} {% endif %} {% endif %}
-<div class="pages">
+  <div class="pages">
   {% if page > 1 %}
     <a href="/?page=1" class="next">Alkuun</a>
     <a href="/?page={{ page - 1 }}" class="next">Edellinen</a>
