@@ -42,9 +42,14 @@
     <div class="slot-texts">
       <strong>Lisäsi</strong>
       <a href="/my_info/{{ slot['user_id'] }}" style="color: #369fcf; text-decoration: underline; font-weight: bold">{{ slot['username'] }}</a>
-      |<strong>Paikka:</strong> {{ slot['location'] }}
+      <br/>
+      <strong>Paikka:</strong> {{ slot['location'] }}
       <br />
-      <strong>Aika:</strong> {{ slot['time'] }} | <strong>Pelaajat:</strong> {{ slot['player_count'] }}/{{ slot['total_players'] }}
+      <strong>Aika:</strong> {{ slot['time'] }}
+      <br/>
+      <strong>Pelaajat:</strong> {{ slot['player_count'] }}/{{ slot['total_players'] }}
+      <br/>
+      <strong>Taso:</strong> {{ slot['player_level'] }}
     </div>
     {% if session.get('user_id') == slot['user_id'] %}
       <a href="/edit_slot/{{ slot['id'] }}" class="button">Muokkaa</a>

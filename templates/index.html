@@ -11,6 +11,8 @@
       <strong>Lisäsi:</strong> {{ slot['username'] }} | <strong>Paikka:</strong> {{ slot['location'] }}
       <br />
       <strong>Aika:</strong> {{ slot['time'] }} | <strong>Pelaajat:</strong> {{ slot['player_count'] }}/{{ slot['total_players'] }}
+      <br />
+      <strong>Aika:</strong> {{ slot['player_level'] }}
     </div>
   </div>
   {% endfor %} {% endif %}
@@ -45,6 +47,8 @@
         >{{ slot['username'] }}</a> | <strong>Paikka:</strong> {{ slot['location'] }}
       <br />
       <strong>Aika:</strong> {{ slot['time'] }} | <strong>Pelaajat:</strong> {{ slot['player_count'] }}/{{ slot['total_players'] }}
+      <br />
+      <strong>Taso:</strong> {{ slot['player_level'] }}
     </div>
     <div>
       {% if slot['player_count'] < slot['total_players'] and session.username %}
