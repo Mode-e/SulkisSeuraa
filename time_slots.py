@@ -208,7 +208,7 @@ def created_slots(user_id, time_now):
 
 def all_created_slots(user_id):
     sql = """
-        SELECT COUNT(*) 
+        SELECT COUNT(id) 
         FROM time_slots 
         WHERE user_id = ?
     """
@@ -296,7 +296,7 @@ def get_upcoming_slots_paged(time_now, page, page_size, user_id=None):
         SELECT T.id, T.user_id, U.username, L.name AS location,
                T.slot_time AS time, P.level_name AS player_level,
                M.amount AS total_players,
-               (SELECT COUNT(*) FROM signups WHERE slot_id = T.id) AS player_count
+               (SELECT COUNT(id) FROM signups WHERE slot_id = T.id) AS player_count
         FROM time_slots T
         JOIN users U ON T.user_id = U.id
         LEFT JOIN locations L ON T.location_id = L.id
@@ -322,7 +322,7 @@ def get_upcoming_slots_paged(time_now, page, page_size, user_id=None):
 
 
 def get_upcoming_slots_count(time_now, user_id=None):
-    sql = "SELECT COUNT(*) AS total FROM time_slots WHERE slot_time >= ?"
+    sql = "SELECT COUNT(id) AS total FROM time_slots WHERE slot_time >= ?"
     params = [time_now]
 
     if user_id is not None:
@@ -339,7 +339,7 @@ def get_upcoming_slots_count(time_now, user_id=None):
 
 def get_created_slots_count(time_now, user_id):
     sql = (
-        "SELECT COUNT(*) AS total FROM time_slots WHERE slot_time >= ? AND user_id = ?"
+        "SELECT COUNT(id) AS total FROM time_slots WHERE slot_time >= ? AND user_id = ?"
     )
     result = db.query(sql, [time_now, user_id])
     if result:
@@ -354,7 +354,7 @@ def get_created_slots_paged(time_now, user_id, page, page_size):
         SELECT T.id, T.user_id, U.username, L.name AS location,
                T.slot_time AS time, P.level_name AS player_level,
                M.amount AS total_players,
-               (SELECT COUNT(*) FROM signups WHERE slot_id = T.id) AS player_count
+               (SELECT COUNT(id) FROM signups WHERE slot_id = T.id) AS player_count
         FROM time_slots T
         JOIN users U ON T.user_id = U.id
         LEFT JOIN locations L ON T.location_id = L.id
@@ -372,7 +372,7 @@ def get_created_slots_paged(time_now, user_id, page, page_size):
 
 def get_my_upcoming_count(time_now, user_id):
     sql = """
-        SELECT COUNT(*) AS total 
+        SELECT COUNT(T.id) AS total 
         FROM time_slots T
         JOIN signups S ON T.id = S.slot_id
         WHERE T.slot_time >= ? AND S.user_id = ?
@@ -388,7 +388,7 @@ def get_my_upcoming_paged(time_now, user_id, page, page_size):
         SELECT T.id, T.user_id, U.username, L.name AS location,
                T.slot_time AS time, P.level_name AS player_level,
                M.amount AS total_players,
-               (SELECT COUNT(*) FROM signups WHERE slot_id = T.id) AS player_count
+               (SELECT COUNT(id) FROM signups WHERE slot_id = T.id) AS player_count
         FROM time_slots T
         JOIN users U ON T.user_id = U.id
         JOIN signups S ON T.id = S.slot_id
@@ -406,7 +406,7 @@ def get_my_upcoming_paged(time_now, user_id, page, page_size):
 
 def get_my_past_count(time_now, user_id):
     sql = """
-        SELECT COUNT(*) AS total 
+        SELECT COUNT(id) AS total 
         FROM time_slots T
         JOIN signups S ON T.id = S.slot_id
         WHERE T.slot_time < ? AND S.user_id = ?
@@ -422,7 +422,7 @@ def get_my_past_paged(time_now, user_id, page, page_size):
         SELECT T.id, T.user_id, U.username, L.name AS location,
                T.slot_time AS time, P.level_name AS player_level,
                M.amount AS total_players,
-               (SELECT COUNT(*) FROM signups WHERE slot_id = T.id) AS player_count
+               (SELECT COUNT(id) FROM signups WHERE slot_id = T.id) AS player_count
         FROM time_slots T
         JOIN users U ON T.user_id = U.id
         JOIN signups S ON T.id = S.slot_id
@@ -440,7 +440,7 @@ def get_my_past_paged(time_now, user_id, page, page_size):
 
 def count_found_slots(time_now, location, day, player_level, total_players, username):
     sql = """
-        SELECT COUNT(*) AS total
+        SELECT COUNT(T.id) AS total
         FROM time_slots T
         JOIN users U ON T.user_id = U.id
         LEFT JOIN locations L ON T.location_id = L.id
@@ -481,7 +481,7 @@ def find_slots_paged(
         SELECT T.id, T.user_id, U.username, L.name AS location,
                T.slot_time AS time, P.level_name AS player_level,
                M.amount AS total_players,
-               (SELECT COUNT(*) FROM signups WHERE slot_id = T.id) AS player_count
+               (SELECT COUNT(id) FROM signups WHERE slot_id = T.id) AS player_count
         FROM time_slots T
         JOIN users U ON T.user_id = U.id
         LEFT JOIN locations L ON T.location_id = L.id
@@ -517,7 +517,7 @@ def find_slots_paged(
 
 
 def get_message_count(slot_id):
-    sql = "SELECT COUNT(*) AS total FROM messages WHERE slot_id = ?"
+    sql = "SELECT COUNT(id) AS total FROM messages WHERE slot_id = ?"
     result = db.query(sql, [slot_id])
     if result:
         if isinstance(result, list):
@@ -528,7 +528,7 @@ def get_message_count(slot_id):
 
 def get_messages_paged(slot_id, page, page_size):
     sql = """
-        SELECT *
+        SELECT id, slot_id, sender_username, text, timestamp
         FROM messages
         WHERE slot_id = ?
         ORDER BY id ASC
