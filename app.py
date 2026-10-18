@@ -1,24 +1,25 @@
 import math
 import secrets
 
+from flask import Flask, abort, flash, redirect, render_template, request, session
+from werkzeug.security import generate_password_hash
+
 import time_slots
 import users
 import utils
 from config import secret_key
-from flask import Flask, abort, flash, redirect, render_template, request, session
-from werkzeug.security import generate_password_hash
 
 app = Flask(__name__)
 app.secret_key = secret_key
 
 
 @app.errorhandler(404)
-def not_found(error):
+def not_found():
     return render_template("404.html"), 404
 
 
 @app.errorhandler(403)
-def forbidden(error):
+def forbidden():
     return render_template("403.html"), 403
 
 

@@ -1,8 +1,9 @@
 import re
+
 from datetime import datetime, timezone
+from flask import abort, flash, render_template, request, session
 
 import time_slots
-from flask import abort, flash, render_template, request, session
 
 
 def check_csrf():

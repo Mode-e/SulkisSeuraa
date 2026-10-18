@@ -1,5 +1,5 @@
-import db
 from werkzeug.security import check_password_hash
+import db
 
 
 def user_create(username, password_hash):
