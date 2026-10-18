@@ -339,13 +339,15 @@ def my_info(user_id):
 def edit_info(user_id):
     if access_denied := utils.check_login():
         return access_denied
-
+    info = users.user_info(user_id)
+    if not info:
+        abort(404)
+    if user_id != session["user_id"]:
+        abort(403)
     prev = utils.check_prev()
 
     if request.method == "POST":
         utils.check_csrf()
-        if user_id != session["user_id"]:
-            abort(403)
 
         data = utils.get_profile_form()
         errors = []
@@ -369,7 +371,6 @@ def edit_info(user_id):
 
         return redirect(f"/my_info/{user_id}")
 
-    info = users.user_info(user_id)[0]
     return render_template("edit_info.html", info=info, prev=prev)
 
 
