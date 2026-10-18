@@ -300,7 +300,7 @@ def get_upcoming_slots_paged(time_now, page, page_size, user_id=None):
         FROM time_slots T
         JOIN users U ON T.user_id = U.id
         LEFT JOIN locations L ON T.location_id = L.id
-        LEFT JOIN player_levels P ON T.id = P.id
+        LEFT JOIN player_levels P ON T.level_id = P.id -- KORJATTU TÄMÄ RIVI
         LEFT JOIN total_players M ON T.max_players_id = M.id
         WHERE T.slot_time >= ?
     """
@@ -358,7 +358,7 @@ def get_created_slots_paged(time_now, user_id, page, page_size):
         FROM time_slots T
         JOIN users U ON T.user_id = U.id
         LEFT JOIN locations L ON T.location_id = L.id
-        LEFT JOIN player_levels P ON T.id = P.id
+        LEFT JOIN player_levels P ON T.level_id = P.id
         LEFT JOIN total_players M ON T.max_players_id = M.id
         WHERE T.slot_time >= ? AND T.user_id = ?
         ORDER BY T.slot_time ASC
@@ -366,7 +366,6 @@ def get_created_slots_paged(time_now, user_id, page, page_size):
     """
     limit = page_size
     offset = page_size * (page - 1)
-
     return list(db.query(sql, [time_now, user_id, limit, offset]))
 
 
@@ -393,7 +392,7 @@ def get_my_upcoming_paged(time_now, user_id, page, page_size):
         JOIN users U ON T.user_id = U.id
         JOIN signups S ON T.id = S.slot_id
         LEFT JOIN locations L ON T.location_id = L.id
-        LEFT JOIN player_levels P ON T.id = P.id
+        LEFT JOIN player_levels P ON T.level_id = P.id
         LEFT JOIN total_players M ON T.max_players_id = M.id
         WHERE T.slot_time >= ? AND S.user_id = ?
         ORDER BY T.slot_time ASC
@@ -406,7 +405,7 @@ def get_my_upcoming_paged(time_now, user_id, page, page_size):
 
 def get_my_past_count(time_now, user_id):
     sql = """
-        SELECT COUNT(id) AS total 
+        SELECT COUNT(T.id) AS total 
         FROM time_slots T
         JOIN signups S ON T.id = S.slot_id
         WHERE T.slot_time < ? AND S.user_id = ?
@@ -427,7 +426,7 @@ def get_my_past_paged(time_now, user_id, page, page_size):
         JOIN users U ON T.user_id = U.id
         JOIN signups S ON T.id = S.slot_id
         LEFT JOIN locations L ON T.location_id = L.id
-        LEFT JOIN player_levels P ON T.id = P.id
+        LEFT JOIN player_levels P ON T.level_id = P.id
         LEFT JOIN total_players M ON T.max_players_id = M.id
         WHERE T.slot_time < ? AND S.user_id = ?
         ORDER BY T.slot_time DESC  -- Menneet vuorot näytetään uusimmasta vanhimpaan
