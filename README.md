@@ -14,10 +14,29 @@
 + Käyttäjäsivu näyttää, montako ilmoitusta käyttäjä on lähettänyt ja listan ilmoituksista.
 
 + Käyttäjä pystyy valitsemaan esimerkiksi seuraavia luokitteluja:
-    + Pelipaikka: Kumpula Unisport tai Otaniemi Unisport
-    + Pelaajan taso: aloittelija, harrastaja, kilpataso
+    + **Pelipaikka:** Kumpula Unisport tai Otaniemi Unisport
+    + **Pelaajan taso:** aloittelija, harrastaja, kilpataso
 
 + Käyttäjä pystyy ilmoittautumaan pelivuoroon. Ilmoittautuessa näkee ketkä käyttäjät ovat ilmoittautuneet.
+
+
+## Raportti: Toiminta suurella tietomäärällä
+
+Sovellusta testattu suurilla tietomäärillä käyttämällä *seed.py* -skriptiä.
++ **Käyttäjät:** 1 000 kappaletta
++ **Pelivuorot (time_slots):** 10 000 kappaletta
++ **Viestit (messages):** 1 000 000 kappaletta
+
+### Suorituskyky ja optimointi
+Ilman optimointia pelivuorokohtaisten viestien haku hidastui oli erittäin hidasta, koska miljoona viestiriviä käydään muuten läpi joka kerta kun sivu ladataan.
+
+Suorituskykyä parannettu lisäämällä tietokantaindeksit. Listaus vaikutuksista:
++ Nopeampi vuorojen haku ja järjestäminen ajan mukaan
++ Nopeampi haku pelipaikan mukaan
++ Nopeampi haku pelivuoron tason mukaan
++ Nopeampi haku tietyn vuoron viesteille
++ Ilmoittautuminen pelivuorolle nopeampaa
+
 
 ## Sovelluksen käyttöönotto ##
 
