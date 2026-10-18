@@ -44,7 +44,7 @@ body {
 }
 
 /* ==========================================
-   3. SIDEBAR (navigation)
+   3. SIDEBAR
    ========================================== */
 
 /* Sidebar styles */
@@ -69,7 +69,7 @@ body {
 
 /* Sidebar link hover styles */
 .sidebar a:hover {
-    color: #ff4d4d;
+    color: #06d3f7;
 }
 
 .sidebar_info {
@@ -104,7 +104,7 @@ body {
 }
 
 /* ==========================================
-   5. FORMS (Cohesive Form Framework)
+   5. FORMS
    ========================================== */
 
 /* Cohesive form framework styles */
@@ -223,12 +223,14 @@ body {
     text-align: center;
 }
 
+/* Button Hover effect */
 .button:hover {
     transform: translateY(-2px);
     box-shadow: 0 6px 12px rgba(0, 0, 0, 0.5), inset 0 2px 3px rgba(255, 255, 255, 0.5);
 
 }
 
+/* Paging button */
 .next {
     border-radius: 40% 60% 65% 35% / 40% 45% 55% 60%;
     width: 84px;
@@ -245,6 +247,7 @@ body {
     text-align: center;
 }
 
+/* Disabled button */
 .disabled {
     opacity: 0.7;
     cursor: not-allowed;
@@ -252,32 +255,18 @@ body {
     pointer-events: none;
 }
 
+/* Next hover effect */
 .next:hover {
     transform: translateY(-2px);
     box-shadow: 0 6px 12px rgba(0, 0, 0, 0.5), inset 0 2px 3px rgba(255, 255, 255, 0.5);
 }
 
-/* ==========================================
-   8. TIME SELECT OPTIONS
-   ========================================== */
-
-.time_select_group {
-    flex: 1.5;
-    max-width: 260px;
-    width: 100%;
-    display: flex;
-    gap: 10px
-}
-
-.time_select_group select {
-    flex: 1;
-    width: 100%;
-}
 
 /* ==========================================
-   9. FLASH MESSAGES
+   8. FLASH MESSAGES
    ========================================== */
 
+/* flash-message */
 .flash-message {
   padding: 10px 20px;
   margin: 10px auto 20px;
@@ -289,12 +278,14 @@ body {
   border: 1px solid transparent;
 }
 
+/* flash-message.success */
 .flash-message.success {
     background-color: transparent;
     border-color: transparent;
     color: #04f7f7;
 }
 
+/* flash-message.error */
 .flash-message.error {
     background-color: transparent;
     border-color: transparent;
@@ -304,9 +295,10 @@ body {
 }
 
 /* ==========================================
-   10. Paging Framework
+   9. Paging Framework
    ========================================== */
 
+/* Paging */
 .pages {
     display: flex;
     gap: 10px;
@@ -317,7 +309,7 @@ body {
 }
 
 /* ==========================================
-   11. ERROR FRAMEWORK
+   10. ERROR FRAMEWORK
    ========================================== */
 
 /* Error framework */
