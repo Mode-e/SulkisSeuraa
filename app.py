@@ -242,7 +242,7 @@ def edit_slot(slot_id):
             if len(players) > 1:
                 users.update_modified_slots_count(session["user_id"])
             time_slots.delete_slot(slot_id)
-            flash("Pelivuoro poistettu.")
+            flash("Pelivuoro poistettu.", "success")
             return redirect("/my_slots")
         data = utils.get_edit_slot_form()
         d, h, m = utils.split_time(data["slot_time"])

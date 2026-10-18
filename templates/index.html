@@ -14,6 +14,23 @@
     </div>
   </div>
   {% endfor %} {% endif %}
+  <div class="pages">
+  {% if page > 1 %}
+    <a href="/?page=1" class="next">Alkuun</a>
+    <a href="/?page={{ page - 1 }}" class="next">Edellinen</a>
+  {% else %}
+    <span class="next disabled">Alkuun</span>
+    <span class="next disabled">Edellinen</span>
+  {% endif %}
+  <span style="font-weight: bold; margin: 0 10px; color: white;">Sivu {{ page }} / {{ page_count }}</span>
+  {% if page < page_count %}
+    <a href="/?page={{ page + 1 }}" class="next">Seuraava</a>
+    <a href="/?page={{ page_count }}" class="next">Loppuun</a>
+  {% else %}
+    <span class="next disabled">Seuraava</span>
+    <span class="next disabled">Loppuun</span>
+  {% endif %}
+  </div>
 </div>
 {% else %}
 <div class="Cohesive_framework">
@@ -24,7 +41,7 @@
   <div class="slot_row">
     <div class="slot-texts">
       <strong>Lisäsi:</strong>
-      <a href="/my_info/{{ slot['user_id'] }}" style="color: #ff8552; text-decoration: underline; font-weight: bold"
+      <a href="/my_info/{{ slot['user_id'] }}" style="color: #369fcf; text-decoration: underline; font-weight: bold"
         >{{ slot['username'] }}</a
       >
       | <strong>Paikka:</strong> {{ slot['location'] }}

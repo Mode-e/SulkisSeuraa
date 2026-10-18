@@ -11,7 +11,7 @@ body {
     margin: 0;
     padding: 0;
     background: #1c0f0d;
-    background: linear-gradient(135deg, #8a291e 0%, #1c0f0d 75%);
+    background: rgb(19, 24, 24);
     min-height: 100vh;
     max-width: 900px;
 }
@@ -22,16 +22,17 @@ body {
 
 /* Header styles */
 .header {
-    background-color: transparent;
+    background-color: black;
     padding: 20px;
     display: flex;
+    width: 100%;
     justify-content: space-between;
     align-items: flex-end;
 }
 
 /* Header title styles */
 .header h1 {
-    color: yellow;
+    color: white;
     margin: 0;
     font-size: 30px;
 }
@@ -49,7 +50,7 @@ body {
 
 /* Sidebar styles */
 .sidebar {
-    background-color: transparent;
+    background-color: rgb(24, 23, 23);
     width: 155px;
     padding: 20px;
     line-height: 2.0;
@@ -216,7 +217,7 @@ body {
     font-weight: bold;
     box-shadow:0 4px 6px rgba(0, 0, 0, 0.4), inset 0 2px 3px rgba(255, 255, 255, 0.4);
     transition: all 0.15s ease;
-    background: linear-gradient(180deg, #ffd700 0%, #b8860b 100%);
+    background: linear-gradient(180deg, #019abd 0%, #00d2ff 100%);
     color: #1a0505;
     text-decoration: none;
     text-align: center;
@@ -225,7 +226,7 @@ body {
 .button:hover {
     transform: translateY(-2px);
     box-shadow: 0 6px 12px rgba(0, 0, 0, 0.5), inset 0 2px 3px rgba(255, 255, 255, 0.5);
-    color:#e0e0e0;
+    color:black;
 }
 
 .next {
@@ -238,16 +239,16 @@ body {
     font-weight: bold;
     box-shadow:0 4px 6px rgba(0, 0, 0, 0.4), inset 0 2px 3px rgba(255, 255, 255, 0.4);
     transition: all 0.15s ease;
-    background: linear-gradient(180deg, #ffd700 0%, #b8860b 100%);
-    color: #1a0505;
+    background: linear-gradient(180deg, #019abd 0%, #00d2ff 100%);
+    color: black;
     text-decoration: none;
     text-align: center;
 }
 
 .disabled {
-    opacity: 0.5;
+    opacity: 0.7;
     cursor: not-allowed;
-    color: #888888;
+    color: #333333;
 }
 
 /* ==========================================
@@ -285,7 +286,7 @@ body {
 .flash-message.success {
     background-color: transparent;
     border-color: transparent;
-    color: #2ecc71;
+    color: #04f7f7;
 }
 
 .flash-message.error {
@@ -336,7 +337,7 @@ body {
 /* Error text */
 .Error_text {
     font-size: 30px;
-    color: #eebbbb;
+    color: rgb(0, 204, 255);
     margin: 0;
 }
 

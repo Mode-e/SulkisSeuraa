@@ -9,7 +9,7 @@
 <div class="Cohesive_framework">
   <div class="Cohesive_form_line">
     <div class="slot-texts">
-      <strong>Lisäsi</strong> <a href="/my_info/{{ slot['user_id'] }}" style="color: #ff8552; text-decoration: underline; font-weight: bold"
+      <strong>Lisäsi</strong> <a href="/my_info/{{ slot['user_id'] }}" style="color: #369fcf; text-decoration: underline; font-weight: bold"
         >{{ slot['username'] }}</a
       >
       <br />
@@ -23,7 +23,7 @@
       <br />
       <strong>Osallistujat:</strong>
       {% for player in players %}
-        <a href="/my_info/{{ player['id'] }}" style="color: #ff8552; text-decoration: underline; font-weight: bold;">
+        <a href="/my_info/{{ player['id'] }}" style="color: #369fcf; text-decoration: underline; font-weight: bold;">
             {{ player['username'] }}
         </a>{% if not loop.last %}, {% endif %} {% endfor %}
     </div>
