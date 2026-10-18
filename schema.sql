@@ -1,3 +1,11 @@
+DROP TABLE IF EXISTS messages;
+DROP TABLE IF EXISTS signups;
+DROP TABLE IF EXISTS time_slots;
+DROP TABLE IF EXISTS users;
+DROP TABLE IF EXISTS locations;
+DROP TABLE IF EXISTS player_levels;
+DROP TABLE IF EXISTS total_players;
+
 CREATE TABLE IF NOT EXISTS users (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     username TEXT UNIQUE NOT NULL,
@@ -52,3 +60,9 @@ CREATE TABLE IF NOT EXISTS messages (
     timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (slot_id) REFERENCES time_slots (id)
 );
+
+CREATE INDEX IF NOT EXISTS idx_time_slots_time ON time_slots(slot_time);
+CREATE INDEX IF NOT EXISTS idx_time_slots_location ON time_slots(location_id);
+CREATE INDEX IF NOT EXISTS idx_time_slots_level ON time_slots(level_id);
+CREATE INDEX IF NOT EXISTS idx_messages_slot ON messages(slot_id);
+CREATE INDEX IF NOT EXISTS idx_signups_slot ON signups(slot_id);
